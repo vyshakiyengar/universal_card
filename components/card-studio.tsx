@@ -157,7 +157,7 @@ export function CardStudio({ account, walletConfigured = false }: StudioProps = 
       </header>
       <main className="studio">
         <aside className="library" aria-label="Your saved cards">
-          <div className="library-title"><h2>Your cards</h2><button type="button" className="icon-button" aria-label="New card" disabled={busy} onClick={() => open(null)}><Plus size={19} /></button></div>
+          <div className="library-title"><h2>Your cards</h2><button type="button" className="icon-button" aria-label="New card" disabled={busy || !ready} onClick={() => open(null)}><Plus size={19} /></button></div>
           {cards.length ? <ul className="card-list">
             {cards.map((card) => {
               const type = card.draft.type === "universal" ? "Universal" : destinations[card.draft.kind].label;
@@ -180,7 +180,7 @@ export function CardStudio({ account, walletConfigured = false }: StudioProps = 
           </div>
           <div className="workspace-grid">
             <form className="editor" onSubmit={save} noValidate>
-              <fieldset disabled={busy}>
+              <fieldset disabled={busy || !ready}>
                 <legend className="visually-hidden">Card details</legend>
                 <div className="type-switch" role="group" aria-label="Card type">
                   <button type="button" aria-pressed={universal} onClick={() => { if (!universal) open(null, "universal"); }}>
@@ -217,7 +217,7 @@ export function CardStudio({ account, walletConfigured = false }: StudioProps = 
                   ? "Contact details are embedded in this QR. Anyone who scans or photographs it can read and share them."
                   : "Anyone with this QR can open the destination and share it."}</p></div>
                 <div className="editor-actions">
-                  <button className="button primary" type="submit" disabled={!ready}><Save size={17} /> {busy ? "Working…" : "Save card"}</button>
+                  <button className="button primary" type="submit"><Save size={17} /> {busy ? "Working…" : "Save card"}</button>
                   {activeId && <button className="button delete-button" type="button" onClick={() => void remove()}><Trash2 size={16} /> Delete</button>}
                 </div>
               </fieldset>

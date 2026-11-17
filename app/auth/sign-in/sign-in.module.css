@@ -1,0 +1,86 @@
+.page {
+  width: min(100% - 2.5rem, 28rem);
+  margin-inline: auto;
+  padding-block: clamp(1.75rem, 7vw, 5rem);
+  color: var(--ink, #18232a);
+}
+
+.back,
+.reset {
+  font-weight: 650;
+  text-underline-offset: 0.2em;
+}
+
+.panel {
+  margin-top: 1.5rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  background: var(--surface, #fff);
+  border: 1px solid var(--line, #d9dfe3);
+  border-radius: 1.25rem;
+  box-shadow: 0 0.625rem 2rem #14212a0d;
+}
+
+.panel h1 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3rem);
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.instructions {
+  color: var(--muted, #4e5e68);
+  margin: 0.65rem 0 0.85rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.panel hr {
+  border: 0;
+  border-block-start: 1px solid var(--line, #d9dfe3);
+  margin: 1.25rem 0;
+}
+
+.providers,
+.form {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.form label {
+  font-weight: 650;
+}
+
+.form input,
+.panel button {
+  min-height: 2.75rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--line, #b8c3cb);
+  border-radius: 0.625rem;
+  font: inherit;
+}
+
+.form input,
+.providers button {
+  background: var(--surface, #fff);
+  color: inherit;
+}
+
+.panel button {
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.panel button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.primary {
+  color: #fff;
+  background: var(--ink, #18232a);
+}
+
+.error {
+  color: #9b2e2c;
+  margin: 0.35rem 0;
+}

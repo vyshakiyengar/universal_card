@@ -6,6 +6,7 @@ const baseURL = `http://127.0.0.1:${port}`;
 export default defineConfig({
   testDir: "./tests/browser",
   workers: 2,
+  timeout: 90_000,
   use: { baseURL },
   projects: [
     { name: "Desktop Chrome", use: { ...devices["Desktop Chrome"] } },

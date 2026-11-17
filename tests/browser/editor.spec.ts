@@ -75,5 +75,5 @@ test("warn about dense data and block an oversized QR", async ({ page }) => {
   await destination.fill("https://example.com/" + "a".repeat(420));
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toHaveCount(0);
   await page.getByRole("button", { name: "Save card" }).click();
-  await expect(page.getByRole("alert")).toContainText("too dense");
+  await expect(page.getByRole("region", { name: "Create a card" }).getByRole("alert")).toContainText("too dense");
 });

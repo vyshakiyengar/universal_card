@@ -49,7 +49,9 @@ function downloadPng({ size, modules }: Preview["code"], filename: string) {
 
 export function CardPreview({ draft, preview, error, wallet }: { draft: CardInput; preview?: Preview; error?: string; wallet?: React.ReactNode }) {
   const isUniversal = draft.type === "universal";
-  const name = draft.name?.trim() || (isUniversal ? "Your name" : destinations[draft.kind].label);
+  const name = draft.name?.trim() || (isUniversal
+    ? (preview ? "Contact" : "Your name")
+    : destinations[draft.kind].label);
   const linkedInId = !isUniversal && draft.kind === "linkedin" && preview
     ? preview.payload.slice(preview.payload.lastIndexOf("/") + 1)
     : null;
