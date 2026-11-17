@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
   devIndicators: false,
+  outputFileTracingIncludes: {
+    "/api/cards/*/wallet": ["./lib/server/wallet-assets/*.png"],
+  },
   async headers() {
     return [{
       source: "/:path*",
