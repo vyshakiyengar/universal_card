@@ -56,7 +56,7 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/studio");
-  await page.getByRole("button", { name: /Create a universal Apple Wallet card/ }).click();
+  await page.getByRole("button", { name: /Universal card with multiple links/ }).click();
   await page.getByLabel(/Name on card/).fill("Zoë Tan");
   await page.getByRole("button", { name: "Add email" }).click();
   await page.getByLabel("email 1", { exact: true }).fill("zoe@example.com");

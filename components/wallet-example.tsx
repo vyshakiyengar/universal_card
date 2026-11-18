@@ -19,7 +19,6 @@ export function WalletExample() {
 
   return (
     <figure className="landing-art" aria-label="Sample Apple Wallet passes">
-      <div className="landing-orbits" aria-hidden="true" />
       <div className="device">
         <div className="device-screen">
           <div className="device-status" aria-hidden="true">

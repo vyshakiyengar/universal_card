@@ -16,15 +16,17 @@
   padding: clamp(1.25rem, 4vw, 2rem);
   background: var(--surface, #fff);
   border: 1px solid var(--line, #d9dfe3);
-  border-radius: 1.25rem;
-  box-shadow: 0 0.625rem 2rem #14212a0d;
+  border-radius: 0.9375rem;
+  box-shadow: 0 0.625rem 2rem #25241c0d;
 }
 
 .panel h1 {
   margin: 0;
+  font-family: var(--heading);
   font-size: clamp(2rem, 6vw, 3rem);
-  letter-spacing: -0.055em;
-  line-height: 1;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1.03;
 }
 
 .instructions {
@@ -54,8 +56,8 @@
 .panel button {
   min-height: 2.75rem;
   padding: 0.6rem 0.85rem;
-  border: 1px solid var(--line, #b8c3cb);
-  border-radius: 0.625rem;
+  border: 1px solid var(--field-line);
+  border-radius: 0.4375rem;
   font: inherit;
 }
 
@@ -75,9 +77,18 @@
   opacity: 0.55;
 }
 
-.primary {
+.panel .primary {
   color: #fff;
-  background: var(--ink, #18232a);
+  background: var(--action);
+  border-color: var(--action);
+}
+
+.panel .primary:hover:not(:disabled) {
+  background: var(--action-hover);
+}
+
+.providers button:hover:not(:disabled) {
+  background: var(--inset);
 }
 
 .error {
