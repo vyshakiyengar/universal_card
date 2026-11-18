@@ -206,17 +206,21 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .universal-choice > .destination-mark { width: 35px; height: 35px; }
   .universal-choice strong { font-size: 16px; }
   .destination-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
-  .destination-card { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; min-height: 56px; padding: 8px 10px; }
+  .destination-card { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; min-height: 56px; padding: 8px 27px 8px 10px; }
   .destination-card strong { font-size: 15px; line-height: 1.2; }
   .tile-top { margin: 0; }
   .tile-top .destination-mark { width: 29px; height: 29px; }
   .tile-top .destination-mark svg { width: 17px; height: 17px; }
-  .tile-arrow { display: none; }
+  .tile-arrow { position: absolute; inset-inline-end: 9px; top: 50%; width: 14px; height: 14px; margin: 0; transform: translateY(-50%); }
   .tile-action { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; white-space: nowrap; clip-path: inset(50%); }
   .manage-card { grid-template-columns: auto minmax(0,1fr); gap: 9px; }
   .manage-actions { grid-column: 2; flex-wrap: wrap; }
 }
 @media (max-width: 370px) {
+  .destination-card { gap: 5px; padding-inline: 7px 21px; }
+  .destination-card strong { font-size: 14px; }
+  .tile-top .destination-mark { width: 24px; height: 24px; }
+  .tile-arrow { inset-inline-end: 6px; width: 12px; height: 12px; }
   .manage-heading { align-items: flex-start; flex-direction: column; }
   .input-pair { grid-template-columns: 1fr; }
   .field-row { grid-template-columns: minmax(0, 1fr) 42px; }

@@ -36,9 +36,9 @@ export default async function Home() {
           <WalletExample />
         </section>
 
-        <section className="scan-example" aria-labelledby="whatsapp-example">
-          <h2 id="whatsapp-example">WhatsApp example</h2>
-          <p className="scan-example-options">Use the same steps for LinkedIn, Instagram, email, phone or a web link. Choose a Universal card to share several contact details in one QR.</p>
+        <section className="scan-example" aria-labelledby="how-it-works">
+          <h2 id="how-it-works">3 simple steps</h2>
+          <p className="scan-example-options">The example shows WhatsApp. The same steps work for any contact option.</p>
           <ol className="scan-example-flow" role="list">
             <li>
               <div className="scan-example-screen scan-example-editor">
@@ -52,8 +52,8 @@ export default async function Home() {
                   />
                 </div>
               </div>
-              <h3>Create a WhatsApp card</h3>
-              <p>Enter your number to make a Wallet card with your QR.</p>
+              <h3>Create your card</h3>
+              <p>Choose WhatsApp or another contact option, enter your details and add the card to Apple Wallet.</p>
             </li>
             <li>
               <div className="scan-example-screen scan-example-camera" aria-hidden="true">
@@ -69,8 +69,8 @@ export default async function Home() {
                   </div>
                 </div>
               </div>
-              <h3>Scan the Apple Wallet card</h3>
-              <p>They point their phone camera at the QR on your WhatsApp card.</p>
+              <h3>Show your QR code</h3>
+              <p>Someone scans the QR on your Apple Wallet card with their phone camera.</p>
             </li>
             <li>
               <div className="scan-example-screen scan-example-chat" aria-hidden="true">
@@ -82,8 +82,8 @@ export default async function Home() {
                   <div className="scan-chat-compose"><span>Message</span><Send size={14} /></div>
                 </div>
               </div>
-              <h3>Your WhatsApp chat opens</h3>
-              <p>They can message you right away.</p>
+              <h3>They open what you shared</h3>
+              <p>A WhatsApp card opens your chat. A Universal card lets them save your contact details.</p>
             </li>
           </ol>
         </section>

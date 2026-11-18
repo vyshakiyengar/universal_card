@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, LayoutGrid, PenLine, Plus, QrCode, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, Check, LayoutGrid, PenLine, Plus, QrCode, Trash2 } from "lucide-react";
 import { cardLimits, makeCardPayload, type CardInput, type DestinationKind } from "@/lib/cards";
 import { buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
@@ -79,7 +79,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
         </div>
         <button className="universal-choice" type="button" disabled={!ready} onClick={() => create("universal")}>
           <DestinationMark kind="universal" />
-          <span><strong className="universal-title"><AppleWalletMark /> Universal card</strong><small>Scanning this QR shares all the contact details on your card in one vCard.</small></span>
+          <span><strong className="universal-title"><AppleWalletMark /> Universal card</strong><small>Scanning this QR shares all your contact details in one vCard.</small></span>
           <span className="universal-arrow" aria-hidden="true"><ArrowRight size={18} /></span>
         </button>
       </section>
@@ -92,7 +92,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
         <div className="destination-grid">
           {types.map((kind) => (
             <button key={kind} className="destination-card" type="button" disabled={!ready} onClick={() => create(kind)}>
-              <span className="tile-top"><DestinationMark kind={kind} /><ArrowUpRight size={18} className="tile-arrow" aria-hidden="true" /></span>
+              <span className="tile-top"><DestinationMark kind={kind} /><ArrowRight size={18} className="tile-arrow" aria-hidden="true" /></span>
               <strong>{destinations[kind].label}</strong>
               <span className="tile-action"><AppleWalletMark /> Create Apple Wallet card for {kind === "url" ? "your custom link" : kind === "website" ? "your website" : `your ${destinations[kind].label}`}</span>
             </button>

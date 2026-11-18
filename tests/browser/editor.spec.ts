@@ -12,13 +12,15 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
   await page.getByRole("button", { name: "Show Email Wallet example" }).click();
   await expect(page.getByRole("img", { name: "Example Email QR" })).toBeVisible();
-  const example = page.getByRole("region", { name: "WhatsApp example", exact: true });
+  const example = page.getByRole("region", { name: "3 simple steps", exact: true });
   await expect(example.getByRole("heading", { level: 3 })).toHaveText([
-    "Create a WhatsApp card", "Scan the Apple Wallet card", "Your WhatsApp chat opens",
+    "Create your card", "Show your QR code", "They open what you shared",
   ]);
   await expect(example.locator(".scan-camera-wallet")).toHaveText("Apple Wallet");
   await expect.poll(() => example.locator(".scan-camera-wallet img").evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
-  await expect(example.getByText(/Use the same steps for LinkedIn, Instagram, email, phone or a web link/)).toBeVisible();
+  await expect(example.getByText(/The same steps work for any contact option/)).toBeVisible();
+  await expect(example.getByText(/Someone scans the QR on your Apple Wallet card/)).toBeVisible();
+  await expect(example.getByText(/A WhatsApp card opens your chat/)).toBeVisible();
   const sampleForm = example.getByRole("img", { name: /WhatsApp form with a sample number/ });
   await sampleForm.scrollIntoViewIfNeeded();
   await expect.poll(() => sampleForm.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
@@ -58,10 +60,15 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(page.getByRole("img", { name: /Apple Wallet illustration with HSBC, Citi, American Express, WhatsApp and LinkedIn/ })).toBeVisible();
   await expect(page.locator(".stack-whatsapp .destination-mark")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(page.getByText("Open your Wallet card and let someone scan it to get your details in seconds.")).toHaveCount(0);
-  await expect(page.getByText("Scanning this QR shares all the contact details on your card in one vCard.")).toBeVisible();
+  await expect(page.getByText("Scanning this QR shares all your contact details in one vCard.")).toBeVisible();
   if (page.viewportSize()!.width <= 680) {
     await expect(page.getByRole("button", { name: /Create Apple Wallet card for your WhatsApp/ })).toHaveCSS("min-height", "56px");
     await expect(page.locator(".tile-action").first()).toHaveCSS("clip-path", "inset(50%)");
+    const mobileArrows = page.locator(".universal-choice .universal-arrow, .destination-card .tile-arrow");
+    await expect(mobileArrows).toHaveCount(8);
+    for (const arrow of await mobileArrows.all()) {
+      await expect(arrow).toBeVisible();
+    }
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
 });
