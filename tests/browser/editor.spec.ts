@@ -13,7 +13,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
     await expect(page.getByRole("heading", { name: title })).toBeVisible();
   }
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toHaveCount(0);
-  await page.getByRole("link", { name: "Create my card" }).first().click();
+  await page.getByRole("link", { name: "Create my free card" }).first().click();
   await expect(page).toHaveURL(/\/studio$/);
   await expect(page.getByRole("heading", { name: "Individual cards" })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);

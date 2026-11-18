@@ -26,7 +26,7 @@ export default async function Home() {
             <h1 id="landing-title">Your contacts.<br /><em>In your Wallet.</em></h1>
             <p>Add your contact details, create a QR code, and keep it in Apple Wallet for your next meeting.</p>
             <div className="landing-actions">
-              <Link className="button primary" href={cta}>Create my card <ArrowRight size={19} /></Link>
+              <Link className="button primary" href={cta}>Create my free card <ArrowRight size={19} /></Link>
               <a href="#how-it-works">How it works <ArrowDown size={16} /></a>
             </div>
           </div>
@@ -40,7 +40,7 @@ export default async function Home() {
             <li><span className="how-icon"><QrCode size={24} /></span><h3>Create your QR code</h3><p>Save your details to create a scannable QR for your card.</p></li>
             <li><span className="how-icon"><Wallet size={24} /></span><h3>Add it to Apple Wallet</h3><p>Once Wallet downloads are enabled, add the card on your iPhone and pull it up at your next meeting.</p></li>
           </ol>
-          <Link className="button primary landing-bottom" href={cta}>Create my card <ArrowRight size={19} /></Link>
+          <Link className="button primary landing-bottom" href={cta}>Create my free card <ArrowRight size={19} /></Link>
         </section>
       </main>
     </>
