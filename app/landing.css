@@ -139,14 +139,36 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
 }
 .scan-camera-card {
   display: grid;
-  justify-items: center;
+  grid-template-columns: minmax(0, 1fr) 52px;
+  align-items: center;
+  gap: 6px 5px;
+  width: min(100% - 12px, 124px);
+  padding: 7px 8px;
+  border: 1px solid #ffffff24;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #084b3a, #137158);
+  box-shadow: 0 4px 12px #0b29288c;
+  color: white;
+  transform: rotate(-4deg);
+}
+.scan-camera-wallet {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ffffff35;
+  font-size: 10px;
+  font-weight: 680;
+  line-height: 1;
+}
+.scan-camera-wallet .apple-wallet-mark { width: 15px; height: 15px; }
+.scan-camera-app {
+  display: grid;
+  justify-items: start;
   gap: 3px;
-  width: 76px;
-  height: 87px;
-  padding: 7px;
-  border-radius: 6px;
-  background: #11624d;
-  transform: rotate(-6deg);
+  font-size: 8px;
+  font-weight: 650;
 }
 .scan-camera-card .destination-mark, .scan-chat-header .destination-mark {
   width: auto;
@@ -154,25 +176,27 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
   background: transparent;
   color: inherit;
 }
-.scan-camera-card .destination-mark {
-  justify-self: start;
-  color: #fff;
+.scan-camera-card .destination-mark svg { width: 15px; height: 15px; }
+.scan-camera-target {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 52px;
 }
-.scan-camera-card .destination-mark svg { width: 13px; height: 13px; }
 .scan-camera-code {
   display: grid;
   place-items: center;
-  width: 47px;
-  height: 47px;
+  width: 42px;
+  height: 42px;
   border-radius: 3px;
   background: white;
   color: #172321;
 }
 .scan-camera-corners {
   position: absolute;
+  top: 50%;
   left: 50%;
-  bottom: 7px;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   color: #c6f3ce;
 }
 .scan-example-chat { background: #e8efe5; }

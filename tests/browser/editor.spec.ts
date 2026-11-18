@@ -14,8 +14,10 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(page.getByRole("img", { name: "Example Email QR" })).toBeVisible();
   const example = page.getByRole("region", { name: "WhatsApp example", exact: true });
   await expect(example.getByRole("heading", { level: 3 })).toHaveText([
-    "Create a WhatsApp card", "Show your QR", "Your WhatsApp chat opens",
+    "Create a WhatsApp card", "Scan the Apple Wallet card", "Your WhatsApp chat opens",
   ]);
+  await expect(example.locator(".scan-camera-wallet")).toHaveText("Apple Wallet");
+  await expect.poll(() => example.locator(".scan-camera-wallet img").evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   await expect(example.getByText(/Use the same steps for LinkedIn, Instagram, email, phone or a web link/)).toBeVisible();
   const sampleForm = example.getByRole("img", { name: /WhatsApp form with a sample number/ });
   await sampleForm.scrollIntoViewIfNeeded();
@@ -49,6 +51,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
     await headerAction.click();
   }
   await expect(page).toHaveURL(/\/studio$/);
+  await expect(page.locator(".hero-copy h1 em")).toHaveText("Apple Wallet");
   await expect(credit).toHaveAttribute("href", "https://vyshak.me");
   await expect(page.getByRole("heading", { name: "Individual cards" })).toBeVisible();
   await expect(page.getByText("One QR card per app or link", { exact: true })).toBeVisible();

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, QrCode, Scan, Send } from "lucide-react";
+import { AppleWalletMark } from "@/components/apple-wallet-mark";
 import { DestinationMark } from "@/components/card-fields";
 import { ConnectionMark } from "@/components/connection-mark";
 import { ProjectCredit } from "@/components/project-credit";
@@ -59,14 +60,17 @@ export default async function Home() {
                 <div className="scan-camera-display">
                   <span className="scan-camera-label">Camera</span>
                   <div className="scan-camera-card">
-                    <DestinationMark kind="whatsapp" />
-                    <span className="scan-camera-code"><QrCode size={39} /></span>
+                    <span className="scan-camera-wallet"><AppleWalletMark /> Apple Wallet</span>
+                    <span className="scan-camera-app"><DestinationMark kind="whatsapp" /> WhatsApp</span>
+                    <span className="scan-camera-target">
+                      <span className="scan-camera-code"><QrCode size={34} /></span>
+                      <Scan className="scan-camera-corners" size={62} strokeWidth={1.25} />
+                    </span>
                   </div>
-                  <Scan className="scan-camera-corners" size={99} strokeWidth={1.25} />
                 </div>
               </div>
-              <h3>Show your QR</h3>
-              <p>Open the card in Apple Wallet so someone can scan it.</p>
+              <h3>Scan the Apple Wallet card</h3>
+              <p>They point their phone camera at the QR on your WhatsApp card.</p>
             </li>
             <li>
               <div className="scan-example-screen scan-example-chat" aria-hidden="true">
