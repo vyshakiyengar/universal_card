@@ -20,7 +20,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(logo).toBeVisible();
   await expect.poll(() => logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   const headerAction = page.getByRole("banner").getByRole("link", { name: "Create My Card", exact: true });
-  const createAction = page.getByRole("link", { name: "Create a free card", exact: true });
+  const createAction = page.getByRole("main").getByRole("link", { name: "Create My Card", exact: true });
   const credit = page.getByRole("contentinfo").getByRole("link", { name: "Vyshak K Iyengar", exact: true });
   await expect(headerAction).toHaveAttribute("href", "/studio");
   await expect(createAction).toHaveAttribute("href", "/studio");
@@ -70,6 +70,7 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
   await expect(page.getByRole("button", { name: "Add to Apple Wallet" })).toHaveCount(0);
   await page.getByRole("button", { name: save }).click();
   await expect(page.getByRole("heading", { name: "Your card is ready." })).toBeVisible();
+  await expect(page.locator(".wallet-preview > :first-child")).toHaveText("Apple Wallet");
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Add to Apple Wallet" })).toBeDisabled();
   await expect(page.getByText("Wallet installation coming soon.")).toBeVisible();
@@ -108,6 +109,7 @@ test("create, open, update and delete an Individual card in Manage cards", async
   await page.getByLabel("LinkedIn profile URL").fill("https://www.linkedin.com/in/alex-morgan/?tracking=1");
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toHaveCount(0);
   await page.getByRole("button", { name: save }).click();
+  await expect(page.locator(".wallet-preview > :first-child")).toHaveText("Apple Wallet");
   await expect(page.getByRole("region", { name: "Saved card" }).getByText("Alex Morgan")).toBeVisible();
   await expect(page.getByText("alex-morgan", { exact: true })).toHaveCount(0);
   const qrPath = page.getByRole("img", { name: "Scannable card QR" }).locator("path");

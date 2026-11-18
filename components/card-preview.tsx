@@ -2,7 +2,7 @@ import { Download } from "lucide-react";
 import type { CardInput } from "@/lib/cards";
 import { qrQuietZone as quietZone, type buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
-import { DestinationMark, destinations } from "./card-fields";
+import { destinations } from "./card-fields";
 import { QrGraphic } from "./qr-graphic";
 
 export type Preview = { code: ReturnType<typeof buildCardQr>; payload: string };
@@ -37,9 +37,8 @@ function downloadPng({ size, modules }: Preview["code"], filename: string) {
 
 export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; preview: Preview; walletUrl?: string }) {
   const isUniversal = draft.type === "universal";
-  const kind = isUniversal ? "universal" : draft.kind;
-  const label = isUniversal ? "Universal contact" : destinations[draft.kind].label;
-  const name = draft.name?.trim() || (isUniversal ? "Contact" : label);
+  const label = isUniversal ? "Contact" : destinations[draft.kind].label;
+  const name = draft.name?.trim() || label;
   const detail = isUniversal
     ? [draft.jobTitle.trim(), draft.company.trim()].filter(Boolean).join(" · ")
     : draft.kind === "linkedin" ? "" : draft.value.trim().replace(/^https?:\/\/(?:www\.)?/, "").replace(/\/$/, "");
@@ -48,12 +47,12 @@ export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; p
   return (
     <section className="saved-preview" aria-label="Saved card">
       <div className="wallet-preview">
-        <div className="pass-top"><div className="pass-brand"><DestinationMark kind={kind} /> {label}</div><span className="pass-wallet"><AppleWalletMark /> Apple Wallet</span></div>
+        <span className="pass-wallet"><AppleWalletMark /> Apple Wallet</span>
         <div className="pass-name">{name}</div>
         {detail && <div className="pass-detail">{detail}</div>}
         <div className="pass-barcode">
           <QrGraphic code={preview.code} label="Scannable card QR" />
-          <span className="scan-label">{isUniversal ? "Scan to save contact" : kind === "url" ? "Scan to open link" : `Scan to open ${label}`}</span>
+          <span className="scan-label">{isUniversal ? "Scan to save contact" : draft.kind === "url" ? "Scan to open link" : `Scan to open ${label}`}</span>
         </div>
       </div>
       {preview.code.density === "dense" && <p className="density-note" role="status">This QR is dense. Test it on another phone before sharing.</p>}

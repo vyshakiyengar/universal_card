@@ -8,6 +8,8 @@ import "./landing.css";
 
 export const dynamic = "force-dynamic";
 
+const createLabel = "Create My Card";
+
 export default async function Home() {
   const configured = isAccountsConfigured();
   const account = configured ? await getAccount() : null;
@@ -18,14 +20,14 @@ export default async function Home() {
       <header className="topbar landing-header">
         <div className="header-inner">
           <Link href="/" className="brand"><ConnectionMark /> Universal Card</Link>
-          <Link className="create-card-link" href={cta}>Create My Card</Link>
+          <Link className="create-card-link" href={cta}>{createLabel}</Link>
         </div>
       </header>
       <main className="landing">
         <section className="landing-hero" aria-labelledby="landing-title">
           <div className="landing-copy">
             <h1 id="landing-title">Create a free contact QR for <em>Apple Wallet.</em></h1>
-            <Link className="create-card-link landing-cta" href={cta}>Create a free card <ArrowRight size={15} aria-hidden="true" /></Link>
+            <Link className="create-card-link landing-cta" href={cta}>{createLabel} <ArrowRight size={15} aria-hidden="true" /></Link>
           </div>
           <WalletExample />
         </section>
@@ -38,7 +40,7 @@ export default async function Home() {
           </ol>
         </section>
         <Link className="create-card-link mobile-create-action" href={cta}>
-          Create a free card <ArrowRight size={15} aria-hidden="true" />
+          {createLabel} <ArrowRight size={15} aria-hidden="true" />
         </Link>
       </main>
       <ProjectCredit />

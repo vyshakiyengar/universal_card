@@ -6,7 +6,7 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
 .landing-hero { position: relative; display: grid; grid-template-columns: 1.06fr .94fr; align-items: center; min-height: 490px; overflow: hidden; border: 1px solid var(--line); border-radius: 19px; background: var(--stage); }
 .landing-copy { position: relative; z-index: 1; padding: clamp(22px, 5vw, 63px); }
 .landing-copy h1 { max-width: 14ch; font-family: var(--heading); font-size: clamp(38px, 5.3vw, 74px); line-height: 1.05; letter-spacing: -.047em; font-weight: 630; text-wrap: balance; }
-.landing-copy h1 em { color: #4c574b; font-style: normal; white-space: nowrap; }
+.landing-copy h1 em { color: var(--action); font-style: normal; white-space: nowrap; }
 .create-card-link {
   display: inline-flex;
   align-items: center;
