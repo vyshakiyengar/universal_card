@@ -42,8 +42,7 @@ export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; p
   const name = draft.name?.trim() || (isUniversal ? "Contact" : label);
   const detail = isUniversal
     ? [draft.jobTitle.trim(), draft.company.trim()].filter(Boolean).join(" · ")
-    : (draft.kind === "linkedin" ? preview.payload.slice(preview.payload.lastIndexOf("/") + 1) :
-      draft.value.trim().replace(/^https?:\/\/(?:www\.)?/, "").replace(/\/$/, ""));
+    : draft.kind === "linkedin" ? "" : draft.value.trim().replace(/^https?:\/\/(?:www\.)?/, "").replace(/\/$/, "");
   const filename = draft.title.trim().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "universal-card";
 
   return (
@@ -54,7 +53,7 @@ export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; p
         {detail && <div className="pass-detail">{detail}</div>}
         <div className="pass-barcode">
           <QrGraphic code={preview.code} label="Scannable card QR" />
-          <span className="scan-label">{isUniversal ? "Scan to save contact" : `Scan to open ${label}`}</span>
+          <span className="scan-label">{isUniversal ? "Scan to save contact" : kind === "url" ? "Scan to open link" : `Scan to open ${label}`}</span>
         </div>
       </div>
       {preview.code.density === "dense" && <p className="density-note" role="status">This QR is dense. Test it on another phone before sharing.</p>}

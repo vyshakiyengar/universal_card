@@ -18,7 +18,7 @@ export function WalletExample() {
   const other = kind === "whatsapp" ? "email" : "whatsapp";
 
   return (
-    <figure className="landing-art">
+    <figure className="landing-art" aria-label="Sample Apple Wallet passes">
       <div className="landing-orbits" aria-hidden="true" />
       <div className="device">
         <div className="device-screen">
@@ -29,7 +29,6 @@ export function WalletExample() {
           <div className="device-wallet-label"><AppleWalletMark /> Apple Wallet</div>
           <div className={`device-pass device-pass-${kind}`} key={kind}>
             <div className="device-pass-brand"><DestinationMark kind={kind} /> {active.label}</div>
-            <div className="device-pass-emblem"><DestinationMark kind={kind} /></div>
             <div className="device-pass-name"><span>Name</span><strong>Alex Morgan</strong></div>
             <div className="device-pass-qr">
               <QrGraphic code={active.qr} label={`Example ${active.label} QR`} maxWidth={91} />
@@ -42,7 +41,6 @@ export function WalletExample() {
           </button>
         </div>
       </div>
-      <figcaption>Example Wallet cards · tap to switch</figcaption>
     </figure>
   );
 }

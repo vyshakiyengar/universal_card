@@ -120,14 +120,10 @@ export function createWalletPass(
   pass.type = "generic";
   const destinationNames = {
     linkedin: "LinkedIn", instagram: "Instagram", whatsapp: "WhatsApp",
-    email: "Email", phone: "Phone", url: "Website",
+    email: "Email", phone: "Phone", url: "Custom link",
   };
   const label = card.type === "universal" ? "Contact" : destinationNames[card.kind];
   pass.primaryFields.push({ key: "name", label, value: card.name || label });
-  if (card.type === "individual" && card.kind === "linkedin") {
-    const profileId = payload.slice(payload.lastIndexOf("/") + 1);
-    pass.secondaryFields.push({ key: "linkedin", label: "LINKEDIN ID", value: profileId });
-  }
   pass.backFields.push({
     key: "privacy",
     label: "QR privacy",

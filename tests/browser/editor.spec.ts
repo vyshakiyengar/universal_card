@@ -6,7 +6,7 @@ const save = /^Generate your Apple Wallet card$/;
 test("the public landing explains the steps and links to the studio", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Create a free contact QR for Apple Wallet." })).toBeVisible();
-  const icon = page.locator(".landing-wallet-label img");
+  const icon = page.locator(".device-wallet-label img");
   await expect(icon).toBeVisible();
   await expect.poll(() => icon.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
@@ -16,9 +16,16 @@ test("the public landing explains the steps and links to the studio", async ({ p
     await expect(page.getByRole("heading", { name: title })).toBeVisible();
   }
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toHaveCount(0);
-  await page.getByRole("link", { name: "Create my free card" }).first().click();
+  const logo = page.locator(".landing-header img[src='/universal-card-mark.svg']");
+  await expect(logo).toBeVisible();
+  await expect.poll(() => logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+  await expect(page.getByRole("link", { name: "Create my free card" })).toHaveCount(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
+  await page.getByRole("link", { name: "Create my free card" }).click();
   await expect(page).toHaveURL(/\/studio$/);
   await expect(page.getByRole("heading", { name: "Individual cards" })).toBeVisible();
+  await expect(page.getByRole("img", { name: /Apple Wallet illustration with HSBC, Citi, American Express, WhatsApp and LinkedIn/ })).toBeVisible();
+  await expect(page.getByText("When someone scans your QR, they receive a vCard they can save to Contacts.")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
 });
 
@@ -27,7 +34,7 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/studio");
   await page.getByRole("button", { name: /Create a universal Apple Wallet card/ }).click();
-  await page.getByLabel("Display name").fill("Zoë Tan");
+  await page.getByLabel(/Name on card/).fill("Zoë Tan");
   await page.getByRole("button", { name: "Add email" }).click();
   await page.getByLabel("email 1", { exact: true }).fill("zoe@example.com");
   await page.getByRole("button", { name: "Add email" }).click();
@@ -68,18 +75,20 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
 
 test("create, open, update and delete an Individual card in Manage cards", async ({ page }) => {
   await page.goto("/studio");
-  for (const name of ["LinkedIn", "WhatsApp", "Email", "Phone", "Instagram", "Website"]) {
+  for (const name of ["LinkedIn", "WhatsApp", "Email", "Phone", "Instagram", "a custom link"]) {
     await expect(page.getByRole("button", { name: new RegExp(`Create Apple Wallet card for ${name}`) })).toBeVisible();
   }
   await page.getByRole("button", { name: /Create Apple Wallet card for LinkedIn/ }).click();
   await expect(page.getByLabel("Name in Manage cards")).toHaveCount(0);
-  await page.getByText("Change display name", { exact: true }).click();
-  await page.getByLabel("Display name").fill("Alex Morgan");
+  await expect(page.getByLabel(/Name on card/)).toBeVisible();
+  await page.getByLabel(/Name on card/).fill("Alex Morgan");
   await page.getByLabel("LinkedIn profile URL").fill("https://www.linkedin.com/in/alex-morgan/?tracking=1");
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toHaveCount(0);
   await page.getByRole("button", { name: save }).click();
   await expect(page.getByRole("region", { name: "Saved card" }).getByText("Alex Morgan")).toBeVisible();
-  await expect(page.getByText("alex-morgan", { exact: true })).toBeVisible();
+  await expect(page.getByText("alex-morgan", { exact: true })).toHaveCount(0);
+  const qrPath = page.getByRole("img", { name: "Scannable card QR" }).locator("path");
+  const firstQr = await qrPath.getAttribute("d");
   await page.getByRole("navigation").getByRole("button", { name: "Manage cards" }).click();
   await page.getByRole("button", { name: "Open LinkedIn" }).click();
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toBeVisible();
@@ -87,7 +96,9 @@ test("create, open, update and delete an Individual card in Manage cards", async
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toHaveCount(0);
   await page.getByLabel("LinkedIn profile URL").fill("https://www.linkedin.com/in/alex-north");
   await page.getByRole("button", { name: save }).click();
-  await expect(page.getByText("alex-north", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Your card is ready." })).toBeVisible();
+  await expect(page.getByText("alex-north", { exact: true })).toHaveCount(0);
+  expect(await qrPath.getAttribute("d")).not.toBe(firstQr);
   await page.getByRole("navigation").getByRole("button", { name: "Manage cards" }).click();
   page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: "Delete LinkedIn" }).click();
@@ -96,8 +107,8 @@ test("create, open, update and delete an Individual card in Manage cards", async
 
 test("validate QR density when saving", async ({ page }) => {
   await page.goto("/studio");
-  await page.getByRole("button", { name: /Create Apple Wallet card for Website/ }).click();
-  const destination = page.getByLabel("Website URL");
+  await page.getByRole("button", { name: /Create Apple Wallet card for a custom link/ }).click();
+  const destination = page.getByLabel("Link URL");
   await destination.fill("https://example.com/" + "a".repeat(420));
   await page.getByRole("button", { name: save }).click();
   await expect(page.getByRole("alert").filter({ hasText: "too dense" })).toBeVisible();

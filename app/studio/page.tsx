@@ -5,9 +5,11 @@ import { isWalletConfigured } from "@/lib/server/wallet";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   if (!isAccountsConfigured()) return <CardStudio />;
   const account = await getAccount();
   if (!account) redirect("/auth/sign-in");
-  return <CardStudio account={{ email: account.email, firstName: account.firstName }} walletConfigured={isWalletConfigured()} />;
+  const { error } = await searchParams;
+  return <CardStudio account={{ email: account.email, firstName: account.firstName }}
+    walletConfigured={isWalletConfigured()} signOutFailed={error === "sign-out"} />;
 }

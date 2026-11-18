@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ConnectionMark } from "@/components/connection-mark";
 import { redirect } from "next/navigation";
 import { getAccount, isAccountsConfigured } from "../../../lib/server/supabase";
 import { startSocialSignIn } from "./actions";
@@ -23,7 +24,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
 
   return (
     <main className={styles.page}>
-      <Link href="/" className={styles.back}>← Universal Card</Link>
+      <Link href="/" className="brand"><ConnectionMark /> Universal Card</Link>
       <section className={styles.panel} aria-labelledby="sign-in-heading">
         <h1 id="sign-in-heading">Sign in</h1>
         <p className={styles.instructions}>Save your cards to your account and get them on any device.</p>

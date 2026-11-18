@@ -10,7 +10,7 @@ export const destinations = {
   email: { label: "Email", field: "Email address", hint: "alex@example.com", inputType: "email" },
   phone: { label: "Phone", field: "Phone number", hint: "+44 7700 900123", inputType: "tel" },
   instagram: { label: "Instagram", field: "Instagram username or URL", hint: "@yourname", inputType: "text" },
-  url: { label: "Website", field: "Website URL", hint: "https://example.com", inputType: "url" },
+  url: { label: "Custom link", field: "Link URL", hint: "https://example.com", inputType: "url" },
 } as const;
 
 export function DestinationMark({ kind }: { kind: DestinationKind | "universal" }) {

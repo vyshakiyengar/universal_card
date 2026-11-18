@@ -134,6 +134,6 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
   writeFileSync(join(dir, "card.pkpass"), createWalletPass({ id, draft: linkedIn }, signing));
   const linkedInPass = JSON.parse(readPassFile("pass.json").toString());
   assert.equal(linkedInPass.generic.primaryFields[0].value, linkedIn.name);
-  assert.equal(linkedInPass.generic.secondaryFields[0].value, "zoe-example");
+  assert.equal(linkedInPass.generic.secondaryFields?.length ?? 0, 0);
   assert.equal(linkedInPass.barcodes[0].message, "https://www.linkedin.com/in/zoe-example");
 });

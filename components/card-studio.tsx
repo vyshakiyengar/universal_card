@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, CreditCard, LayoutGrid, PenLine, Plus, Trash2, Wallet } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, LayoutGrid, PenLine, Plus, QrCode, Trash2 } from "lucide-react";
 import { cardLimits, makeCardPayload, type CardInput, type DestinationKind } from "@/lib/cards";
 import { buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
 import { DestinationMark, destinations, UniversalFields } from "./card-fields";
 import { CardPreview, type Preview } from "./card-preview";
+import { ConnectionMark } from "./connection-mark";
+import { WalletStack } from "./wallet-stack";
 
 type SavedCard = { id: string; draft: CardInput; createdAt: string; updatedAt: string };
 type EntryKind = DestinationKind | "universal";
@@ -18,6 +20,7 @@ type Screen =
 type StudioProps = {
   account?: { email: string | null; firstName: string };
   walletConfigured?: boolean;
+  signOutFailed?: boolean;
 };
 
 const storageKey = "universal-card-studio-v1";
@@ -62,18 +65,9 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
       <section className="studio-hero" aria-labelledby="page-title">
         <div className="hero-copy">
           <h1 id="page-title" tabIndex={-1}>Create a<br /> Wallet card.</h1>
-          <p>Add your details and generate a card with your name and QR code.</p>
           <a className="hero-link" href="#individual-cards">Choose a card <ArrowDown size={17} /></a>
         </div>
-        <div className="hero-art" aria-hidden="true">
-          <div className="hero-orbits" />
-          <div className="art-card art-card-back" />
-          <div className="art-card art-card-middle" />
-          <div className="art-card art-card-front">
-            <Wallet size={34} strokeWidth={1.35} />
-            <div className="art-lines"><i /><i /><i /></div>
-          </div>
-        </div>
+        <WalletStack />
       </section>
 
       <section id="individual-cards" className="chooser-section" aria-labelledby="individual-title">
@@ -86,7 +80,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
             <button key={kind} className="destination-card" type="button" disabled={!ready} onClick={() => create(kind)}>
               <span className="tile-top"><DestinationMark kind={kind} /><ArrowUpRight size={18} className="tile-arrow" aria-hidden="true" /></span>
               <strong>{destinations[kind].label}</strong>
-              <span className="tile-action"><AppleWalletMark /> Create Apple Wallet card for {destinations[kind].label}</span>
+              <span className="tile-action"><AppleWalletMark /> Create Apple Wallet card for {kind === "url" ? "a custom link" : destinations[kind].label}</span>
             </button>
           ))}
         </div>
@@ -96,7 +90,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
         <div className="section-heading"><h2 id="universal-title">Universal cards</h2></div>
         <button className="universal-choice" type="button" disabled={!ready} onClick={() => create("universal")}>
           <DestinationMark kind="universal" />
-          <span><strong className="universal-title"><AppleWalletMark /> Create a universal Apple Wallet card</strong><small>Share multiple emails, phone numbers and links in a single contact.</small></span>
+          <span><strong className="universal-title"><AppleWalletMark /> Create a universal Apple Wallet card</strong><small>When someone scans your QR, they receive a vCard they can save to Contacts.</small></span>
           <span className="universal-arrow" aria-hidden="true"><ArrowRight size={18} /></span>
         </button>
       </section>
@@ -104,7 +98,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
   );
 }
 
-export function CardStudio({ account, walletConfigured = false }: StudioProps = {}) {
+export function CardStudio({ account, walletConfigured = false, signOutFailed = false }: StudioProps = {}) {
   const online = Boolean(account);
   const [cards, setCards] = useState<SavedCard[]>([]);
   const [screen, setScreen] = useState<Screen>({ view: "create" });
@@ -216,7 +210,7 @@ export function CardStudio({ account, walletConfigured = false }: StudioProps = 
       <header className="topbar">
         <div className="header-inner">
           <button className="brand" type="button" disabled={busy} onClick={() => navigate({ view: "create" })}>
-            <span className="brand-mark"><Wallet size={19} strokeWidth={2} /></span> Universal Card
+            <ConnectionMark /> Universal Card
           </button>
           <nav className="studio-nav" aria-label="Card studio">
             <button type="button" disabled={busy} aria-current={!manage ? "page" : undefined} onClick={() => navigate({ view: "create" })}><Plus size={17} /> Create cards</button>
@@ -229,6 +223,7 @@ export function CardStudio({ account, walletConfigured = false }: StudioProps = 
       </header>
 
       <main ref={main} className={`studio view-${screen.view}`}>
+        {signOutFailed && <p className="form-error" role="alert">You’re still signed in. Try signing out again.</p>}
         {loadError && <p className="form-error" role="alert">{loadError}</p>}
         {screen.view === "create" && <CreateCards ready={ready} create={create} />}
         {screen.view === "manage" && (
@@ -247,7 +242,7 @@ export function CardStudio({ account, walletConfigured = false }: StudioProps = 
                     <DestinationMark kind={kind} />
                     <div className="managed-name"><strong>{title}</strong><small>{card.draft.type === "individual" ? card.draft.value : "Universal contact"}</small><span className="managed-wallet"><AppleWalletMark /> Apple Wallet</span></div>
                     <div className="manage-actions">
-                      <button className="button secondary" type="button" disabled={busy} aria-label={`Open ${title}`} onClick={() => open(card)}><CreditCard size={17} /> Open</button>
+                      <button className="button secondary" type="button" disabled={busy} aria-label={`Open ${title}`} onClick={() => open(card)}><QrCode size={16} /> Open</button>
                       <button className="button secondary" type="button" disabled={busy} aria-label={`Edit ${title}`} onClick={() => edit(card)}><PenLine size={16} /> Edit</button>
                       <button className="icon-button delete-button" type="button" disabled={busy} aria-label={`Delete ${title}`} onClick={() => void remove(card)}><Trash2 size={17} /></button>
                     </div>
@@ -273,7 +268,7 @@ export function CardStudio({ account, walletConfigured = false }: StudioProps = 
               <div className="focused-heading">
                 <div className="editor-kind"><DestinationMark kind={kind} /><span><AppleWalletMark /> Apple Wallet</span></div>
                 <h1 tabIndex={-1}>{screen.id ? `Edit your ${label} card` : kind === "universal" ? "Create a universal card" : `Create a ${label} Wallet card`}</h1>
-                <p>{kind === "universal" ? "Choose the details you want people to save." : `Enter the destination your ${label} QR will open.`}</p>
+                <p>{kind === "universal" ? "Choose the details to share in your vCard." : kind === "url" ? "Use any web link you want your QR to open." : `Enter the destination your ${label} QR will open.`}</p>
               </div>
               <form className="editor" onSubmit={save} noValidate>
                 <fieldset disabled={busy}>
@@ -286,31 +281,21 @@ export function CardStudio({ account, walletConfigured = false }: StudioProps = 
                         onChange={(event) => change({ ...draft, value: event.target.value })} />
                     </label>
                   )}
-                  {draft.type === "universal" && (
-                    <>
-                      <label className="field">Display name <span className="field-note">Optional</span>
-                        <input value={draft.name} maxLength={cardLimits.text} placeholder="Name shown on your contact and card" autoComplete="name"
-                          onChange={(event) => change({ ...draft, name: event.target.value })} />
-                      </label>
-                      <UniversalFields draft={draft} onChange={change} />
-                    </>
-                  )}
-                  <details className="optional-fields">
-                    <summary>{screen.id ? "Card settings" : draft.type === "individual" ? "Change display name" : "Rename in Manage cards"}</summary>
-                    {draft.type === "individual" && (
-                      <label className="field">Display name <span className="field-note">Optional</span>
-                        <input value={draft.name ?? ""} maxLength={cardLimits.text} placeholder="Name shown on the card" autoComplete="name"
-                          onChange={(event) => change({ ...draft, name: event.target.value })} />
-                      </label>
-                    )}
-                    {(draft.type === "universal" || screen.id) && (
+                  <label className="field">Name on card <span className="field-note">Last name optional</span>
+                    <input value={draft.name ?? ""} maxLength={cardLimits.text} placeholder="First name" autoComplete="name"
+                      onChange={(event) => change({ ...draft, name: event.target.value })} />
+                  </label>
+                  {draft.type === "universal" && <UniversalFields draft={draft} onChange={change} />}
+                  {editing.id && (
+                    <details className="optional-fields">
+                      <summary>Rename saved card</summary>
                       <label className="field">Name in Manage cards
                         <input value={draft.title} maxLength={cardLimits.title}
                           onChange={(event) => change({ ...draft, title: event.target.value })} />
                         <span className="input-help">Only used to find this card in your list.</span>
                       </label>
-                    )}
-                  </details>
+                    </details>
+                  )}
                   {draft.type === "universal" && <p className="privacy">Anyone who scans or photographs your QR can read and share the contact details you include.</p>}
                   {error && <p className="form-error" role="alert">{error}</p>}
                   <button className="button primary save-button" type="submit" disabled={!ready}>
@@ -327,7 +312,7 @@ export function CardStudio({ account, walletConfigured = false }: StudioProps = 
             <div className="result-heading">
               {screen.justSaved && <span className="saved-tick" aria-hidden="true"><Check size={22} /></span>}
               <h1 tabIndex={-1}>{screen.justSaved ? "Your card is ready." : screen.card.draft.title}</h1>
-              <p>{screen.card.draft.type === "universal" ? "Scan the QR to save these contact details." : `Scan the QR to open ${destinations[screen.card.draft.kind].label}.`}</p>
+              <p>{screen.card.draft.type === "universal" ? "Scan the QR to receive a vCard you can save to Contacts." : screen.card.draft.kind === "url" ? "Scan the QR to open this link." : `Scan the QR to open ${destinations[screen.card.draft.kind].label}.`}</p>
             </div>
             <CardPreview draft={screen.card.draft} preview={screen.preview} walletUrl={online && walletConfigured ? `/api/cards/${screen.card.id}/wallet` : undefined} />
             <button className="button secondary result-edit" type="button" onClick={() => edit(screen.card)}><PenLine size={16} /> Edit details</button>
