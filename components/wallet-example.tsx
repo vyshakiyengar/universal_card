@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BatteryFull, Pause, Play, Signal, Wifi } from "lucide-react";
+import { BatteryFull, Signal, Wifi } from "lucide-react";
 import { makeCardPayload } from "@/lib/cards";
 import { buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
@@ -41,6 +41,7 @@ export function WalletExample() {
   const kind = exampleKinds[index];
   const active = examples[kind];
   const label = exampleLabel(kind);
+  const rotationLabel = playing ? "Pause card examples" : "Play card examples";
 
   useEffect(() => {
     if (!playing) return;
@@ -58,13 +59,7 @@ export function WalletExample() {
             <span>9:41</span><span className="device-camera" />
             <span><Signal size={10} /><Wifi size={11} /><BatteryFull size={13} /></span>
           </div>
-          <div className="device-wallet-toolbar">
-            <div className="device-wallet-label"><AppleWalletMark /> Apple Wallet</div>
-            <button className="device-rotation" type="button" onClick={() => setPlaying((enabled) => !enabled)}
-              aria-label={playing ? "Pause card examples" : "Play card examples"}>
-              {playing ? <Pause size={12} aria-hidden="true" /> : <Play size={12} aria-hidden="true" />}
-            </button>
-          </div>
+          <div className="device-wallet-label"><AppleWalletMark /> Apple Wallet</div>
           <div className={`device-pass device-pass-${kind}`} key={kind}>
             <div className="device-pass-brand"><DestinationMark kind={kind} /> {label}</div>
             <div className="device-pass-name"><span>Name</span><strong>Alex Morgan</strong></div>
@@ -74,11 +69,12 @@ export function WalletExample() {
             </div>
             <HeyaWordmark compact />
           </div>
-          <div className="device-platforms" role="img" aria-label={`Card options: ${exampleKinds.map(exampleLabel).join(", ")}`}>
+          <button className="device-platforms" type="button" title={rotationLabel} aria-label={rotationLabel}
+            onClick={() => setPlaying((enabled) => !enabled)}>
             {exampleKinds.map((type) => (
-              <span key={type} data-active={type === kind} title={exampleLabel(type)}><DestinationMark kind={type} /></span>
+              <span key={type} data-active={type === kind}><DestinationMark kind={type} /></span>
             ))}
-          </div>
+          </button>
         </div>
       </div>
     </figure>

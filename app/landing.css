@@ -57,16 +57,12 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
 .device-pass-qr .qr-code { display: block; border-radius: 3px; }
 .device-pass-qr small { font-size: 9px; }
 .device-pass > .heya-stamp { position: absolute; inset: auto 8px 9px auto; font-size: 10px; }
-.device-platforms { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); align-items: center; justify-items: center; flex-shrink: 0; padding: 4px; min-height: 44px; margin-top: auto; border-radius: 9px; color: #fff; background: linear-gradient(145deg,#194b96,#376bb0); }
+.device-platforms { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); align-items: center; justify-items: center; flex-shrink: 0; padding: 4px; min-height: 44px; margin-top: auto; border: 0; border-radius: 9px; color: #a3a6a1; background: #efefed; }
 .device-platforms .destination-mark { width: 17px; height: 17px; border-radius: 4px; color: inherit; background: transparent; }
 .device-platforms .destination-mark svg { width: 12px; height: 12px; }
-.device-platforms [data-active="true"] .destination-mark { color: #194b96; background: #fff; }
-.device-rotation { position: relative; display: grid; place-items: center; width: 27px; height: 25px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--action); }
-.device-rotation::before { position: absolute; content: ""; inset: -8px; }
-.device-rotation:hover { border-color: var(--action); }
+.device-platforms [data-active="true"] .destination-mark { color: #373b38; }
 
-.device-wallet-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin: -3px 2px 1px; }
-.device-wallet-label { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); font-size: 12px; font-weight: 650; }
+.device-wallet-label { display: inline-flex; align-items: center; min-height: 25px; gap: 7px; margin: -3px 2px 1px; color: var(--ink); font-size: 12px; font-weight: 650; }
 .device-wallet-label .apple-wallet-mark { width: 19px; height: 19px; }
 .scan-example {
   width: min(100%, 920px);

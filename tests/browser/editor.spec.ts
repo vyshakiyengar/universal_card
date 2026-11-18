@@ -19,7 +19,10 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(icon).toBeVisible();
   await expect(icon).toHaveCSS("width", "19px");
   await expect.poll(() => icon.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
-  await expect(page.getByRole("img", { name: /Card options:.*WhatsApp.*LinkedIn.*Snapchat/ })).toBeVisible();
+  const tray = page.getByRole("button", { name: "Play card examples" });
+  await expect(tray.locator(".destination-mark")).toHaveCount(9);
+  await expect(tray).toHaveCSS("background-color", "rgb(239, 239, 237)");
+  await expect(tray.locator('[data-active="true"] .destination-mark')).toHaveCSS("color", "rgb(55, 59, 56)");
   const platforms = page.getByRole("img", { name: /Available card types include WhatsApp.*LinkedIn.*Universal card/ });
   await expect(platforms).toBeVisible();
   await expect.poll(() => platforms.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
