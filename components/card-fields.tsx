@@ -1,4 +1,4 @@
-import { AtSign, Contact, Globe2, Phone, Plus, Trash2 } from "lucide-react";
+import { AtSign, Contact, Globe2, Link2, Phone, Plus, Trash2 } from "lucide-react";
 import {
   cardLimits, emailLabels, linkKinds, phoneLabels,
   type DestinationKind, type UniversalCard,
@@ -10,6 +10,7 @@ export const destinations = {
   email: { label: "Email", field: "Email address", hint: "alex@example.com", inputType: "email" },
   phone: { label: "Phone", field: "Phone number", hint: "+44 7700 900123", inputType: "tel" },
   instagram: { label: "Instagram", field: "Instagram username or URL", hint: "@yourname", inputType: "text" },
+  website: { label: "Website", field: "Website URL", hint: "https://example.com", inputType: "url" },
   url: { label: "Custom link", field: "Link URL", hint: "https://example.com", inputType: "url" },
 } as const;
 
@@ -21,7 +22,8 @@ export function DestinationMark({ kind }: { kind: DestinationKind | "universal" 
       {kind === "instagram" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>}
       {kind === "email" && <AtSign />}
       {kind === "phone" && <Phone />}
-      {kind === "url" && <Globe2 />}
+      {kind === "url" && <Link2 />}
+      {kind === "website" && <Globe2 />}
       {kind === "universal" && <Contact />}
     </span>
   );
@@ -68,9 +70,7 @@ function ContactRows<Label extends string>({ labels, rows, onChange, type }: {
 export function UniversalFields({ draft, onChange }: { draft: UniversalCard; onChange: (draft: UniversalCard) => void }) {
   return (
     <>
-      <details className="optional-fields">
-        <summary>Job title and company</summary>
-        <div className="input-pair">
+      <div className="input-pair">
         <label className="field">Job title
           <input value={draft.jobTitle} maxLength={cardLimits.text} placeholder="Product designer" autoComplete="organization-title"
             onChange={(event) => onChange({ ...draft, jobTitle: event.target.value })} />
@@ -79,8 +79,7 @@ export function UniversalFields({ draft, onChange }: { draft: UniversalCard; onC
           <input value={draft.company} maxLength={cardLimits.text} placeholder="Studio North" autoComplete="organization"
             onChange={(event) => onChange({ ...draft, company: event.target.value })} />
         </label>
-        </div>
-      </details>
+      </div>
       <div className="contact-fields">
         <ContactRows labels={emailLabels} type="email" rows={draft.emails} onChange={(emails) => onChange({ ...draft, emails })} />
         <ContactRows labels={phoneLabels} type="phone" rows={draft.phones} onChange={(phones) => onChange({ ...draft, phones })} />

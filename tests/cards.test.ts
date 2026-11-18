@@ -60,6 +60,7 @@ test("Individual cards encode exactly one direct destination", () => {
     ["whatsapp", "+44 (20) 7946-0958", "https://wa.me/442079460958"],
     ["email", "Alex+cards@Example.com", "mailto:Alex+cards@example.com"],
     ["phone", "+44 20 7946 0958", "tel:+442079460958"],
+    ["website", "https://example.org/company?ref=wallet", "https://example.org/company?ref=wallet"],
     ["url", "https://example.org/portfolio?from=wallet#work", "https://example.org/portfolio?from=wallet#work"],
   ];
   for (const [kind, value, expected] of examples) {

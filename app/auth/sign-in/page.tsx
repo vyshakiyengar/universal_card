@@ -4,7 +4,6 @@ import { ConnectionMark } from "@/components/connection-mark";
 import { redirect } from "next/navigation";
 import { getAccount, isAccountsConfigured } from "../../../lib/server/supabase";
 import { startSocialSignIn } from "./actions";
-import { EmailForm } from "./email-form";
 import styles from "./sign-in.module.css";
 
 export const metadata: Metadata = { title: "Sign in | Universal Card" };
@@ -34,9 +33,8 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
           <button disabled={!available} name="provider" type="submit" value="apple">Continue with Apple</button>
           <button disabled={!available} name="provider" type="submit" value="google">Continue with Google</button>
         </form>
-        <hr />
-        <EmailForm available={available} />
       </section>
+      <nav aria-label="Site information" className={styles.legal}><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></nav>
     </main>
   );
 }

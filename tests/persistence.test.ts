@@ -13,8 +13,9 @@ test("database isolates cards by owner, protects owner_id, and cascades account 
     await db.exec(`
       create role anon;
       create role authenticated;
+      create role service_role;
       create schema auth;
-      create table auth.users(id uuid primary key);
+      create table auth.users(id uuid primary key, email text, email_confirmed_at timestamptz, last_sign_in_at timestamptz);
       create function auth.uid() returns uuid language sql stable as
         $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
       grant usage on schema auth to authenticated;
@@ -22,6 +23,9 @@ test("database isolates cards by owner, protects owner_id, and cascades account 
     `);
     const migration = await readFile(new URL("../supabase/migrations/20261117000100_create_cards.sql", import.meta.url), "utf8");
     await db.exec(migration);
+    await db.exec(await readFile(new URL("../supabase/migrations/20261118000100_launch_controls.sql", import.meta.url), "utf8"));
+    await db.query("update auth.users set email = $2, email_confirmed_at = now(), last_sign_in_at = now() where id = $1",
+      [secondId, "vyshakiyengar@gmail.com"]);
     await db.exec("set role anon");
     await assert.rejects(db.query("select * from public.cards"), /permission denied/);
     await db.exec("set role authenticated");
@@ -32,6 +36,8 @@ test("database isolates cards by owner, protects owner_id, and cascades account 
     }
 
     await useAccount(firstId);
+    await assert.rejects(db.query("select * from public.read_universal_card_activity()"), /Admin access required/);
+    await assert.rejects(db.query("select public.increment_card_activity('sign_in', 'all', now())"), /permission denied/);
     const { rows: [card] } = await db.query<{ id: string; owner_id: string }>(
       "insert into public.cards(draft) values ($1) returning id, owner_id", [draft("Work")],
     );
@@ -42,6 +48,9 @@ test("database isolates cards by owner, protects owner_id, and cascades account 
       /permission denied/,
     );
     await useAccount(secondId);
+    assert.deepEqual((await db.query("select event, total::int from public.read_universal_card_activity() order by event")).rows,
+      [{ event: "card_created", total: 2 }, { event: "sign_in", total: 1 }]);
+    assert.deepEqual((await db.query("select public.export_universal_card_data() as cards")).rows, [{ cards: [] }]);
     assert.deepEqual((await db.query("select id from public.cards")).rows, []);
     assert.deepEqual((await db.query("update public.cards set draft = $1 where id = $2 returning id", [draft("Spoofed"), card.id])).rows, []);
     assert.deepEqual((await db.query("delete from public.cards where id = $1 returning id", [card.id])).rows, []);
@@ -53,8 +62,11 @@ test("database isolates cards by owner, protects owner_id, and cascades account 
     assert.deepEqual(updated.rows, [{ title: "Updated" }]);
     await assert.rejects(db.query("update public.cards set owner_id = $1 where id = $2", [secondId, card.id]), /permission denied/);
     assert.deepEqual((await db.query("delete from public.cards where id = $1 returning id", [card.id])).rows, [{ id: card.id }]);
+    const { rows: [exported] } = await db.query<{ cards: unknown[] }>("select public.export_universal_card_data() as cards");
+    assert.equal(exported.cards.length, 1);
+    await db.query("select public.delete_universal_card_account()");
     await db.exec("reset role");
-    await db.query("delete from auth.users where id = $1", [firstId]);
+    assert.deepEqual((await db.query("select id from auth.users")).rows, [{ id: secondId }]);
     assert.deepEqual((await db.query("select id from public.cards")).rows, []);
   } finally {
     await db.close();

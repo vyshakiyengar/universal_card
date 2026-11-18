@@ -120,7 +120,7 @@ export function createWalletPass(
   pass.type = "generic";
   const destinationNames = {
     linkedin: "LinkedIn", instagram: "Instagram", whatsapp: "WhatsApp",
-    email: "Email", phone: "Phone", url: "Custom link",
+    email: "Email", phone: "Phone", url: "Custom link", website: "Website",
   };
   const label = card.type === "universal" ? "Contact" : destinationNames[card.kind];
   pass.primaryFields.push({ key: "name", label, value: card.name || label });

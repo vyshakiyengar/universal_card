@@ -1,7 +1,7 @@
 export const emailLabels = ["work", "home", "other"] as const;
 export const phoneLabels = ["mobile", "work", "home", "other"] as const;
 export const linkKinds = ["linkedin", "instagram", "whatsapp", "url"] as const;
-export const destinationKinds = [...linkKinds, "email", "phone"] as const;
+export const destinationKinds = [...linkKinds, "email", "phone", "website"] as const;
 
 export type EmailLabel = (typeof emailLabels)[number];
 export type PhoneLabel = (typeof phoneLabels)[number];
@@ -164,6 +164,7 @@ function destinationValue(kind: DestinationKind, value: string): string {
       }
       return `https://www.instagram.com/${path}/`;
     }
+    case "website":
     case "url": {
       const url = readWebUrl(value, "Enter a website URL starting with https:// or http://.");
       const path = `${url.pathname}${url.search}${url.hash}`;

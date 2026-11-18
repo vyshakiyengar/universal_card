@@ -58,6 +58,8 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
   await page.goto("/studio");
   await page.getByRole("button", { name: /Universal card with multiple links/ }).click();
   await page.getByLabel(/Name on card/).fill("Zoë Tan");
+  await expect(page.getByLabel("Job title")).toBeVisible();
+  await expect(page.getByLabel("Company")).toBeVisible();
   await page.getByRole("button", { name: "Add email" }).click();
   await page.getByLabel("email 1", { exact: true }).fill("zoe@example.com");
   await page.getByRole("button", { name: "Add email" }).click();
@@ -99,10 +101,10 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
 
 test("create, open, update and delete an Individual card in Manage cards", async ({ page }) => {
   await page.goto("/studio");
-  for (const name of ["LinkedIn", "WhatsApp", "Email", "Phone", "Instagram", "a custom link"]) {
-    await expect(page.getByRole("button", { name: new RegExp(`Create Apple Wallet card for ${name}`) })).toBeVisible();
+  for (const name of ["LinkedIn", "WhatsApp", "Email", "Phone", "Instagram", "custom link", "website"]) {
+    await expect(page.getByRole("button", { name: new RegExp(`Create Apple Wallet card for your ${name}`) })).toBeVisible();
   }
-  await page.getByRole("button", { name: /Create Apple Wallet card for LinkedIn/ }).click();
+  await page.getByRole("button", { name: /Create Apple Wallet card for your LinkedIn/ }).click();
   await expect(page.getByLabel("Name in Manage cards")).toHaveCount(0);
   await expect(page.getByLabel(/Name on card/)).toBeVisible();
   await page.getByLabel(/Name on card/).fill("Alex Morgan");
@@ -132,7 +134,7 @@ test("create, open, update and delete an Individual card in Manage cards", async
 
 test("validate QR density when saving", async ({ page }) => {
   await page.goto("/studio");
-  await page.getByRole("button", { name: /Create Apple Wallet card for a custom link/ }).click();
+  await page.getByRole("button", { name: /Create Apple Wallet card for your custom link/ }).click();
   const destination = page.getByLabel("Link URL");
   await destination.fill("https://example.com/" + "a".repeat(420));
   await page.getByRole("button", { name: save }).click();
@@ -141,4 +143,15 @@ test("validate QR density when saving", async ({ page }) => {
   await destination.fill("https://example.com/" + "a".repeat(240));
   await page.getByRole("button", { name: save }).click();
   await expect(page.getByText(/This QR is dense/)).toBeVisible();
+});
+
+test("a separate Website card opens the saved web destination", async ({ page }) => {
+  await page.goto("/studio");
+  await page.getByRole("button", { name: /Create Apple Wallet card for your website/i }).click();
+  await page.getByLabel("Website URL").fill("https://example.org/company");
+  await page.getByRole("button", { name: save }).click();
+  await expect(page.getByRole("img", { name: "Scannable card QR" })).toBeVisible();
+  await page.getByRole("navigation", { name: "Card studio" }).getByRole("button", { name: "Manage cards" }).click();
+  await page.getByRole("button", { name: "Edit Website" }).click();
+  await expect(page.getByLabel("Website URL")).toHaveValue("https://example.org/company");
 });

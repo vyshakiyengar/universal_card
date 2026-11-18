@@ -52,7 +52,7 @@ export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; p
         {detail && <div className="pass-detail">{detail}</div>}
         <div className="pass-barcode">
           <QrGraphic code={preview.code} label="Scannable card QR" />
-          <span className="scan-label">{isUniversal ? "Scan to save contact" : draft.kind === "url" ? "Scan to open link" : `Scan to open ${label}`}</span>
+          <span className="scan-label">{isUniversal ? "Scan to save contact" : (draft.kind === "url" || draft.kind === "website") ? "Scan to open link" : `Scan to open ${label}`}</span>
         </div>
       </div>
       {preview.code.density === "dense" && <p className="density-note" role="status">This QR is dense. Test it on another phone before sharing.</p>}
