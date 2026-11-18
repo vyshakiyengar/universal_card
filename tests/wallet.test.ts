@@ -102,7 +102,7 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
   }
   for (const [index, name] of logoNames.entries()) {
     const logo = readPassFile(name);
-    assert.equal(logo.readUInt32BE(16), 112 * (index + 1));
+    assert.equal(logo.readUInt32BE(16), 50 * (index + 1));
     assert.equal(logo.readUInt32BE(20), 50 * (index + 1));
   }
 
@@ -120,6 +120,7 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
   assert.equal(pass.passTypeIdentifier, identity);
   assert.equal(pass.teamIdentifier, team);
   assert.equal(pass.formatVersion, 1);
+  assert.equal(pass.logoText, "Universal card");
   assert.equal(pass.generic.primaryFields[0].value, draft.name);
   assert.equal(JSON.stringify(pass).includes(draft.title), false);
   assert.deepEqual(pass.barcodes, [{
@@ -129,6 +130,7 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
     altText: "Scan to save contact",
   }]);
   assert.equal(pass.webServiceURL, undefined);
+  const universalLogo = readPassFile("logo.png");
 
   const linkedIn = {
     type: "individual",
@@ -139,7 +141,17 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
   };
   writeFileSync(join(dir, "card.pkpass"), createWalletPass({ id, draft: linkedIn }, signing));
   const linkedInPass = JSON.parse(readPassFile("pass.json").toString());
+  assert.equal(linkedInPass.logoText, "LinkedIn");
+  assert.equal(linkedInPass.backgroundColor, "rgb(17, 56, 96)");
+  assert.notDeepEqual(readPassFile("logo.png"), universalLogo);
   assert.equal(linkedInPass.generic.primaryFields[0].value, linkedIn.name);
   assert.equal(linkedInPass.generic.secondaryFields?.length ?? 0, 0);
   assert.equal(linkedInPass.barcodes[0].message, "https://www.linkedin.com/in/zoe-example");
+
+  const whatsApp = { ...linkedIn, title: "WhatsApp", kind: "whatsapp", value: "+44 7700 900123" };
+  writeFileSync(join(dir, "card.pkpass"), createWalletPass({ id, draft: whatsApp }, signing));
+  const whatsAppPass = JSON.parse(readPassFile("pass.json").toString());
+  assert.equal(whatsAppPass.logoText, "WhatsApp");
+  assert.equal(whatsAppPass.backgroundColor, "rgb(10, 73, 58)");
+  assert.equal(whatsAppPass.barcodes[0].message, "https://wa.me/447700900123");
 });

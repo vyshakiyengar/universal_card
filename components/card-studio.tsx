@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, Check, LayoutGrid, PenLine, Plus, QrCode, Trash2 } from "lucide-react";
-import { cardLimits, makeCardPayload, type CardInput, type DestinationKind } from "@/lib/cards";
+import { cardKindLabels, cardLimits, makeCardPayload, type CardInput, type DestinationKind } from "@/lib/cards";
 import { buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
 import { DestinationMark, destinations, scanDescriptions, UniversalFields } from "./card-fields";
@@ -66,7 +66,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
     <>
       <section className="studio-hero" aria-labelledby="page-title">
         <div className="hero-copy">
-          <h1 id="page-title" tabIndex={-1}>One <em>Apple Wallet</em> card for all your details, <span className="hero-alternative">or one for each.</span></h1>
+          <h1 id="page-title" tabIndex={-1}>One <em>Apple Wallet</em> card for all your details, or one for each.</h1>
           <a className="hero-link" href="#universal-cards">Explore Heya cards <ArrowDown size={17} aria-hidden="true" /></a>
         </div>
         <WalletStack />
@@ -74,8 +74,8 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
 
       <section id="universal-cards" className="chooser-section universal-section" aria-labelledby="universal-title">
         <div className="section-heading">
-          <h2 id="universal-title">Create Universal Cards</h2>
-          <p>All the details you choose, in one QR</p>
+          <h2 id="universal-title">Create <span>Universal</span> Cards</h2>
+          <p>All contact details you choose to share in one QR</p>
         </div>
         <button className="universal-choice" type="button" disabled={!ready} onClick={() => create("universal")}>
           <DestinationMark kind="universal" />
@@ -86,7 +86,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
 
       <section id="individual-cards" className="chooser-section" aria-labelledby="individual-title">
         <div className="section-heading">
-          <h2 id="individual-title">Create Individual Cards</h2>
+          <h2 id="individual-title">Create <span>Individual</span> Cards</h2>
           <p>One card for an app, link, or contact detail</p>
         </div>
         <div className="destination-grid">
@@ -319,8 +319,8 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
           <div className="focused-page result-page">
             <button className="back-button" type="button" onClick={() => navigate({ view: "manage" })}><ArrowLeft size={18} /> Manage cards</button>
             <div className="result-heading">
-              {screen.justSaved && <span className="saved-tick" aria-hidden="true"><Check size={22} /></span>}
-              <h1 tabIndex={-1}>{screen.justSaved ? "Your card is ready." : screen.card.draft.title}</h1>
+              {screen.justSaved && <span className="saved-tick"><Check size={12} aria-hidden="true" /><span className="visually-hidden" role="status">Card saved.</span></span>}
+              <h1 tabIndex={-1}>Your {cardKindLabels[getKind(screen.card.draft)]} Heya Card</h1>
             </div>
             <CardPreview draft={screen.card.draft} preview={screen.preview} walletUrl={online && walletConfigured ? `/api/cards/${screen.card.id}/wallet` : undefined} />
             <button className="button secondary result-edit" type="button" onClick={() => edit(screen.card)}><PenLine size={16} /> Edit details</button>

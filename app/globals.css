@@ -67,7 +67,6 @@ a.brand { text-decoration: none; }
 .hero-copy { padding: clamp(25px, 5vw, 59px); }
 .hero-copy h1 { max-width: 23ch; font-family: var(--heading); font-size: clamp(30px, 3.55vw, 51px); line-height: 1.06; letter-spacing: -.043em; font-weight: 620; text-wrap: balance; }
 .hero-copy h1 em { color: var(--action); font-style: normal; white-space: nowrap; }
-.hero-alternative { color: #4a647d; }
 .hero-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 17px; min-height: 40px; padding-block: 7px; color: var(--action); font-size: 13px; font-weight: 620; text-decoration: none; }
 .hero-link:hover { color: var(--action-hover); text-decoration: underline; text-underline-offset: 3px; }
 .wallet-stack { width: min(100%, 352px); margin: 0; padding: 25px 22px; justify-self: center; }
@@ -92,6 +91,8 @@ a.brand { text-decoration: none; }
 .chooser-section { margin-top: 36px; scroll-margin-top: 24px; }
 .section-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 3px 10px; margin-bottom: 11px; }
 .section-heading h2 { font-family: var(--heading); font-size: clamp(19px, 2.3vw, 26px); font-weight: 640; letter-spacing: -.035em; line-height: 1.1; }
+#universal-title span { color: var(--action); }
+#individual-title span { color: #245b59; }
 .section-heading p { color: var(--muted); font-size: 12px; }
 .manage-heading p, .focused-heading p, .result-heading p { color: var(--muted); }
 .destination-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
@@ -124,7 +125,7 @@ a.brand { text-decoration: none; }
 .back-button { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); background: none; border: 0; padding: 4px 0; min-height: 34px; margin-bottom: 19px; font-weight: 650; font-size: 13px; }
 .back-button:hover { color: var(--ink); }
 .focused-heading { margin-bottom: 19px; }
-.focused-heading h1, .manage-heading h1, .result-heading h1 { font-family: var(--heading); font-size: clamp(34px, 5vw, 59px); line-height: 1.03; font-weight: 650; letter-spacing: -.042em; overflow-wrap: anywhere; }
+.focused-heading h1, .manage-heading h1 { font-family: var(--heading); font-size: clamp(34px, 5vw, 59px); line-height: 1.03; font-weight: 650; letter-spacing: -.042em; overflow-wrap: anywhere; }
 .focused-heading h1 { margin-top: 11px; }
 .focused-heading p, .manage-heading p, .result-heading p { margin-top: 9px; }
 .editor { background: var(--surface); border: 1px solid var(--line); border-radius: 15px; padding: clamp(16px, 4vw, 29px); box-shadow: 0 12px 31px -23px #2a241435; }
@@ -169,11 +170,16 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .empty-library { padding: 20px 16px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); color: var(--muted); }
 
 .result-page { max-width: 450px; }
-.result-heading { text-align: center; margin-bottom: 20px; }
-.saved-tick { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 100%; margin-bottom: 11px; background: var(--inset); color: var(--action); }
-.wallet-preview { display: flex; flex-direction: column; align-items: flex-start; color: #f8fbff; padding: 20px; border-radius: 24px; background: radial-gradient(ellipse at 100% 0,#4b7fdb,transparent 64%), linear-gradient(135deg,#132e6e,#224e9e); box-shadow: 0 14px 27px -15px #1f459070, inset 0 1px #ffffff2c; }
-.pass-wallet { display: inline-flex; align-items: center; gap: 7px; color: #eef5ff; font-size: 13px; font-weight: 650; white-space: nowrap; }
-.pass-wallet .apple-wallet-mark { width: 21px; height: 21px; }
+.result-heading { display: flex; align-items: center; justify-content: center; gap: 7px; text-align: center; margin-bottom: 15px; }
+.result-heading h1 { font-size: 18px; line-height: 1.25; font-weight: 650; letter-spacing: -.02em; }
+.saved-tick { display: inline-grid; flex: 0 0 auto; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--inset); color: var(--action); }
+.wallet-preview { display: flex; flex-direction: column; align-items: flex-start; color: #f8fbff; padding: 20px; border-radius: 24px; background: radial-gradient(ellipse at 100% 0,var(--pass-highlight),transparent 64%), linear-gradient(135deg,var(--pass-background),var(--pass-end)); box-shadow: 0 14px 27px -15px #1f459070, inset 0 1px #ffffff2c; }
+.pass-brand-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; }
+.pass-platform { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 710; line-height: 1.15; }
+.pass-platform .destination-mark { width: 20px; height: 20px; background: transparent; color: inherit; }
+.pass-platform .destination-mark svg { width: 19px; height: 19px; }
+.pass-wallet { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 5px; color: #eef5ff; font-size: 10px; font-weight: 650; white-space: nowrap; }
+.pass-wallet .apple-wallet-mark { width: 14px; height: 14px; }
 .pass-name { font-size: clamp(30px, 7vw, 45px); font-weight: 690; line-height: 1; letter-spacing: -.052em; margin-top: 16px; overflow-wrap: anywhere; max-width: 100%; }
 .pass-detail { color: #dbeaff; margin-top: 5px; max-width: 100%; overflow-wrap: anywhere; }
 .pass-barcode { align-self: stretch; display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 13px; padding: 5px 5px 12px; border-radius: 13px; background: white; color: #173053; }

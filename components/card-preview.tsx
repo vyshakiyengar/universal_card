@@ -1,8 +1,10 @@
 import { Download } from "lucide-react";
-import type { CardInput } from "@/lib/cards";
+import type { CSSProperties } from "react";
+import { cardKindLabels, type CardInput } from "@/lib/cards";
 import { qrQuietZone as quietZone, type buildCardQr } from "@/lib/qr";
+import { walletCardColors } from "@/lib/wallet-card-design";
 import { AppleWalletMark } from "./apple-wallet-mark";
-import { destinations, scanDescriptions } from "./card-fields";
+import { DestinationMark, scanDescriptions } from "./card-fields";
 import { HeyaWordmark } from "./heya-wordmark";
 import { QrGraphic } from "./qr-graphic";
 
@@ -38,8 +40,15 @@ function downloadPng({ size, modules }: Preview["code"], filename: string) {
 
 export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; preview: Preview; walletUrl?: string }) {
   const isUniversal = draft.type === "universal";
-  const label = isUniversal ? "Contact" : destinations[draft.kind].label;
-  const name = draft.name?.trim() || label;
+  const kind = isUniversal ? "universal" : draft.kind;
+  const label = isUniversal ? "Universal card" : cardKindLabels[kind];
+  const name = draft.name?.trim() || (isUniversal ? "Contact" : label);
+  const colors = walletCardColors(kind);
+  const surface = {
+    "--pass-background": colors.background,
+    "--pass-end": colors.end,
+    "--pass-highlight": colors.highlight,
+  } as CSSProperties;
   const detail = isUniversal
     ? [draft.jobTitle.trim(), draft.company.trim()].filter(Boolean).join(" · ")
     : draft.kind === "linkedin" ? "" : draft.value.trim().replace(/^https?:\/\/(?:www\.)?/, "").replace(/\/$/, "");
@@ -47,13 +56,16 @@ export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; p
 
   return (
     <section className="saved-preview" aria-label="Saved card">
-      <div className="wallet-preview">
-        <span className="pass-wallet"><AppleWalletMark /> Apple Wallet</span>
+      <div className="wallet-preview" style={surface}>
+        <div className="pass-brand-row">
+          <span className="pass-platform"><DestinationMark kind={kind} /> {label}</span>
+          <span className="pass-wallet"><AppleWalletMark /> Apple Wallet</span>
+        </div>
         <div className="pass-name">{name}</div>
         {detail && <div className="pass-detail">{detail}</div>}
         <div className="pass-barcode">
           <QrGraphic code={preview.code} label="Scannable card QR" />
-          <span className="scan-label">{scanDescriptions[isUniversal ? "universal" : draft.kind]}</span>
+          <span className="scan-label">{scanDescriptions[kind]}</span>
         </div>
         <HeyaWordmark compact />
       </div>

@@ -1,18 +1,18 @@
 import { AtSign, Ghost, Globe2, Link2, Phone, Plus, QrCode, Trash2 } from "lucide-react";
 import {
-  cardLimits, emailLabels, linkKinds, phoneLabels,
+  cardKindLabels, cardLimits, emailLabels, linkKinds, phoneLabels,
   type DestinationKind, type UniversalCard,
 } from "@/lib/cards";
 
 export const destinations = {
-  linkedin: { label: "LinkedIn", field: "LinkedIn profile URL", hint: "https://www.linkedin.com/in/your-name", inputType: "text" },
-  whatsapp: { label: "WhatsApp", field: "WhatsApp number or link", hint: "+44 7700 900123", inputType: "text" },
-  email: { label: "Email", field: "Email address", hint: "alex@example.com", inputType: "email" },
-  phone: { label: "Phone", field: "Phone number", hint: "+44 7700 900123", inputType: "tel" },
-  instagram: { label: "Instagram", field: "Instagram username or URL", hint: "@yourname", inputType: "text" },
-  snapchat: { label: "Snapchat", field: "Snapchat username or profile link", hint: "@yourname", inputType: "text" },
-  website: { label: "Website", field: "Website URL", hint: "https://example.com", inputType: "url" },
-  url: { label: "Custom link", field: "Link URL", hint: "https://example.com", inputType: "url" },
+  linkedin: { label: cardKindLabels.linkedin, field: "LinkedIn profile URL", hint: "https://www.linkedin.com/in/your-name", inputType: "text" },
+  whatsapp: { label: cardKindLabels.whatsapp, field: "WhatsApp number or link", hint: "+44 7700 900123", inputType: "text" },
+  email: { label: cardKindLabels.email, field: "Email address", hint: "alex@example.com", inputType: "email" },
+  phone: { label: cardKindLabels.phone, field: "Phone number", hint: "+44 7700 900123", inputType: "tel" },
+  instagram: { label: cardKindLabels.instagram, field: "Instagram username or URL", hint: "@yourname", inputType: "text" },
+  snapchat: { label: cardKindLabels.snapchat, field: "Snapchat username or profile link", hint: "@yourname", inputType: "text" },
+  website: { label: cardKindLabels.website, field: "Website URL", hint: "https://example.com", inputType: "url" },
+  url: { label: cardKindLabels.url, field: "Link URL", hint: "https://example.com", inputType: "url" },
 } as const;
 
 export const scanDescriptions = {

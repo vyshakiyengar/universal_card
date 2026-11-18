@@ -4,8 +4,9 @@ import { createPrivateKey, X509Certificate } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PKPass } from "passkit-generator";
-import { makeCardPayload } from "../cards";
+import { cardKindLabels, makeCardPayload } from "../cards";
 import { buildCardQr } from "../qr";
+import { walletCardColors } from "../wallet-card-design";
 
 const passTypePattern = /^pass\.[a-z\d-]+(?:\.[a-z\d-]+)+$/i;
 const teamPattern = /^[A-Z0-9]{10}$/;
@@ -91,15 +92,19 @@ export function createWalletPass(
 ): Buffer {
   const { card, payload } = makeCardPayload(savedCard.draft);
   buildCardQr(payload);
+  const kind = card.type === "universal" ? "universal" : card.kind;
+  const label = kind === "universal" ? "Universal card" : cardKindLabels[kind];
+  const { background } = walletCardColors(kind);
+  const assets = join(process.cwd(), "lib/server/wallet-assets");
 
   const pass = new PKPass(
     {
-      "icon.png": readFileSync(join(process.cwd(), "lib/server/wallet-assets/icon.png")),
-      "icon@2x.png": readFileSync(join(process.cwd(), "lib/server/wallet-assets/icon@2x.png")),
-      "icon@3x.png": readFileSync(join(process.cwd(), "lib/server/wallet-assets/icon@3x.png")),
-      "logo.png": readFileSync(join(process.cwd(), "lib/server/wallet-assets/logo.png")),
-      "logo@2x.png": readFileSync(join(process.cwd(), "lib/server/wallet-assets/logo@2x.png")),
-      "logo@3x.png": readFileSync(join(process.cwd(), "lib/server/wallet-assets/logo@3x.png")),
+      "icon.png": readFileSync(join(assets, "icon.png")),
+      "icon@2x.png": readFileSync(join(assets, "icon@2x.png")),
+      "icon@3x.png": readFileSync(join(assets, "icon@3x.png")),
+      "logo.png": readFileSync(join(assets, `mark-${kind}.png`)),
+      "logo@2x.png": readFileSync(join(assets, `mark-${kind}@2x.png`)),
+      "logo@3x.png": readFileSync(join(assets, `mark-${kind}@3x.png`)),
     },
     {
       wwdr: configuration.intermediate.toString(),
@@ -113,19 +118,15 @@ export function createWalletPass(
       organizationName: configuration.organizationName,
       serialNumber: savedCard.id,
       description: "Heya Cards business card",
-      backgroundColor: "rgb(19, 57, 132)",
+      logoText: label,
+      backgroundColor: background,
       foregroundColor: "rgb(255, 255, 255)",
       labelColor: "rgb(220, 233, 255)",
     },
   );
 
   pass.type = "generic";
-  const destinationNames = {
-    linkedin: "LinkedIn", instagram: "Instagram", whatsapp: "WhatsApp", snapchat: "Snapchat",
-    email: "Email", phone: "Phone", url: "Custom link", website: "Website",
-  };
-  const label = card.type === "universal" ? "Contact" : destinationNames[card.kind];
-  pass.primaryFields.push({ key: "name", label, value: card.name || label });
+  pass.primaryFields.push({ key: "name", label: "Name", value: card.name || (kind === "universal" ? "Contact" : label) });
   pass.backFields.push({
     key: "privacy",
     label: "QR privacy",

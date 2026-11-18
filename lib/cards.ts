@@ -8,6 +8,18 @@ export type PhoneLabel = (typeof phoneLabels)[number];
 export type LinkKind = (typeof linkKinds)[number];
 export type DestinationKind = (typeof destinationKinds)[number];
 
+export const cardKindLabels = {
+  universal: "Universal",
+  linkedin: "LinkedIn",
+  instagram: "Instagram",
+  whatsapp: "WhatsApp",
+  snapchat: "Snapchat",
+  email: "Email",
+  phone: "Phone",
+  url: "Custom link",
+  website: "Website",
+} as const satisfies Record<DestinationKind | "universal", string>;
+
 export type UniversalCard = {
   type: "universal";
   title: string;
