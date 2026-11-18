@@ -7,6 +7,19 @@ export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
   if (!accounts) return response;
 
+  // A login started on an alias cannot read its sign-in cookie on the callback host.
+  const canonical = new URL(accounts.origin);
+  if (
+    process.env.VERCEL_ENV === "production" &&
+    (request.method === "GET" || request.method === "HEAD") &&
+    request.nextUrl.pathname !== "/" &&
+    request.nextUrl.host !== canonical.host
+  ) {
+    canonical.pathname = request.nextUrl.pathname;
+    canonical.search = request.nextUrl.search;
+    return NextResponse.redirect(canonical, { headers: { "Cache-Control": "private, no-store" } });
+  }
+
   const supabase = createServerClient(accounts.url, accounts.key, {
     cookieOptions: { httpOnly: true, secure: accounts.origin.startsWith("https:") },
     cookies: {
@@ -23,4 +36,4 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
-export const config = { matcher: ["/", "/studio", "/auth/sign-in"] };
+export const config = { matcher: ["/", "/studio", "/auth/sign-in", "/account", "/admin"] };

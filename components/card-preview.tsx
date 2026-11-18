@@ -3,6 +3,7 @@ import type { CardInput } from "@/lib/cards";
 import { qrQuietZone as quietZone, type buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
 import { destinations, scanDescriptions } from "./card-fields";
+import { HeyaWordmark } from "./heya-wordmark";
 import { QrGraphic } from "./qr-graphic";
 
 export type Preview = { code: ReturnType<typeof buildCardQr>; payload: string };
@@ -54,6 +55,7 @@ export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; p
           <QrGraphic code={preview.code} label="Scannable card QR" />
           <span className="scan-label">{scanDescriptions[isUniversal ? "universal" : draft.kind]}</span>
         </div>
+        <HeyaWordmark compact />
       </div>
       {preview.code.density === "dense" && <p className="density-note" role="status">This QR is dense. Test it on another phone before sharing.</p>}
       <div className="preview-actions">

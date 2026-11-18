@@ -4,14 +4,15 @@ import { expect, test } from "@playwright/test";
 const save = /^Generate your Apple Wallet card$/;
 
 test("the public landing explains the steps and links to the studio", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Create your free contact QR cards on Apple Wallet" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Create free business cards for Apple Wallet" })).toBeVisible();
   const icon = page.locator(".device-wallet-label img");
   await expect(icon).toBeVisible();
   await expect.poll(() => icon.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
-  await page.getByRole("button", { name: "Show Email Wallet example" }).click();
-  await expect(page.getByRole("img", { name: "Example Email QR" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Play card examples" })).toBeVisible();
+  await expect(page.getByRole("img", { name: /Card options:.*WhatsApp.*LinkedIn.*Snapchat/ })).toBeVisible();
   const example = page.getByRole("region", { name: "3 simple steps", exact: true });
   await expect(example.getByRole("heading", { level: 3 })).toHaveText([
     "Create your card", "Show your QR code", "They open what you shared",
@@ -26,9 +27,9 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect.poll(() => sampleForm.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toHaveCount(0);
-  const logo = page.locator(".landing-header img[src='/universal-card-mark.svg']");
+  const logo = page.getByRole("banner").getByRole("link", { name: "Heya Cards" });
   await expect(logo).toBeVisible();
-  await expect.poll(() => logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+  await expect(logo.locator(".heya-wordmark")).toHaveText("heyacards");
   const headerAction = page.getByRole("banner").getByRole("link", { name: "Create My Card", exact: true });
   const createAction = page.getByRole("main").getByRole("link", { name: "Create My Card", exact: true });
   const credit = page.getByRole("contentinfo").getByRole("link", { name: "Vyshak K Iyengar", exact: true });
@@ -65,12 +66,28 @@ test("the public landing explains the steps and links to the studio", async ({ p
     await expect(page.getByRole("button", { name: /Create Apple Wallet card for your WhatsApp/ })).toHaveCSS("min-height", "56px");
     await expect(page.locator(".tile-action").first()).toHaveCSS("clip-path", "inset(50%)");
     const mobileArrows = page.locator(".universal-choice .universal-arrow, .destination-card .tile-arrow");
-    await expect(mobileArrows).toHaveCount(8);
+    await expect(mobileArrows).toHaveCount(9);
     for (const arrow of await mobileArrows.all()) {
       await expect(arrow).toBeVisible();
     }
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
+});
+
+test("landing rotates every two seconds through all card types and can pause", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.clock.install();
+  await page.goto("/");
+  const pause = page.getByRole("button", { name: "Pause card examples" });
+  await expect(pause).toBeVisible();
+  await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
+  for (const label of ["Email", "LinkedIn", "Instagram", "Phone", "Website", "Custom link", "Contact card", "Snapchat", "WhatsApp"]) {
+    await page.clock.runFor(2_000);
+    await expect(page.getByRole("img", { name: `Example ${label} QR` })).toBeVisible();
+  }
+  await pause.click();
+  await page.clock.runFor(4_000);
+  await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
 });
 
 test("save a Universal card before producing a QR, export it and reopen it", async ({ page }) => {
@@ -130,6 +147,7 @@ test("create, open, update and delete an Individual card in Manage cards", async
     ["Email", "Scanning opens a new email with the address in the To field."],
     ["Phone", "Scanning opens the phone dialer with the number filled in."],
     ["Instagram", "Scanning opens the linked Instagram profile."],
+    ["Snapchat", "Scanning opens the linked Snapchat profile."],
     ["custom link", "Scanning opens the exact link you entered."],
     ["website", "Scanning opens the website in a browser."],
   ]) {
@@ -188,4 +206,16 @@ test("a separate Website card opens the saved web destination", async ({ page })
   await page.getByRole("navigation", { name: "Card studio" }).getByRole("button", { name: "Manage cards" }).click();
   await page.getByRole("button", { name: "Edit Website" }).click();
   await expect(page.getByLabel("Website URL")).toHaveValue("https://example.org/company");
+});
+
+test("a Snapchat card saves the username and renders a shareable QR", async ({ page }) => {
+  await page.goto("/studio");
+  await page.getByRole("button", { name: /Create Apple Wallet card for your Snapchat/ }).click();
+  await page.getByLabel("Snapchat username or profile link").fill("@alex.morgan");
+  await page.getByRole("button", { name: save }).click();
+  await expect(page.getByRole("img", { name: "Scannable card QR" })).toBeVisible();
+  await expect(page.locator(".scan-label")).toHaveText("Scanning opens the linked Snapchat profile.");
+  await page.getByRole("navigation", { name: "Card studio" }).getByRole("button", { name: "Manage cards" }).click();
+  await page.getByRole("button", { name: "Edit Snapchat" }).click();
+  await expect(page.getByLabel("Snapchat username or profile link")).toHaveValue("@alex.morgan");
 });

@@ -97,6 +97,9 @@ export function createWalletPass(
       "icon.png": readFileSync(join(process.cwd(), "lib/server/wallet-assets/icon.png")),
       "icon@2x.png": readFileSync(join(process.cwd(), "lib/server/wallet-assets/icon@2x.png")),
       "icon@3x.png": readFileSync(join(process.cwd(), "lib/server/wallet-assets/icon@3x.png")),
+      "logo.png": readFileSync(join(process.cwd(), "lib/server/wallet-assets/logo.png")),
+      "logo@2x.png": readFileSync(join(process.cwd(), "lib/server/wallet-assets/logo@2x.png")),
+      "logo@3x.png": readFileSync(join(process.cwd(), "lib/server/wallet-assets/logo@3x.png")),
     },
     {
       wwdr: configuration.intermediate.toString(),
@@ -109,8 +112,7 @@ export function createWalletPass(
       teamIdentifier: configuration.teamIdentifier,
       organizationName: configuration.organizationName,
       serialNumber: savedCard.id,
-      description: "Universal Card networking pass",
-      logoText: configuration.organizationName,
+      description: "Heya Cards business card",
       backgroundColor: "rgb(19, 57, 132)",
       foregroundColor: "rgb(255, 255, 255)",
       labelColor: "rgb(220, 233, 255)",
@@ -119,7 +121,7 @@ export function createWalletPass(
 
   pass.type = "generic";
   const destinationNames = {
-    linkedin: "LinkedIn", instagram: "Instagram", whatsapp: "WhatsApp",
+    linkedin: "LinkedIn", instagram: "Instagram", whatsapp: "WhatsApp", snapchat: "Snapchat",
     email: "Email", phone: "Phone", url: "Custom link", website: "Website",
   };
   const label = card.type === "universal" ? "Contact" : destinationNames[card.kind];

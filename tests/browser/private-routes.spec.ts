@@ -7,6 +7,8 @@ test("account and Wallet endpoints fail closed without credentials", async ({ pa
   const list = await request.get("/api/cards");
   expect(list.status()).toBe(503);
   expect(list.headers()["cache-control"]).toContain("no-store");
+  expect(list.headers()["content-security-policy"]).toContain("frame-ancestors 'none'");
+  expect(list.headers()["permissions-policy"]).toBe("camera=(), microphone=(), geolocation=()");
   const cardId = "00000000-0000-4000-8000-000000000001";
   const pass = await request.get(`/api/cards/${cardId}/wallet`);
   expect(pass.status()).toBe(503);

@@ -57,6 +57,8 @@ test("Individual cards encode exactly one direct destination", () => {
   const examples = [
     ["linkedin", "https://www.linkedin.com/in/alex-morgan/?trk=mail", "https://www.linkedin.com/in/alex-morgan"],
     ["instagram", "@alex.morgan", "https://www.instagram.com/alex.morgan/"],
+    ["snapchat", "@Alex.Morgan", "https://www.snapchat.com/add/alex.morgan"],
+    ["snapchat", "https://snapchat.com/add/alex-morgan/?share=sample", "https://www.snapchat.com/add/alex-morgan"],
     ["whatsapp", "+44 (20) 7946-0958", "https://wa.me/442079460958"],
     ["email", "Alex+cards@Example.com", "mailto:Alex+cards@example.com"],
     ["phone", "+44 20 7946 0958", "tel:+442079460958"],
@@ -76,6 +78,9 @@ test("invalid targets cannot inject fields, spoof provider hosts or use unsafe s
     ["linkedin", "https://www.linkedin.com.evil.example/in/fake"],
     ["instagram", "https://instagram.com@evil.example/fake"],
     ["whatsapp", "https://evil.example/12025550112"],
+    ["snapchat", "https://snapchat.com.evil.example/add/alex"],
+    ["snapchat", "https://snapchat.com/t/alex"],
+    ["snapchat", "@alice."],
     ["email", "person@example.org\r\nEMAIL:extra@example.org"],
     ["phone", "123;phone-context=evil.example"],
     ["url", "javascript:alert(1)"],
@@ -83,6 +88,17 @@ test("invalid targets cannot inject fields, spoof provider hosts or use unsafe s
   for (const [kind, value] of examples) {
     assert.throws(() => makeCardPayload({ type: "individual", title: "Card", kind, value }), CardValidationError);
   }
+});
+
+test("a Universal card can include Snapchat alongside other contact details", () => {
+  const { payload } = makeCardPayload({
+    type: "universal", title: "Personal", name: "Alex Morgan",
+    emails: [{ label: "home", value: "alex@example.com" }],
+    links: [{ kind: "snapchat", value: "@alex-morgan" }],
+  });
+  assert.match(payload, /\r\nEMAIL;TYPE=home:alex@example.com\r\n/);
+  assert.match(payload, /\r\nURL:https:\/\/www\.snapchat\.com\/add\/alex-morgan\r\n/);
+  assert.equal(decode(payload), payload);
 });
 
 test("QR density uses byte count, warns at the soft limit and blocks at the hard limit", () => {

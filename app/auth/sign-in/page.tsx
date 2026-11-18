@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ConnectionMark } from "@/components/connection-mark";
+import { HeyaWordmark } from "@/components/heya-wordmark";
 import { redirect } from "next/navigation";
 import { getAccount, getAccountsConfig } from "../../../lib/server/supabase";
 import { startSocialSignIn } from "./actions";
 import styles from "./sign-in.module.css";
 
-export const metadata: Metadata = { title: "Sign in | Universal Card" };
+export const metadata: Metadata = { title: "Sign in | Heya Cards" };
 export const dynamic = "force-dynamic";
 
 const errors: Record<string, string> = {
@@ -42,7 +42,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
 
   return (
     <main className={styles.page}>
-      <Link href="/" className="brand"><ConnectionMark /> Universal Card</Link>
+      <Link href="/" className="brand" aria-label="Heya Cards"><HeyaWordmark /></Link>
       <section className={styles.panel} aria-labelledby="sign-in-heading">
         <h1 id="sign-in-heading">Sign in</h1>
         <p className={styles.instructions}>Save your cards to your account and get them on any device.</p>

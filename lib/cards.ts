@@ -1,6 +1,6 @@
 export const emailLabels = ["work", "home", "other"] as const;
 export const phoneLabels = ["mobile", "work", "home", "other"] as const;
-export const linkKinds = ["linkedin", "instagram", "whatsapp", "url"] as const;
+export const linkKinds = ["linkedin", "instagram", "whatsapp", "snapchat", "url"] as const;
 export const destinationKinds = [...linkKinds, "email", "phone", "website"] as const;
 
 export type EmailLabel = (typeof emailLabels)[number];
@@ -163,6 +163,20 @@ function destinationValue(kind: DestinationKind, value: string): string {
         throw new CardValidationError(message);
       }
       return `https://www.instagram.com/${path}/`;
+    }
+    case "snapchat": {
+      const message = "Enter a Snapchat username or a https://www.snapchat.com/add/ profile link.";
+      let username = value.replace(/^@/, "");
+      if (/^https?:/i.test(value)) {
+        const url = readWebUrl(value, message, true);
+        const match = /^\/add\/([^/]+)\/?$/.exec(url.pathname);
+        if (!/^(?:www\.)?snapchat\.com$/.test(url.hostname) || !match) throw new CardValidationError(message);
+        username = match[1];
+      }
+      if (username.length < 3 || username.length > 15 || !/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)?$/i.test(username)) {
+        throw new CardValidationError(message);
+      }
+      return `https://www.snapchat.com/add/${username.toLowerCase()}`;
     }
     case "website":
     case "url": {

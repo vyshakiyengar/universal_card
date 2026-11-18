@@ -27,7 +27,7 @@ export default async function Admin() {
   return (
     <main className="utility-page">
       <Link href="/studio">Back to studio</Link>
-      <h1>Universal Card activity</h1>
+      <h1>Heya Cards activity</h1>
       <p>Last 30 days in UTC. Refreshes every 30 seconds.</p>
       <RefreshMetrics />
       {error ? <p role="alert">Activity could not be loaded.</p> : <>

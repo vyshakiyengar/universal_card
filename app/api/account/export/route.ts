@@ -20,7 +20,7 @@ export async function GET() {
       headers: {
         "Cache-Control": "private, no-store",
         "Content-Type": "application/json; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="universal-card-data.json"',
+        "Content-Disposition": 'attachment; filename="heya-cards-data.json"',
         "X-Content-Type-Options": "nosniff",
       },
     });

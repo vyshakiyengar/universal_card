@@ -1,21 +1,63 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowUp, BatteryFull, Signal, Wifi } from "lucide-react";
+import { useEffect, useState } from "react";
+import { BatteryFull, Pause, Play, Signal, Wifi } from "lucide-react";
+import { makeCardPayload } from "@/lib/cards";
 import { buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
-import { DestinationMark } from "./card-fields";
+import { DestinationMark, destinations } from "./card-fields";
+import { HeyaWordmark } from "./heya-wordmark";
 import { QrGraphic } from "./qr-graphic";
 
 const examples = {
-  whatsapp: { label: "WhatsApp", action: "Scan to chat", qr: buildCardQr("https://wa.me/447700900123") },
-  email: { label: "Email", action: "Scan to email", qr: buildCardQr("mailto:alex@example.com") },
+  whatsapp: { action: "Scan to chat", qr: buildCardQr("https://wa.me/447700900123") },
+  email: { action: "Scan to email", qr: buildCardQr("mailto:alex@example.com") },
+  linkedin: { action: "Scan to open LinkedIn", qr: buildCardQr("https://www.linkedin.com/company/linkedin") },
+  instagram: { action: "Scan to open Instagram", qr: buildCardQr("https://www.instagram.com/instagram/") },
+  phone: { action: "Scan to call", qr: buildCardQr("tel:+447700900123") },
+  website: { action: "Scan to visit", qr: buildCardQr("https://example.com") },
+  url: { action: "Scan to open the link", qr: buildCardQr("https://example.com/hello") },
+  universal: {
+    action: "Scan to save contact",
+    qr: buildCardQr(makeCardPayload({
+      type: "universal", title: "Contact card", name: "Alex Morgan",
+      emails: [{ label: "work", value: "alex@example.com" }],
+    }).payload),
+  },
+  snapchat: { action: "Scan to open Snapchat", qr: buildCardQr("https://www.snapchat.com/") },
 } as const;
 
+const exampleKinds = ["whatsapp", "email", "linkedin", "instagram", "phone", "website", "url", "universal", "snapchat"] as const;
+const rotationDelay = 2_000;
+
+function exampleLabel(kind: (typeof exampleKinds)[number]) {
+  return kind === "universal" ? "Contact card" : destinations[kind].label;
+}
+
 export function WalletExample() {
-  const [kind, setKind] = useState<keyof typeof examples>("whatsapp");
+  const [index, setIndex] = useState(0);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [rotation, setRotation] = useState<boolean | null>(null);
+  const playing = rotation ?? !reducedMotion;
+  const kind = exampleKinds[index];
   const active = examples[kind];
-  const other = kind === "whatsapp" ? "email" : "whatsapp";
+  const label = exampleLabel(kind);
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncPreference = () => setReducedMotion(preference.matches);
+    syncPreference();
+    preference.addEventListener("change", syncPreference);
+    return () => preference.removeEventListener("change", syncPreference);
+  }, []);
+
+  useEffect(() => {
+    if (!playing) return;
+    const timer = window.setInterval(() => {
+      if (!document.hidden) setIndex((index) => (index + 1) % exampleKinds.length);
+    }, rotationDelay);
+    return () => window.clearInterval(timer);
+  }, [playing]);
 
   return (
     <figure className="landing-art" aria-label="Sample Apple Wallet passes">
@@ -25,19 +67,27 @@ export function WalletExample() {
             <span>9:41</span><span className="device-camera" />
             <span><Signal size={10} /><Wifi size={11} /><BatteryFull size={13} /></span>
           </div>
-          <div className="device-wallet-label"><AppleWalletMark /> Apple Wallet</div>
+          <div className="device-wallet-toolbar">
+            <div className="device-wallet-label"><AppleWalletMark /> Apple Wallet</div>
+            <button className="device-rotation" type="button" onClick={() => setRotation(!playing)}
+              aria-label={playing ? "Pause card examples" : "Play card examples"}>
+              {playing ? <Pause size={12} aria-hidden="true" /> : <Play size={12} aria-hidden="true" />}
+            </button>
+          </div>
           <div className={`device-pass device-pass-${kind}`} key={kind}>
-            <div className="device-pass-brand"><DestinationMark kind={kind} /> {active.label}</div>
+            <div className="device-pass-brand"><DestinationMark kind={kind} /> {label}</div>
             <div className="device-pass-name"><span>Name</span><strong>Alex Morgan</strong></div>
             <div className="device-pass-qr">
-              <QrGraphic code={active.qr} label={`Example ${active.label} QR`} maxWidth={91} />
+              <QrGraphic code={active.qr} label={`Example ${label} QR`} maxWidth={91} />
               <small>{active.action}</small>
             </div>
+            <HeyaWordmark compact />
           </div>
-          <button className={`device-stack device-stack-${other}`} type="button" onClick={() => setKind(other)}
-            aria-label={`Show ${examples[other].label} Wallet example`}>
-            <DestinationMark kind={other} /><strong>{examples[other].label}</strong><ArrowUp size={15} />
-          </button>
+          <div className="device-platforms" role="img" aria-label={`Card options: ${exampleKinds.map(exampleLabel).join(", ")}`}>
+            {exampleKinds.map((type) => (
+              <span key={type} data-active={type === kind} title={exampleLabel(type)}><DestinationMark kind={type} /></span>
+            ))}
+          </div>
         </div>
       </div>
     </figure>

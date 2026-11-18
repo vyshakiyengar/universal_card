@@ -3,7 +3,8 @@ import Link from "next/link";
 import { ArrowRight, QrCode, Scan, Send } from "lucide-react";
 import { AppleWalletMark } from "@/components/apple-wallet-mark";
 import { DestinationMark } from "@/components/card-fields";
-import { ConnectionMark } from "@/components/connection-mark";
+import { HeyaWordmark } from "@/components/heya-wordmark";
+import { LandingAnalytics } from "@/components/landing-analytics";
 import { ProjectCredit } from "@/components/project-credit";
 import { WalletExample } from "@/components/wallet-example";
 import { getAccount, isAccountsConfigured } from "@/lib/server/supabase";
@@ -22,14 +23,14 @@ export default async function Home() {
     <>
       <header className="topbar landing-header">
         <div className="header-inner">
-          <Link href="/" className="brand"><ConnectionMark /> Universal Card</Link>
+          <Link href="/" className="brand" aria-label="Heya Cards"><HeyaWordmark /></Link>
           <Link className="create-card-link" href={cta}>{createLabel}</Link>
         </div>
       </header>
       <main className="landing">
         <section className="landing-hero" aria-labelledby="landing-title">
           <div className="landing-copy">
-            <h1 id="landing-title">Create your free contact QR cards on <em>Apple Wallet</em></h1>
+            <h1 id="landing-title">Create free business cards for <em>Apple Wallet</em></h1>
             <p className="landing-intro">Share your contact details with a quick scan at your next meeting or networking event.</p>
             <Link className="create-card-link landing-cta" href={cta}>{createLabel} <ArrowRight size={15} aria-hidden="true" /></Link>
           </div>
@@ -45,7 +46,7 @@ export default async function Home() {
                 <div className="scan-editor-crop">
                   <Image
                     src="/images/whatsapp-card-editor.jpg"
-                    alt="Universal Card’s WhatsApp form with a sample number and the Generate your Apple Wallet card button"
+                    alt="Heya Cards’ WhatsApp form with a sample number and the Generate your Apple Wallet card button"
                     width={744}
                     height={958}
                     unoptimized
@@ -93,6 +94,7 @@ export default async function Home() {
         </Link>
       </main>
       <ProjectCredit />
+      {process.env.VERCEL_ENV === "production" && <LandingAnalytics />}
     </>
   );
 }

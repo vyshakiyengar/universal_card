@@ -8,7 +8,7 @@ import { buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
 import { DestinationMark, destinations, scanDescriptions, UniversalFields } from "./card-fields";
 import { CardPreview, type Preview } from "./card-preview";
-import { ConnectionMark } from "./connection-mark";
+import { HeyaWordmark } from "./heya-wordmark";
 import { ProjectCredit } from "./project-credit";
 import { WalletStack } from "./wallet-stack";
 
@@ -26,7 +26,7 @@ type StudioProps = {
 };
 
 const storageKey = "universal-card-studio-v1";
-const types = ["linkedin", "whatsapp", "instagram", "email", "phone", "url", "website"] as const;
+const types = ["linkedin", "whatsapp", "instagram", "email", "phone", "url", "website", "snapchat"] as const;
 
 function newDraft(kind: EntryKind, name: string): CardInput {
   return kind === "universal"
@@ -214,8 +214,8 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
     <>
       <header className="topbar">
         <div className="header-inner">
-          <button className="brand" type="button" disabled={busy} onClick={() => navigate({ view: "create" })}>
-            <ConnectionMark /> Universal Card
+          <button className="brand" type="button" aria-label="Heya Cards" disabled={busy} onClick={() => navigate({ view: "create" })}>
+            <HeyaWordmark />
           </button>
           <nav className="studio-nav" aria-label="Card studio">
             <button type="button" disabled={busy} aria-current={!manage ? "page" : undefined} onClick={() => navigate({ view: "create" })}><Plus size={17} /> Create cards</button>

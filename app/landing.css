@@ -34,24 +34,37 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
 .device-status { position: relative; display: flex; justify-content: space-between; align-items: center; min-height: 20px; margin: 0 7px 11px; font-size: 10px; font-weight: 700; color: var(--ink); }
 .device-status > span:last-child { display: flex; align-items: center; gap: 3px; }
 .device-camera { position: absolute; top: 1px; left: 50%; width: 56px; height: 13px; transform: translateX(-50%); background: #262922; border-radius: 30px; }
-.device-pass { display: flex; flex-direction: column; min-height: 266px; padding: 10px; border: 1px solid #ffffff24; border-radius: 12px; color: white; box-shadow: 0 7px 13px -6px #1218165c, inset 0 1px #fff4; }
-.device-pass-whatsapp, .device-stack-whatsapp { background: linear-gradient(145deg,#086148,#168360); }
-.device-pass-email, .device-stack-email { background: linear-gradient(145deg,#194b96,#4179cd); }
+.device-pass { position: relative; display: flex; flex-direction: column; min-height: 266px; padding: 10px; border: 1px solid #ffffff24; border-radius: 12px; color: white; box-shadow: 0 7px 13px -6px #1218165c, inset 0 1px #fff4; }
+.device-pass-whatsapp { background: linear-gradient(145deg,#086148,#168360); }
+.device-pass-email { background: linear-gradient(145deg,#194b96,#4179cd); }
+.device-pass-linkedin { background: linear-gradient(145deg,#124376,#1d6298); }
+.device-pass-instagram { background: linear-gradient(145deg,#57256f,#ab326d); }
+.device-pass-phone { background: linear-gradient(145deg,#374d82,#5368a1); }
+.device-pass-website { background: linear-gradient(145deg,#294b62,#3d6678); }
+.device-pass-url { background: linear-gradient(145deg,#255463,#307383); }
+.device-pass-universal { background: linear-gradient(145deg,#263d59,#4a617f); }
+.device-pass-snapchat { background: linear-gradient(145deg,#f8d62b,#f8e06d); color: #302501; }
+.device-pass-snapchat .device-pass-name span { color: #493900; }
 .device-pass-brand { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 720; }
-.device-pass-brand .destination-mark, .device-stack .destination-mark { width: 22px; height: 22px; border-radius: 6px; }
-.device-pass-brand .destination-mark svg, .device-stack .destination-mark svg { width: 15px; height: 15px; }
+.device-pass-brand .destination-mark { width: 22px; height: 22px; border-radius: 6px; }
+.device-pass-brand .destination-mark svg { width: 15px; height: 15px; }
 .device-pass-name { display: grid; margin-top: 24px; gap: 3px; }
 .device-pass-name span { font-size: 9px; text-transform: uppercase; letter-spacing: .08em; color: #f3f7ff; }
 .device-pass-name strong { font-size: 15px; line-height: 1.1; }
 .device-pass-qr { margin-top: auto; display: grid; justify-items: center; gap: 4px; padding-top: 7px; }
 .device-pass-qr .qr-code { display: block; border-radius: 3px; }
 .device-pass-qr small { font-size: 9px; }
-.device-stack { position: relative; display: flex; flex-shrink: 0; align-items: center; gap: 6px; padding: 8px; margin: auto 0 0; min-height: 44px; border: none; border-radius: 9px; color: white; text-align: left; font-size: 12px; }
-.device-stack > svg { margin-left: auto; }
-.device-stack:hover { filter: brightness(1.14); }
-.device-stack:focus-visible { outline-offset: -3px; outline-color: white; }
+.device-pass > .heya-stamp { position: absolute; inset: auto 8px 9px auto; font-size: 10px; }
+.device-platforms { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); align-items: center; justify-items: center; flex-shrink: 0; padding: 4px; min-height: 44px; margin-top: auto; border-radius: 9px; color: #fff; background: linear-gradient(145deg,#194b96,#376bb0); }
+.device-platforms .destination-mark { width: 17px; height: 17px; border-radius: 4px; color: inherit; background: transparent; }
+.device-platforms .destination-mark svg { width: 12px; height: 12px; }
+.device-platforms [data-active="true"] .destination-mark { color: #194b96; background: #fff; }
+.device-rotation { position: relative; display: grid; place-items: center; width: 27px; height: 25px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--action); }
+.device-rotation::before { position: absolute; content: ""; inset: -8px; }
+.device-rotation:hover { border-color: var(--action); }
 
-.device-wallet-label { display: inline-flex; align-items: center; gap: 6px; margin: -2px 2px 7px; color: var(--ink); font-size: 10px; font-weight: 650; }
+.device-wallet-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin: -3px 2px 1px; }
+.device-wallet-label { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); font-size: 10px; font-weight: 650; }
 .device-wallet-label .apple-wallet-mark { width: 15px; height: 15px; }
 .scan-example {
   width: min(100%, 920px);

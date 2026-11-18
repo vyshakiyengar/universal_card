@@ -3,9 +3,9 @@ import "@fontsource-variable/instrument-sans";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Universal Card | Card Studio",
-  description: "Create a contact card or a direct link QR to share in person.",
-  icons: { icon: "/universal-card-mark.svg" },
+  title: "Heya Cards",
+  description: "Create free business cards for Apple Wallet and share your contact details with a scan.",
+  icons: { icon: "/heya-mark.svg" },
   robots: { index: false, follow: false },
 };
 

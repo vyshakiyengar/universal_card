@@ -1,15 +1,15 @@
 import Link from "next/link";
 
-export const metadata = { title: "Terms | Universal Card" };
+export const metadata = { title: "Terms | Heya Cards" };
 
 export default function Terms() {
   return (
     <main className="utility-page">
-      <Link href="/">Universal Card</Link>
+      <Link href="/">Heya Cards</Link>
       <h1>Terms of use</h1>
       <section>
-        <h2>Using Universal Card</h2>
-        <p>Universal Card helps you create QR cards for contact details and web destinations. You retain ownership of the details you enter and allow the service to store and encode them so it can make and save your cards.</p>
+        <h2>Using Heya Cards</h2>
+        <p>Heya Cards helps you create QR cards for contact details and web destinations. You retain ownership of the details you enter and allow the service to store and encode them so it can make and save your cards.</p>
         <p>Only add information you have permission to share. Do not use the service to impersonate people, distribute harmful content or collect someone else’s information without permission.</p>
       </section>
       <section>

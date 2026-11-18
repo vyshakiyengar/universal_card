@@ -1,6 +1,6 @@
-# Universal Card
+# Heya Cards
 
-A private card studio for in-person networking. Save multiple named cards and add each one to Apple Wallet. Instead of a hosted profile, a Universal card encodes a vCard directly in the QR. Individual cards go straight to LinkedIn, WhatsApp, email, phone, Instagram, or a website.
+A private card studio for in-person networking. Save multiple named cards and add each one to Apple Wallet. A Universal card encodes a vCard directly in the QR. Individual cards go straight to LinkedIn, WhatsApp, email, phone, Instagram, Snapchat, or a website.
 
 ## Run locally
 

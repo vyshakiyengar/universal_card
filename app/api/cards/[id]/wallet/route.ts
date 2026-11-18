@@ -23,7 +23,7 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
       headers: {
         ...privateHeaders,
         "Content-Type": "application/vnd.apple.pkpass",
-        "Content-Disposition": 'attachment; filename="universal-card.pkpass"',
+        "Content-Disposition": 'attachment; filename="heya-card.pkpass"',
       },
     });
   } catch (error) {
