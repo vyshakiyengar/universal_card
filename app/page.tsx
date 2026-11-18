@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 const createLabel = "Create my Heya card";
 const pageTitle = "Free Business Cards for Apple Wallet · Heya cards";
-const introduction = "Create for free. Let people scan to save your details or open a link with a single click.";
+const introduction = "Let people scan to save your details or open a link with a single click.";
 
 export const metadata: Metadata = {
   title: pageTitle,
@@ -76,8 +76,8 @@ export default async function Home() {
                   />
                 </div>
               </div>
-              <h3>Create and add your card</h3>
-              <p>Choose WhatsApp, another contact option, or a Universal card for all your details. Fill it in and add it to Apple Wallet.</p>
+              <h3>Create and add your Heya card in Apple Wallet</h3>
+              <p>Choose WhatsApp, any other contact detail, or all your details on one card. It’s free.</p>
             </li>
             <li>
               <div className="scan-example-screen scan-example-camera" aria-hidden="true">

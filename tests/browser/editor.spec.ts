@@ -10,7 +10,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await page.getByRole("button", { name: "Pause card examples" }).click();
   await expect(page.getByRole("button", { name: "Play card examples" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Create your free contact cards for Apple Wallet" })).toBeVisible();
-  await expect(page.getByText("Create for free. Let people scan to save your details or open a link with a single click.")).toBeVisible();
+  await expect(page.getByText("Let people scan to save your details or open a link with a single click.", { exact: true })).toBeVisible();
   const title = "Free Business Cards for Apple Wallet · Heya cards";
   await expect(page).toHaveTitle(title);
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", title);
@@ -30,9 +30,9 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(example.getByRole("link", { name: "Go to the three steps" })).toHaveAttribute("href", "#how-it-works");
   await expect(example.locator(".scan-example-jump svg")).toHaveAttribute("stroke-width", "1.35");
   await expect(example.getByRole("heading", { level: 3 })).toHaveText([
-    "Create and add your card", "Someone scans your Heya card in Apple Wallet", "They open your chat or contact details",
+    "Create and add your Heya card in Apple Wallet", "Someone scans your Heya card in Apple Wallet", "They open your chat or contact details",
   ]);
-  await expect(example.getByText("Choose WhatsApp, another contact option, or a Universal card for all your details. Fill it in and add it to Apple Wallet.")).toBeVisible();
+  await expect(example.getByText("Choose WhatsApp, any other contact detail, or all your details on one card. It’s free.")).toBeVisible();
   await expect(example.locator(".scan-camera-wallet")).toHaveText("Apple Wallet");
   await expect(example.locator(".scan-camera-wallet img")).toHaveCSS("width", "18px");
   await expect.poll(() => example.locator(".scan-camera-wallet img").evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
