@@ -17,6 +17,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute("content", title);
   const icon = page.locator(".device-wallet-label img");
   await expect(icon).toBeVisible();
+  await expect(icon).toHaveCSS("width", "19px");
   await expect.poll(() => icon.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   await expect(page.getByRole("img", { name: /Card options:.*WhatsApp.*LinkedIn.*Snapchat/ })).toBeVisible();
   const platforms = page.getByRole("img", { name: /Available card types include WhatsApp.*LinkedIn.*Universal card/ });
@@ -27,6 +28,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
     "Create and add your card", "Someone scans your Heya card in Apple Wallet", "They open your chat or contact details",
   ]);
   await expect(example.locator(".scan-camera-wallet")).toHaveText("Apple Wallet");
+  await expect(example.locator(".scan-camera-wallet img")).toHaveCSS("width", "18px");
   await expect.poll(() => example.locator(".scan-camera-wallet img").evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   await expect(example.getByText(/The same steps work for any contact option/)).toBeVisible();
   await expect(example.getByText(/Open the card to show its QR code/)).toBeVisible();
@@ -48,6 +50,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
 
   if (page.viewportSize()!.width <= 680) {
+    await expect(platforms).toHaveCSS("width", "180px");
     await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" }));
     await expect(headerAction).toBeInViewport({ ratio: 1 });
     await expect(createAction).toBeInViewport({ ratio: 1 });
@@ -59,6 +62,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
     expect(buttonPosition.y).toBeGreaterThan(examplePosition.y + examplePosition.height);
     await createAction.click();
   } else {
+    await expect(platforms).toHaveCSS("width", "216px");
     const buttonPosition = (await createAction.boundingBox())!;
     const platformsPosition = (await platforms.boundingBox())!;
     expect(platformsPosition.x).toBeGreaterThan(buttonPosition.x + buttonPosition.width);
