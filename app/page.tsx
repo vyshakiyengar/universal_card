@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowRight, QrCode, Scan, Send } from "lucide-react";
 import { AppleWalletMark } from "@/components/apple-wallet-mark";
 import { DestinationMark } from "@/components/card-fields";
@@ -12,7 +13,16 @@ import "./landing.css";
 
 export const dynamic = "force-dynamic";
 
-const createLabel = "Create My Card";
+const createLabel = "Create my Heya card";
+const pageTitle = "Free Business Cards for Apple Wallet · Heya cards";
+const introduction = "Create one for free. Let people scan to save your details or open a link.";
+
+export const metadata: Metadata = {
+  title: pageTitle,
+  description: introduction,
+  openGraph: { title: pageTitle, description: introduction },
+  twitter: { title: pageTitle, description: introduction },
+};
 
 export default async function Home() {
   const configured = isAccountsConfigured();
@@ -30,9 +40,19 @@ export default async function Home() {
       <main className="landing">
         <section className="landing-hero" aria-labelledby="landing-title">
           <div className="landing-copy">
-            <h1 id="landing-title">Create free business cards for <em>Apple Wallet</em></h1>
-            <p className="landing-intro">Share your contact details with a quick scan at your next meeting or networking event.</p>
-            <Link className="create-card-link landing-cta" href={cta}>{createLabel} <ArrowRight size={15} aria-hidden="true" /></Link>
+            <h1 id="landing-title">Create your free <span>contact cards</span> in <em>Apple Wallet</em></h1>
+            <p className="landing-intro">{introduction}</p>
+            <div className="landing-actions">
+              <Link className="create-card-link landing-cta" href={cta}>{createLabel} <ArrowRight size={15} aria-hidden="true" /></Link>
+              <Image
+                className="landing-platforms"
+                src="/images/landing-platforms.png"
+                alt="Available card types include WhatsApp, phone, Instagram, email, LinkedIn, Snapchat, website, custom link and Universal card"
+                width={216}
+                height={22}
+                unoptimized
+              />
+            </div>
           </div>
           <WalletExample />
         </section>
@@ -53,7 +73,7 @@ export default async function Home() {
                   />
                 </div>
               </div>
-              <h3>Create your card</h3>
+              <h3>Create and add your card</h3>
               <p>Choose WhatsApp or another contact option, enter your details and add the card to Apple Wallet.</p>
             </li>
             <li>
@@ -70,8 +90,8 @@ export default async function Home() {
                   </div>
                 </div>
               </div>
-              <h3>Show your QR code</h3>
-              <p>Someone scans the QR on your Apple Wallet card with their phone camera.</p>
+              <h3>Someone scans your Heya card in Apple Wallet</h3>
+              <p>Open the card to show its QR code to their phone camera.</p>
             </li>
             <li>
               <div className="scan-example-screen scan-example-chat" aria-hidden="true">
@@ -83,8 +103,8 @@ export default async function Home() {
                   <div className="scan-chat-compose"><span>Message</span><Send size={14} /></div>
                 </div>
               </div>
-              <h3>They open what you shared</h3>
-              <p>A WhatsApp card opens your chat. A Universal card lets them save your contact details.</p>
+              <h3>They open your chat or contact details</h3>
+              <p>A WhatsApp card opens your chat. A Universal card lets them save your contact.</p>
             </li>
           </ol>
         </section>

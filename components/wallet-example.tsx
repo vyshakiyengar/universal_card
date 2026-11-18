@@ -20,36 +20,27 @@ const examples = {
   universal: {
     action: "Scan to save contact",
     qr: buildCardQr(makeCardPayload({
-      type: "universal", title: "Contact card", name: "Alex Morgan",
+      type: "universal", title: "Universal card", name: "Alex Morgan",
       emails: [{ label: "work", value: "alex@example.com" }],
+      phones: [{ label: "mobile", value: "+447700900123" }],
     }).payload),
   },
   snapchat: { action: "Scan to open Snapchat", qr: buildCardQr("https://www.snapchat.com/") },
 } as const;
 
-const exampleKinds = ["whatsapp", "email", "linkedin", "instagram", "phone", "website", "url", "universal", "snapchat"] as const;
+const exampleKinds = ["whatsapp", "universal", "email", "linkedin", "instagram", "phone", "website", "url", "snapchat"] as const;
 const rotationDelay = 2_000;
 
 function exampleLabel(kind: (typeof exampleKinds)[number]) {
-  return kind === "universal" ? "Contact card" : destinations[kind].label;
+  return kind === "universal" ? "Universal card" : destinations[kind].label;
 }
 
 export function WalletExample() {
   const [index, setIndex] = useState(0);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [rotation, setRotation] = useState<boolean | null>(null);
-  const playing = rotation ?? !reducedMotion;
+  const [playing, setPlaying] = useState(true);
   const kind = exampleKinds[index];
   const active = examples[kind];
   const label = exampleLabel(kind);
-
-  useEffect(() => {
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const syncPreference = () => setReducedMotion(preference.matches);
-    syncPreference();
-    preference.addEventListener("change", syncPreference);
-    return () => preference.removeEventListener("change", syncPreference);
-  }, []);
 
   useEffect(() => {
     if (!playing) return;
@@ -69,7 +60,7 @@ export function WalletExample() {
           </div>
           <div className="device-wallet-toolbar">
             <div className="device-wallet-label"><AppleWalletMark /> Apple Wallet</div>
-            <button className="device-rotation" type="button" onClick={() => setRotation(!playing)}
+            <button className="device-rotation" type="button" onClick={() => setPlaying((enabled) => !enabled)}
               aria-label={playing ? "Pause card examples" : "Play card examples"}>
               {playing ? <Pause size={12} aria-hidden="true" /> : <Play size={12} aria-hidden="true" />}
             </button>
