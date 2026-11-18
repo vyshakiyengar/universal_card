@@ -10,7 +10,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await page.getByRole("button", { name: "Pause card examples" }).click();
   await expect(page.getByRole("button", { name: "Play card examples" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Create your free contact cards for Apple Wallet" })).toBeVisible();
-  await expect(page.getByText("Create one for free. Let people scan to save your details or open a link.")).toBeVisible();
+  await expect(page.getByText("Create for free. Let people scan to save your details or open a link with a single click.")).toBeVisible();
   const title = "Free Business Cards for Apple Wallet · Heya cards";
   await expect(page).toHaveTitle(title);
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", title);
@@ -32,6 +32,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(example.getByRole("heading", { level: 3 })).toHaveText([
     "Create and add your card", "Someone scans your Heya card in Apple Wallet", "They open your chat or contact details",
   ]);
+  await expect(example.getByText("Choose WhatsApp, another contact option, or a Universal card for all your details. Fill it in and add it to Apple Wallet.")).toBeVisible();
   await expect(example.locator(".scan-camera-wallet")).toHaveText("Apple Wallet");
   await expect(example.locator(".scan-camera-wallet img")).toHaveCSS("width", "18px");
   await expect.poll(() => example.locator(".scan-camera-wallet img").evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
@@ -75,9 +76,11 @@ test("the public landing explains the steps and links to the studio", async ({ p
     await headerAction.click();
   }
   await expect(page).toHaveURL(/\/studio$/);
-  await expect(page.getByRole("heading", { name: "One Apple Wallet card for all your details, or one for each." })).toBeVisible();
-  await expect(page.locator(".hero-copy h1 em")).toHaveText("Apple Wallet");
-  await expect(page.locator(".hero-copy h1 > *")).toHaveCount(1);
+  const intro = page.getByRole("heading", { name: "One Apple Wallet card for all your contact details, or one for each." });
+  await expect(intro).toBeVisible();
+  await expect(intro.locator("em")).toHaveText("Apple Wallet");
+  await expect(intro.locator(".hero-alternative")).toHaveText("one for each");
+  await expect(intro.locator(".hero-alternative")).toHaveCSS("color", "rgb(36, 91, 89)");
   const explore = page.getByRole("link", { name: "Explore Heya cards" });
   await expect(explore).toHaveAttribute("href", "#universal-cards");
   await expect(explore).toHaveCSS("border-top-style", "none");
@@ -88,11 +91,22 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(page.getByRole("heading", { name: "Create Individual Cards", exact: true })).toBeVisible();
   await expect(page.locator("#individual-title span")).toHaveCSS("color", "rgb(36, 91, 89)");
   await expect(page.getByText("One card for an app, link, or contact detail", { exact: true })).toBeVisible();
-  await expect(page.getByRole("img", { name: /Apple Wallet illustration with HSBC, Citi, American Express, WhatsApp and LinkedIn/ })).toBeVisible();
+  const stack = page.getByRole("img", { name: /Apple Wallet illustration with HSBC, Citi, American Express, WhatsApp and LinkedIn/ });
+  await expect(stack).toBeVisible();
   await expect(page.locator(".stack-whatsapp .destination-mark")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(page.getByText("Open your Wallet card and let someone scan it to get your details in seconds.")).toHaveCount(0);
   await expect(page.getByText("Scanning this QR shares all your contact details in one vCard.")).toBeVisible();
   if (page.viewportSize()!.width <= 680) {
+    const headline = (await intro.boundingBox())!;
+    const illustration = (await stack.boundingBox())!;
+    const link = (await explore.boundingBox())!;
+    expect(headline.x + headline.width).toBeLessThan(illustration.x);
+    expect(headline.y).toBeLessThan(illustration.y + illustration.height);
+    expect(illustration.y).toBeLessThan(headline.y + headline.height);
+    expect(link.y).toBeGreaterThanOrEqual(Math.max(headline.y + headline.height, illustration.y + illustration.height));
+    await explore.click();
+    await expect(page).toHaveURL(/#universal-cards$/);
+    await expect(page.getByRole("heading", { name: "Create Universal Cards", exact: true })).toBeInViewport();
     await expect(page.getByRole("button", { name: /Create Apple Wallet card for your WhatsApp/ })).toHaveCSS("min-height", "56px");
     await expect(page.locator(".tile-action").first()).toHaveCSS("clip-path", "inset(50%)");
     const mobileArrows = page.locator(".universal-choice .universal-arrow, .destination-card .tile-arrow");

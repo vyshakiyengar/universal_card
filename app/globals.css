@@ -16,6 +16,7 @@
   --field-line: #898d7f;
   --action: #244a73;
   --action-hover: #325e8a;
+  --accent-teal: #245b59;
   --focus: #39628c;
   --heading: Baskervville, Georgia, serif;
   --stage: radial-gradient(ellipse at 82% 38%, #fffefa 0, transparent 68%), linear-gradient(120deg, #f6f4ee 16%, #e7e1d6);
@@ -65,8 +66,9 @@ a.brand { text-decoration: none; }
 
 .studio-hero { isolation: isolate; display: grid; grid-template-columns: 1.2fr .8fr; min-height: 345px; align-items: center; overflow: hidden; border: 1px solid var(--line); border-radius: 19px; background: var(--stage); }
 .hero-copy { padding: clamp(25px, 5vw, 59px); }
-.hero-copy h1 { max-width: 23ch; font-family: var(--heading); font-size: clamp(30px, 3.55vw, 51px); line-height: 1.06; letter-spacing: -.043em; font-weight: 620; text-wrap: balance; }
+.hero-copy h1 { max-width: 23ch; font-family: var(--heading); font-size: clamp(28px, 3.15vw, 45px); line-height: 1.06; letter-spacing: -.043em; font-weight: 620; text-wrap: balance; }
 .hero-copy h1 em { color: var(--action); font-style: normal; white-space: nowrap; }
+.hero-alternative { color: var(--accent-teal); }
 .hero-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 17px; min-height: 40px; padding-block: 7px; color: var(--action); font-size: 13px; font-weight: 620; text-decoration: none; }
 .hero-link:hover { color: var(--action-hover); text-decoration: underline; text-underline-offset: 3px; }
 .wallet-stack { width: min(100%, 352px); margin: 0; padding: 25px 22px; justify-self: center; }
@@ -92,7 +94,7 @@ a.brand { text-decoration: none; }
 .section-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 3px 10px; margin-bottom: 11px; }
 .section-heading h2 { font-family: var(--heading); font-size: clamp(19px, 2.3vw, 26px); font-weight: 640; letter-spacing: -.035em; line-height: 1.1; }
 #universal-title span { color: var(--action); }
-#individual-title span { color: #245b59; }
+#individual-title span { color: var(--accent-teal); }
 .section-heading p { color: var(--muted); font-size: 12px; }
 .manage-heading p, .focused-heading p, .result-heading p { color: var(--muted); }
 .destination-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
@@ -195,12 +197,13 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .studio-nav { grid-row: 2; grid-column: 1 / -1; justify-self: start; }
   .project-credit { font-size: 12px; }
   .studio { padding-top: 18px; }
-  .studio-hero { min-height: 0; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 8px 12px; padding: 17px 17px 15px; border-radius: 15px; }
+  .studio-hero { min-height: 0; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 4px 12px; padding: 19px 16px 3px; border-radius: 15px; }
   .hero-copy { display: contents; }
-  .hero-copy h1 { grid-column: 1 / -1; max-width: none; font-size: clamp(25px, 6.45vw, 38px); text-wrap: pretty; }
-  .hero-link { grid-column: 1; grid-row: 2; justify-self: start; gap: 4px; margin: 0; min-height: 44px; font-size: 12px; white-space: nowrap; }
-  .hero-link svg { width: 14px; height: 14px; }
-  .wallet-stack { grid-column: 2; grid-row: 2; max-width: 182px; padding: 0; }
+  .hero-copy h1 { grid-area: 1 / 1; max-width: 20ch; font-size: clamp(18px, 4.85vw, 24px); line-height: 1.12; text-wrap: pretty; }
+  .hero-copy h1 em { white-space: normal; }
+  .hero-link { grid-area: 2 / 1 / auto / -1; justify-self: start; gap: 5px; margin: 0; min-height: 44px; color: var(--muted); font-size: 12px; font-weight: 450; }
+  .hero-link svg { width: 13px; height: 13px; stroke-width: 1.5; }
+  .wallet-stack { grid-area: 1 / 2; width: min(94%, 176px); padding: 0; }
   .stack-window { padding: 5px 4px 0; border-radius: 12px; }
   .stack-wallet-label { font-size: 9px; gap: 4px; padding: 1px 3px 5px; }
   .stack-wallet-label .apple-wallet-mark { width: 12px; height: 12px; }
@@ -228,7 +231,6 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .manage-actions { grid-column: 2; flex-wrap: wrap; }
 }
 @media (max-width: 370px) {
-  .studio-hero { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
   .destination-card { gap: 5px; padding-inline: 7px 21px; }
   .destination-card strong { font-size: 14px; }
   .tile-top .destination-mark { width: 24px; height: 24px; }

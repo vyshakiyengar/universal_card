@@ -66,7 +66,9 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
     <>
       <section className="studio-hero" aria-labelledby="page-title">
         <div className="hero-copy">
-          <h1 id="page-title" tabIndex={-1}>One <em>Apple Wallet</em> card for all your details, or one for each.</h1>
+          <h1 id="page-title" tabIndex={-1}>
+            One <em>Apple Wallet</em> card for all your contact details, or <span className="hero-alternative">one for each</span>.
+          </h1>
           <a className="hero-link" href="#universal-cards">Explore Heya cards <ArrowDown size={17} aria-hidden="true" /></a>
         </div>
         <WalletStack />
