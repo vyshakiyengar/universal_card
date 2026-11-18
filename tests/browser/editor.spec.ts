@@ -9,7 +9,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
   await page.getByRole("button", { name: "Pause card examples" }).click();
   await expect(page.getByRole("button", { name: "Play card examples" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Create your free contact cards in Apple Wallet" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Create your free contact cards for Apple Wallet" })).toBeVisible();
   await expect(page.getByText("Create one for free. Let people scan to save your details or open a link.")).toBeVisible();
   const title = "Free Business Cards for Apple Wallet · Heya cards";
   await expect(page).toHaveTitle(title);
@@ -66,7 +66,12 @@ test("the public landing explains the steps and links to the studio", async ({ p
     await headerAction.click();
   }
   await expect(page).toHaveURL(/\/studio$/);
+  await expect(page.getByRole("heading", { name: "One Apple Wallet card for all your details, or one for each." })).toBeVisible();
   await expect(page.locator(".hero-copy h1 em")).toHaveText("Apple Wallet");
+  await expect(page.locator(".hero-alternative")).toHaveCSS("color", "rgb(74, 100, 125)");
+  const explore = page.getByRole("link", { name: "Explore Heya cards" });
+  await expect(explore).toHaveAttribute("href", "#universal-cards");
+  await expect(explore).toHaveCSS("border-top-style", "none");
   await expect(credit).toHaveAttribute("href", "https://vyshak.me");
   await expect(page.getByText("All the details you choose, in one QR", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Individual cards" })).toBeVisible();
