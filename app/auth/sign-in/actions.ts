@@ -43,7 +43,7 @@ export async function signInWithEmail(_previous: EmailState, formData: FormData)
 
     const { error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
     if (error) return { email, step: "verify", error: "The code is invalid or has expired." };
-    redirect("/");
+    redirect("/studio");
   }
 
   const { error } = await supabase.auth.signInWithOtp({ email });

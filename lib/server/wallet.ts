@@ -111,9 +111,9 @@ export function createWalletPass(
       serialNumber: savedCard.id,
       description: "Universal Card networking pass",
       logoText: configuration.organizationName,
-      backgroundColor: "rgb(23, 24, 43)",
+      backgroundColor: "rgb(112, 13, 43)",
       foregroundColor: "rgb(255, 255, 255)",
-      labelColor: "rgb(247, 186, 114)",
+      labelColor: "rgb(255, 224, 223)",
     },
   );
 

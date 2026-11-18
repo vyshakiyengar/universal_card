@@ -23,4 +23,4 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
-export const config = { matcher: ["/", "/auth/sign-in"] };
+export const config = { matcher: ["/", "/studio", "/auth/sign-in"] };

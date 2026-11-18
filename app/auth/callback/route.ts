@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   if (code && supabase) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(new URL("/", config.origin), { status: 303, headers: privateHeaders });
+      return NextResponse.redirect(new URL("/studio", config.origin), { status: 303, headers: privateHeaders });
     }
   }
   return NextResponse.redirect(new URL("/auth/sign-in?error=callback", config.origin), {

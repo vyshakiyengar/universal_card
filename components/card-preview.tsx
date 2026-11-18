@@ -1,24 +1,11 @@
-import { Contact, Download, QrCode, ScanLine } from "lucide-react";
+import { CreditCard, Download } from "lucide-react";
 import type { CardInput } from "@/lib/cards";
 import { qrQuietZone as quietZone, type buildCardQr } from "@/lib/qr";
-import { destinations } from "./card-fields";
+import { DestinationMark, destinations } from "./card-fields";
+import { QrGraphic } from "./qr-graphic";
 
 export type Preview = { code: ReturnType<typeof buildCardQr>; payload: string };
 
-
-function modulePath({ size, modules }: Preview["code"]) {
-  const segments: string[] = [];
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      if (!modules[y * size + x]) continue;
-      const start = x;
-      while (x + 1 < size && modules[y * size + x + 1]) x++;
-      const run = x - start + 1;
-      segments.push(`M${start + quietZone} ${y + quietZone}h${run}v1h-${run}z`);
-    }
-  }
-  return segments.join("");
-}
 
 function download(url: string, filename: string) {
   const link = document.createElement("a");
@@ -47,60 +34,41 @@ function downloadPng({ size, modules }: Preview["code"], filename: string) {
   });
 }
 
-export function CardPreview({ draft, preview, error, wallet }: { draft: CardInput; preview?: Preview; error?: string; wallet?: React.ReactNode }) {
+export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; preview: Preview; walletUrl?: string }) {
   const isUniversal = draft.type === "universal";
-  const name = draft.name?.trim() || (isUniversal
-    ? (preview ? "Contact" : "Your name")
-    : destinations[draft.kind].label);
-  const linkedInId = !isUniversal && draft.kind === "linkedin" && preview
-    ? preview.payload.slice(preview.payload.lastIndexOf("/") + 1)
-    : null;
+  const kind = isUniversal ? "universal" : draft.kind;
+  const label = isUniversal ? "Universal contact" : destinations[draft.kind].label;
+  const name = draft.name?.trim() || (isUniversal ? "Contact" : label);
   const detail = isUniversal
-    ? [draft.jobTitle.trim(), draft.company.trim()].filter(Boolean).join(" · ") || "Contact card"
-    : linkedInId || draft.value.trim().replace(/^https?:\/\/(?:www\.)?/, "").replace(/\/$/, "") || "Direct link";
+    ? [draft.jobTitle.trim(), draft.company.trim()].filter(Boolean).join(" · ")
+    : (draft.kind === "linkedin" ? preview.payload.slice(preview.payload.lastIndexOf("/") + 1) :
+      draft.value.trim().replace(/^https?:\/\/(?:www\.)?/, "").replace(/\/$/, ""));
   const filename = draft.title.trim().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "universal-card";
-  const size = preview ? preview.code.size + quietZone * 2 : 0;
-  const pixelWidth = size ? size * Math.floor(216 / size) : 0;
-  const Icon = isUniversal ? Contact : destinations[draft.kind].icon;
 
   return (
-    <aside className="preview-pane" aria-label="Live preview">
-      <div className="preview-heading">
-        <h2>Live preview</h2>
-        <ScanLine size={19} />
-      </div>
+    <section className="saved-preview" aria-label="Saved card">
       <div className="wallet-preview">
-        <div className="pass-brand"><Icon size={18} /> {isUniversal ? "Universal contact" : destinations[draft.kind].label}</div>
+        <div className="pass-brand"><DestinationMark kind={kind} /> {label}</div>
         <div className="pass-name">{name}</div>
-        <div className="pass-detail">{detail}</div>
+        {detail && <div className="pass-detail">{detail}</div>}
         <div className="pass-barcode">
-          {preview ? (
-            <svg role="img" aria-label="Scannable card QR" width={pixelWidth} height={pixelWidth} viewBox={`0 0 ${size} ${size}`}
-              shapeRendering="crispEdges" className="qr-code">
-              <rect width={size} height={size} fill="white" />
-              <path d={modulePath(preview.code)} fill="black" />
-            </svg>
-          ) : (
-            <div className="empty-qr"><QrCode size={46} strokeWidth={1.3} /><span>QR code appears here</span></div>
-          )}
-          <span className="scan-label">{isUniversal ? "Scan to save contact" : `Scan to open ${destinations[draft.kind].label}`}</span>
+          <QrGraphic code={preview.code} label="Scannable card QR" />
+          <span className="scan-label">{isUniversal ? "Scan to save contact" : `Scan to open ${label}`}</span>
         </div>
       </div>
-      {preview ? (
-        <>
-          <div className={`qr-status ${preview.code.density === "dense" ? "dense" : ""}`} role="status">
-            <span className="status-dot" /> <span>{preview.code.density === "dense" ? "Dense QR · test on another phone" : "QR ready to scan"}</span>
-            <span className="byte-count">{preview.code.bytes} bytes</span>
-          </div>
-          <div className="preview-actions">
-            <button className="button secondary" type="button" onClick={() => downloadPng(preview.code, filename)}><Download size={16} /> QR image</button>
-            {isUniversal && <button className="button secondary" type="button" onClick={() => download(
-              URL.createObjectURL(new Blob([preview.payload], { type: "text/vcard;charset=utf-8" })), `${filename}.vcf`,
-            )}><Download size={16} /> vCard</button>}
-          </div>
-        </>
-      ) : <p className={error ? "preview-error" : "preview-tip"}>{error ?? "Add a contact detail to generate a QR."}</p>}
-      {wallet}
-    </aside>
+      {preview.code.density === "dense" && <p className="density-note" role="status">This QR is dense. Test it on another phone before sharing.</p>}
+      <div className="preview-actions">
+        <button className="button secondary" type="button" onClick={() => downloadPng(preview.code, filename)}><Download size={16} /> QR image</button>
+        {isUniversal && <button className="button secondary" type="button" onClick={() => download(
+          URL.createObjectURL(new Blob([preview.payload], { type: "text/vcard;charset=utf-8" })), `${filename}.vcf`,
+        )}><Download size={16} /> vCard</button>}
+      </div>
+      {walletUrl ? (
+        <a className="button wallet-button" href={walletUrl}><CreditCard size={20} /> Add to Apple Wallet</a>
+      ) : (
+        <button className="button wallet-button" type="button" disabled aria-describedby="wallet-preview-note"><CreditCard size={20} /> Add to Apple Wallet</button>
+      )}
+      {!walletUrl && <p id="wallet-preview-note" className="wallet-note">Preview only. Wallet downloads become available once signing is enabled.</p>}
+    </section>
   );
 }

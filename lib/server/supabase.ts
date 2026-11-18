@@ -49,10 +49,16 @@ export async function createAccountsClient() {
   });
 }
 
-export async function getAccount(): Promise<{ id: string; email: string | null } | null> {
+export async function getAccount(): Promise<{ id: string; email: string | null; firstName: string } | null> {
   const supabase = await createAccountsClient();
   if (!supabase) return null;
 
   const { data, error } = await supabase.auth.getUser();
-  return !error && data.user ? { id: data.user.id, email: data.user.email ?? null } : null;
+  if (error || !data.user) return null;
+
+  const metadata = data.user.user_metadata;
+  const name = [metadata.given_name, metadata.full_name, metadata.name]
+    .find((value): value is string => typeof value === "string" && Boolean(value.trim()));
+  const firstName = name?.replace(/[\p{Cc}\p{Cs}]/gu, "").trim().split(/\s+/u)[0] ?? "";
+  return { id: data.user.id, email: data.user.email ?? null, firstName: Array.from(firstName).slice(0, 50).join("") };
 }
