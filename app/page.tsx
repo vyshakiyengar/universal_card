@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, QrCode, ScanLine } from "lucide-react";
+import { DestinationMark } from "@/components/card-fields";
 import { ConnectionMark } from "@/components/connection-mark";
 import { ProjectCredit } from "@/components/project-credit";
 import { WalletExample } from "@/components/wallet-example";
@@ -41,6 +42,27 @@ export default async function Home() {
             <li><span aria-hidden="true">3</span><h2>Add it to Apple Wallet</h2></li>
           </ol>
         </section>
+
+        <section className="scan-example" aria-labelledby="whatsapp-example">
+          <h2 id="whatsapp-example">WhatsApp example</h2>
+          <ol className="scan-example-flow" role="list">
+            <li>
+              <span className="scan-example-art" aria-hidden="true"><QrCode size={24} /></span>
+              <span>Create a WhatsApp QR</span>
+              <ArrowRight className="scan-example-arrow" size={14} aria-hidden="true" />
+            </li>
+            <li>
+              <span className="scan-example-art" aria-hidden="true"><ScanLine size={25} /></span>
+              <span>Someone scans it</span>
+              <ArrowRight className="scan-example-arrow" size={14} aria-hidden="true" />
+            </li>
+            <li>
+              <span className="scan-example-art scan-example-chat" aria-hidden="true"><DestinationMark kind="whatsapp" /></span>
+              <span>Your chat opens in WhatsApp</span>
+            </li>
+          </ol>
+        </section>
+
         <Link className="create-card-link mobile-create-action" href={cta}>
           {createLabel} <ArrowRight size={15} aria-hidden="true" />
         </Link>

@@ -15,6 +15,10 @@ test("the public landing explains the steps and links to the studio", async ({ p
   for (const title of ["Add your contact details", "Create your QR code", "Add it to Apple Wallet"]) {
     await expect(page.getByRole("heading", { name: title })).toBeVisible();
   }
+  const example = page.getByRole("region", { name: "WhatsApp example" });
+  await expect(example.getByRole("listitem")).toHaveText([
+    "Create a WhatsApp QR", "Someone scans it", "Your chat opens in WhatsApp",
+  ]);
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toHaveCount(0);
   const logo = page.locator(".landing-header img[src='/universal-card-mark.svg']");
   await expect(logo).toBeVisible();
@@ -59,6 +63,7 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/studio");
   await page.getByRole("button", { name: /Universal card with multiple links/ }).click();
+  await expect(page.getByText("On compatible phones, scanning opens a vCard you can save to Contacts.")).toBeVisible();
   await page.getByLabel(/Name on card/).fill("Zoë Tan");
   await expect(page.getByLabel("Job title")).toBeVisible();
   await expect(page.getByLabel("Company")).toBeVisible();
@@ -75,6 +80,7 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
   await page.getByRole("button", { name: save }).click();
   await expect(page.getByRole("heading", { name: "Your card is ready." })).toBeVisible();
   await expect(page.locator(".wallet-preview > :first-child")).toHaveText("Apple Wallet");
+  await expect(page.locator(".scan-label")).toHaveText("On compatible phones, scanning opens a vCard you can save to Contacts.");
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Add to Apple Wallet" })).toBeDisabled();
   await expect(page.getByText("Wallet installation coming soon.")).toBeVisible();
@@ -103,8 +109,18 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
 
 test("create, open, update and delete an Individual card in Manage cards", async ({ page }) => {
   await page.goto("/studio");
-  for (const name of ["LinkedIn", "WhatsApp", "Email", "Phone", "Instagram", "custom link", "website"]) {
-    await expect(page.getByRole("button", { name: new RegExp(`Create Apple Wallet card for your ${name}`) })).toBeVisible();
+  for (const [name, description] of [
+    ["LinkedIn", "Scanning opens the linked LinkedIn page."],
+    ["WhatsApp", "Scanning opens a chat with the linked number if it is active on WhatsApp."],
+    ["Email", "Scanning opens a new email with the address in the To field."],
+    ["Phone", "Scanning opens the phone dialer with the number filled in."],
+    ["Instagram", "Scanning opens the linked Instagram profile."],
+    ["custom link", "Scanning opens the exact link you entered."],
+    ["website", "Scanning opens the website in a browser."],
+  ]) {
+    await page.getByRole("button", { name: new RegExp(`Create Apple Wallet card for your ${name}`) }).click();
+    await expect(page.getByText(description, { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "All card types" }).click();
   }
   await page.getByRole("button", { name: /Create Apple Wallet card for your LinkedIn/ }).click();
   await expect(page.getByLabel("Name in Manage cards")).toHaveCount(0);
@@ -121,6 +137,7 @@ test("create, open, update and delete an Individual card in Manage cards", async
   await page.getByRole("navigation").getByRole("button", { name: "Manage cards" }).click();
   await page.getByRole("button", { name: "Open LinkedIn" }).click();
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toBeVisible();
+  await expect(page.locator(".scan-label")).toHaveText("Scanning opens the linked LinkedIn page.");
   await page.getByRole("button", { name: "Edit details" }).click();
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toHaveCount(0);
   await page.getByLabel("LinkedIn profile URL").fill("https://www.linkedin.com/in/alex-north");

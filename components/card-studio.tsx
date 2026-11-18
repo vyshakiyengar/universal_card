@@ -6,7 +6,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, LayoutGrid, PenL
 import { cardLimits, makeCardPayload, type CardInput, type DestinationKind } from "@/lib/cards";
 import { buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
-import { DestinationMark, destinations, UniversalFields } from "./card-fields";
+import { DestinationMark, destinations, scanDescriptions, UniversalFields } from "./card-fields";
 import { CardPreview, type Preview } from "./card-preview";
 import { ConnectionMark } from "./connection-mark";
 import { ProjectCredit } from "./project-credit";
@@ -277,7 +277,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
               <div className="focused-heading">
                 <div className="editor-kind"><DestinationMark kind={kind} /><span><AppleWalletMark /> Apple Wallet</span></div>
                 <h1 tabIndex={-1}>{screen.id ? `Edit your ${label} card` : kind === "universal" ? "Create a universal card" : `Create your ${label} card`}</h1>
-                {kind === "universal" && <p>Choose the details to share in your vCard.</p>}
+                <p>{scanDescriptions[kind]}</p>
               </div>
               <form className="editor" onSubmit={save} noValidate>
                 <fieldset disabled={busy}>
@@ -321,7 +321,6 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
             <div className="result-heading">
               {screen.justSaved && <span className="saved-tick" aria-hidden="true"><Check size={22} /></span>}
               <h1 tabIndex={-1}>{screen.justSaved ? "Your card is ready." : screen.card.draft.title}</h1>
-              {screen.card.draft.type === "universal" && <p>Scan the QR to receive a vCard you can save to Contacts.</p>}
             </div>
             <CardPreview draft={screen.card.draft} preview={screen.preview} walletUrl={online && walletConfigured ? `/api/cards/${screen.card.id}/wallet` : undefined} />
             <button className="button secondary result-edit" type="button" onClick={() => edit(screen.card)}><PenLine size={16} /> Edit details</button>

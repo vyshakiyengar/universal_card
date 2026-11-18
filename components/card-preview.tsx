@@ -2,7 +2,7 @@ import { Download } from "lucide-react";
 import type { CardInput } from "@/lib/cards";
 import { qrQuietZone as quietZone, type buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
-import { destinations } from "./card-fields";
+import { destinations, scanDescriptions } from "./card-fields";
 import { QrGraphic } from "./qr-graphic";
 
 export type Preview = { code: ReturnType<typeof buildCardQr>; payload: string };
@@ -52,7 +52,7 @@ export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; p
         {detail && <div className="pass-detail">{detail}</div>}
         <div className="pass-barcode">
           <QrGraphic code={preview.code} label="Scannable card QR" />
-          <span className="scan-label">{isUniversal ? "Scan to save contact" : (draft.kind === "url" || draft.kind === "website") ? "Scan to open link" : `Scan to open ${label}`}</span>
+          <span className="scan-label">{scanDescriptions[isUniversal ? "universal" : draft.kind]}</span>
         </div>
       </div>
       {preview.code.density === "dense" && <p className="density-note" role="status">This QR is dense. Test it on another phone before sharing.</p>}

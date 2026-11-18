@@ -59,6 +59,66 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
 .how-list li span { display: grid; place-items: center; flex: 0 0 auto; width: 24px; height: 24px; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); font-size: 11px; }
 .how-list h2 { font-size: 14px; font-weight: 570; color: var(--ink); line-height: 1.3; }
 
+.scan-example {
+  width: min(100%, 660px);
+  margin: 24px auto 0;
+  padding: 15px 15px 17px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.scan-example h2 {
+  font-size: 14px;
+  font-weight: 670;
+  text-align: center;
+}
+.scan-example-flow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.scan-example-flow li {
+  position: relative;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 7px;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.25;
+  text-align: center;
+}
+.scan-example-art {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  border: 1px solid #d9e2ea;
+  border-radius: 9px;
+  background: #eff4f8;
+  color: var(--action);
+}
+.scan-example-chat {
+  border-color: #cfe0d5;
+  background: #edf6ef;
+  color: #176544;
+}
+.scan-example-chat .destination-mark {
+  width: auto;
+  height: auto;
+  background: transparent;
+  color: inherit;
+}
+.scan-example-arrow {
+  position: absolute;
+  top: 15px;
+  right: -13px;
+  color: var(--muted);
+}
+
 @media (max-width: 680px) {
   .landing-header { position: sticky; top: 0; z-index: 3; background: #f7f6f2f2; backdrop-filter: blur(12px); }
   .landing-header .header-inner { min-height: 61px; padding-block: 7px; }
@@ -87,6 +147,8 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
   .how-section { margin-top: 17px; }
   .how-list { grid-template-columns: minmax(0, 1fr); gap: 10px; margin: 0; }
   .how-list li { border: 0; justify-content: flex-start; padding: 2px 7px; }
+  .scan-example { margin-top: 20px; padding-inline: 11px; }
+  .scan-example-flow li { font-size: 12px; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .landing-copy { animation: settle-in .3s ease-out both; }

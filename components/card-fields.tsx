@@ -14,6 +14,17 @@ export const destinations = {
   url: { label: "Custom link", field: "Link URL", hint: "https://example.com", inputType: "url" },
 } as const;
 
+export const scanDescriptions = {
+  universal: "On compatible phones, scanning opens a vCard you can save to Contacts.",
+  linkedin: "Scanning opens the linked LinkedIn page.",
+  whatsapp: "Scanning opens a chat with the linked number if it is active on WhatsApp.",
+  instagram: "Scanning opens the linked Instagram profile.",
+  email: "Scanning opens a new email with the address in the To field.",
+  phone: "Scanning opens the phone dialer with the number filled in.",
+  website: "Scanning opens the website in a browser.",
+  url: "Scanning opens the exact link you entered.",
+} satisfies Record<DestinationKind | "universal", string>;
+
 export function DestinationMark({ kind }: { kind: DestinationKind | "universal" }) {
   return (
     <span className={`destination-mark mark-${kind}`} aria-hidden="true">
