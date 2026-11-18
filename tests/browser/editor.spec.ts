@@ -58,7 +58,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(page.getByRole("img", { name: /Apple Wallet illustration with HSBC, Citi, American Express, WhatsApp and LinkedIn/ })).toBeVisible();
   await expect(page.locator(".stack-whatsapp .destination-mark")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(page.getByText("Open your Wallet card and let someone scan it to get your details in seconds.")).toHaveCount(0);
-  await expect(page.getByText("Scan to receive a vCard you can save to Contacts.")).toBeVisible();
+  await expect(page.getByText("Scanning this QR shares all the contact details on your card in one vCard.")).toBeVisible();
   if (page.viewportSize()!.width <= 680) {
     await expect(page.getByRole("button", { name: /Create Apple Wallet card for your WhatsApp/ })).toHaveCSS("min-height", "56px");
     await expect(page.locator(".tile-action").first()).toHaveCSS("clip-path", "inset(50%)");
@@ -70,7 +70,7 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/studio");
-  await page.getByRole("button", { name: /New Universal card/ }).click();
+  await page.getByRole("button", { name: /^Universal card Scanning/ }).click();
   await expect(page.getByText("On compatible phones, scanning opens a vCard you can save to Contacts.")).toBeVisible();
   await page.getByLabel(/Name on card/).fill("Zoë Tan");
   await expect(page.getByLabel("Job title")).toBeVisible();

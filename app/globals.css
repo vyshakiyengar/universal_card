@@ -109,7 +109,7 @@ a.brand { text-decoration: none; }
 .mark-phone { color: #4b5aa1; background: #ecf0ff; }
 .mark-url { color: #1d6474; background: #e4f1f2; }
 .universal-choice { width: 100%; display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 14px; padding: 17px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-align: left; border-radius: 12px; transition: box-shadow .18s ease, border-color .18s ease; }
-.universal-choice .destination-mark { background: var(--action); color: white; }
+.mark-universal { background: #e9eff5; color: var(--action); }
 .universal-choice strong, .universal-choice small { display: block; }
 .universal-choice small { margin-top: 3px; color: var(--muted); font-size: 13px; }
 .universal-arrow { display: inline-flex; color: var(--muted); }

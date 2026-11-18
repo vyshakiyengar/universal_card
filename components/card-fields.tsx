@@ -1,4 +1,4 @@
-import { AtSign, Contact, Globe2, Link2, Phone, Plus, Trash2 } from "lucide-react";
+import { AtSign, Globe2, Link2, Phone, Plus, QrCode, Trash2 } from "lucide-react";
 import {
   cardLimits, emailLabels, linkKinds, phoneLabels,
   type DestinationKind, type UniversalCard,
@@ -35,7 +35,7 @@ export function DestinationMark({ kind }: { kind: DestinationKind | "universal" 
       {kind === "phone" && <Phone />}
       {kind === "url" && <Link2 />}
       {kind === "website" && <Globe2 />}
-      {kind === "universal" && <Contact />}
+      {kind === "universal" && <QrCode />}
     </span>
   );
 }
