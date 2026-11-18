@@ -15,10 +15,14 @@ test("the public landing explains the steps and links to the studio", async ({ p
   for (const title of ["Add your contact details", "Create your QR code", "Add it to Apple Wallet"]) {
     await expect(page.getByRole("heading", { name: title })).toBeVisible();
   }
-  const example = page.getByRole("region", { name: "WhatsApp example" });
-  await expect(example.getByRole("listitem")).toHaveText([
-    "Create a WhatsApp QR", "Someone scans it", "Your chat opens in WhatsApp",
+  const example = page.getByRole("region", { name: "From Wallet card to WhatsApp chat" });
+  await expect(example.getByRole("heading", { level: 3 })).toHaveText([
+    "Create a WhatsApp Wallet card", "Someone scans your QR", "Your WhatsApp chat opens",
   ]);
+  const sampleForm = example.getByRole("img", { name: /WhatsApp form with a sample number/ });
+  await sampleForm.scrollIntoViewIfNeeded();
+  await expect.poll(() => sampleForm.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toHaveCount(0);
   const logo = page.locator(".landing-header img[src='/universal-card-mark.svg']");
   await expect(logo).toBeVisible();
