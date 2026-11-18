@@ -79,7 +79,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
         </div>
         <button className="universal-choice" type="button" disabled={!ready} onClick={() => create("universal")}>
           <DestinationMark kind="universal" />
-          <span><strong className="universal-title"><AppleWalletMark /> Universal card with multiple links</strong><small>Scan to receive a vCard you can save to Contacts.</small></span>
+          <span><strong className="universal-title"><AppleWalletMark /> New Universal card</strong><small>Scan to receive a vCard you can save to Contacts.</small></span>
           <span className="universal-arrow" aria-hidden="true"><ArrowRight size={18} /></span>
         </button>
       </section>
@@ -87,7 +87,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
       <section id="individual-cards" className="chooser-section" aria-labelledby="individual-title">
         <div className="section-heading">
           <h2 id="individual-title">Individual cards</h2>
-          <p>One detail per card</p>
+          <p>One QR card per app or link</p>
         </div>
         <div className="destination-grid">
           {types.map((kind) => (

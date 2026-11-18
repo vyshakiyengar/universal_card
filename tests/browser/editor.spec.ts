@@ -12,13 +12,11 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
   await page.getByRole("button", { name: "Show Email Wallet example" }).click();
   await expect(page.getByRole("img", { name: "Example Email QR" })).toBeVisible();
-  for (const title of ["Add your contact details", "Create your QR code", "Add it to Apple Wallet"]) {
-    await expect(page.getByRole("heading", { name: title })).toBeVisible();
-  }
-  const example = page.getByRole("region", { name: "From Wallet card to WhatsApp chat" });
+  const example = page.getByRole("region", { name: "WhatsApp example", exact: true });
   await expect(example.getByRole("heading", { level: 3 })).toHaveText([
-    "Create a WhatsApp Wallet card", "Someone scans your QR", "Your WhatsApp chat opens",
+    "Create a WhatsApp card", "Show your QR", "Your WhatsApp chat opens",
   ]);
+  await expect(example.getByText(/Use the same steps for LinkedIn, Instagram, email, phone or a web link/)).toBeVisible();
   const sampleForm = example.getByRole("img", { name: /WhatsApp form with a sample number/ });
   await sampleForm.scrollIntoViewIfNeeded();
   await expect.poll(() => sampleForm.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
@@ -36,7 +34,6 @@ test("the public landing explains the steps and links to the studio", async ({ p
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
 
   if (page.viewportSize()!.width <= 680) {
-    await expect(createAction).toBeInViewport({ ratio: 1 });
     await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" }));
     await expect(headerAction).toBeInViewport({ ratio: 1 });
     await expect(createAction).toBeInViewport({ ratio: 1 });
@@ -44,9 +41,8 @@ test("the public landing explains the steps and links to the studio", async ({ p
     const buttonPosition = (await createAction.boundingBox())!;
     const creditPosition = (await credit.boundingBox())!;
     expect(creditPosition.y).toBeGreaterThan(buttonPosition.y + buttonPosition.height);
-    for (const step of await page.locator(".how-list li").all()) {
-      await expect(step).toHaveCSS("border-bottom-width", "0px");
-    }
+    const examplePosition = (await example.boundingBox())!;
+    expect(buttonPosition.y).toBeGreaterThan(examplePosition.y + examplePosition.height);
     await createAction.click();
   } else {
     await expect(headerAction).toBeInViewport({ ratio: 1 });
@@ -55,6 +51,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(page).toHaveURL(/\/studio$/);
   await expect(credit).toHaveAttribute("href", "https://vyshak.me");
   await expect(page.getByRole("heading", { name: "Individual cards" })).toBeVisible();
+  await expect(page.getByText("One QR card per app or link", { exact: true })).toBeVisible();
   await expect(page.getByRole("img", { name: /Apple Wallet illustration with HSBC, Citi, American Express, WhatsApp and LinkedIn/ })).toBeVisible();
   await expect(page.locator(".stack-whatsapp .destination-mark")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(page.getByText("Open your Wallet card and let someone scan it to get your details in seconds.")).toHaveCount(0);
@@ -70,7 +67,7 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/studio");
-  await page.getByRole("button", { name: /Universal card with multiple links/ }).click();
+  await page.getByRole("button", { name: /New Universal card/ }).click();
   await expect(page.getByText("On compatible phones, scanning opens a vCard you can save to Contacts.")).toBeVisible();
   await page.getByLabel(/Name on card/).fill("Zoë Tan");
   await expect(page.getByLabel("Job title")).toBeVisible();

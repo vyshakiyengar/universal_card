@@ -29,23 +29,15 @@ export default async function Home() {
         <section className="landing-hero" aria-labelledby="landing-title">
           <div className="landing-copy">
             <h1 id="landing-title">Create your free contact QR cards on <em>Apple Wallet</em></h1>
+            <p className="landing-intro">Share your contact details with a quick scan at your next meeting or networking event.</p>
             <Link className="create-card-link landing-cta" href={cta}>{createLabel} <ArrowRight size={15} aria-hidden="true" /></Link>
           </div>
           <WalletExample />
         </section>
 
-        <p className="hero-description">Keep your contact QR in Apple Wallet, ready to share at your next meeting or networking event.</p>
-
-        <section className="how-section" aria-label="How it works">
-          <ol className="how-list">
-            <li><span aria-hidden="true">1</span><h2>Add your contact details</h2></li>
-            <li><span aria-hidden="true">2</span><h2>Create your QR code</h2></li>
-            <li><span aria-hidden="true">3</span><h2>Add it to Apple Wallet</h2></li>
-          </ol>
-        </section>
-
         <section className="scan-example" aria-labelledby="whatsapp-example">
-          <h2 id="whatsapp-example">From Wallet card to WhatsApp chat</h2>
+          <h2 id="whatsapp-example">WhatsApp example</h2>
+          <p className="scan-example-options">Use the same steps for LinkedIn, Instagram, email, phone or a web link. Choose a Universal card to share several contact details in one QR.</p>
           <ol className="scan-example-flow" role="list">
             <li>
               <div className="scan-example-screen scan-example-editor">
@@ -59,8 +51,8 @@ export default async function Home() {
                   />
                 </div>
               </div>
-              <h3>Create a WhatsApp Wallet card</h3>
-              <p>Enter your WhatsApp number to generate your card and QR code.</p>
+              <h3>Create a WhatsApp card</h3>
+              <p>Enter your number to make a Wallet card with your QR.</p>
             </li>
             <li>
               <div className="scan-example-screen scan-example-camera" aria-hidden="true">
@@ -73,8 +65,8 @@ export default async function Home() {
                   <Scan className="scan-camera-corners" size={99} strokeWidth={1.25} />
                 </div>
               </div>
-              <h3>Someone scans your QR</h3>
-              <p>Show the card in Apple Wallet. They scan the QR with their phone camera.</p>
+              <h3>Show your QR</h3>
+              <p>Open the card in Apple Wallet so someone can scan it.</p>
             </li>
             <li>
               <div className="scan-example-screen scan-example-chat" aria-hidden="true">
@@ -87,7 +79,7 @@ export default async function Home() {
                 </div>
               </div>
               <h3>Your WhatsApp chat opens</h3>
-              <p>They can message you using the number on your card.</p>
+              <p>They can message you right away.</p>
             </li>
           </ol>
         </section>
