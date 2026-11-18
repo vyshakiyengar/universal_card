@@ -8,6 +8,7 @@ import { AppleWalletMark } from "./apple-wallet-mark";
 import { DestinationMark, destinations, UniversalFields } from "./card-fields";
 import { CardPreview, type Preview } from "./card-preview";
 import { ConnectionMark } from "./connection-mark";
+import { ProjectCredit } from "./project-credit";
 import { WalletStack } from "./wallet-stack";
 
 type SavedCard = { id: string; draft: CardInput; createdAt: string; updatedAt: string };
@@ -319,6 +320,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
           </div>
         )}
       </main>
+      <ProjectCredit />
     </>
   );
 }

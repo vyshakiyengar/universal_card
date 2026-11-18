@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ConnectionMark } from "@/components/connection-mark";
+import { ProjectCredit } from "@/components/project-credit";
 import { WalletExample } from "@/components/wallet-example";
 import { getAccount, isAccountsConfigured } from "@/lib/server/supabase";
 import "./landing.css";
@@ -17,13 +18,14 @@ export default async function Home() {
       <header className="topbar landing-header">
         <div className="header-inner">
           <Link href="/" className="brand"><ConnectionMark /> Universal Card</Link>
+          <Link className="create-card-link" href={cta}>Create My Card</Link>
         </div>
       </header>
       <main className="landing">
         <section className="landing-hero" aria-labelledby="landing-title">
           <div className="landing-copy">
             <h1 id="landing-title">Create a free contact QR for <em>Apple Wallet.</em></h1>
-            <Link className="button primary landing-cta" href={cta}>Create my free card <ArrowRight size={17} /></Link>
+            <Link className="create-card-link landing-cta" href={cta}>Create a free card <ArrowRight size={15} aria-hidden="true" /></Link>
           </div>
           <WalletExample />
         </section>
@@ -36,6 +38,10 @@ export default async function Home() {
           </ol>
         </section>
       </main>
+      <ProjectCredit />
+      <Link className="create-card-link mobile-create-action" href={cta}>
+        Create a free card <ArrowRight size={15} aria-hidden="true" />
+      </Link>
     </>
   );
 }

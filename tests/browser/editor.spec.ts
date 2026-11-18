@@ -19,10 +19,27 @@ test("the public landing explains the steps and links to the studio", async ({ p
   const logo = page.locator(".landing-header img[src='/universal-card-mark.svg']");
   await expect(logo).toBeVisible();
   await expect.poll(() => logo.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
-  await expect(page.getByRole("link", { name: "Create my free card" })).toHaveCount(1);
+  const headerAction = page.getByRole("banner").getByRole("link", { name: "Create My Card", exact: true });
+  const createAction = page.getByRole("link", { name: "Create a free card", exact: true });
+  const credit = page.getByRole("contentinfo").getByRole("link", { name: "Vyshak K Iyengar", exact: true });
+  await expect(headerAction).toHaveAttribute("href", "/studio");
+  await expect(createAction).toHaveAttribute("href", "/studio");
+  await expect(credit).toHaveAttribute("href", "https://vyshak.me");
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
-  await page.getByRole("link", { name: "Create my free card" }).click();
+
+  if (page.viewportSize()!.width <= 680) {
+    await expect(createAction).toBeInViewport({ ratio: 1 });
+    await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" }));
+    await expect(headerAction).toBeInViewport({ ratio: 1 });
+    await expect(createAction).toBeInViewport({ ratio: 1 });
+    await expect(credit).toBeInViewport({ ratio: 1 });
+    await createAction.click();
+  } else {
+    await expect(headerAction).toBeInViewport({ ratio: 1 });
+    await headerAction.click();
+  }
   await expect(page).toHaveURL(/\/studio$/);
+  await expect(credit).toHaveAttribute("href", "https://vyshak.me");
   await expect(page.getByRole("heading", { name: "Individual cards" })).toBeVisible();
   await expect(page.getByRole("img", { name: /Apple Wallet illustration with HSBC, Citi, American Express, WhatsApp and LinkedIn/ })).toBeVisible();
   await expect(page.getByText("When someone scans your QR, they receive a vCard they can save to Contacts.")).toBeVisible();

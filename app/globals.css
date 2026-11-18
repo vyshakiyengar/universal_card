@@ -36,6 +36,17 @@ a.brand { text-decoration: none; }
 .account, .local-indicator { justify-self: end; }
 .local-indicator { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .studio { margin-inline: auto; max-width: 1220px; padding: 32px clamp(17px, 4vw, 50px) 66px; }
+.project-credit {
+  margin-inline: auto;
+  width: min(calc(100% - 2 * clamp(17px, 4vw, 50px)), 1120px);
+  padding: 17px 0 24px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+.project-credit a { color: #234f8c; font-weight: 600; text-decoration-color: #9bb5d8; text-underline-offset: 3px; }
+.project-credit a:hover { text-decoration-color: currentColor; }
 
 .studio-hero { isolation: isolate; display: grid; grid-template-columns: 1fr 1fr; min-height: 367px; align-items: center; overflow: hidden; border: 1px solid #d8e5f7; border-radius: 28px; background: radial-gradient(ellipse at 95% 48%, #bad3fc 0%, transparent 56%), linear-gradient(120deg, #fbfdff 15%, #e7f0fc 68%, #cbdefa); }
 .hero-copy { padding: clamp(25px, 5vw, 59px); }
