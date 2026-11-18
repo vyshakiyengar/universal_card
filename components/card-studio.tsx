@@ -74,7 +74,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
 
       <section id="universal-cards" className="chooser-section universal-section" aria-labelledby="universal-title">
         <div className="section-heading">
-          <h2 id="universal-title">Universal cards</h2>
+          <h2 id="universal-title">Create Universal Cards</h2>
           <p>All the details you choose, in one QR</p>
         </div>
         <button className="universal-choice" type="button" disabled={!ready} onClick={() => create("universal")}>
@@ -86,7 +86,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
 
       <section id="individual-cards" className="chooser-section" aria-labelledby="individual-title">
         <div className="section-heading">
-          <h2 id="individual-title">Individual cards</h2>
+          <h2 id="individual-title">Create Individual Cards</h2>
           <p>One card for an app, link, or contact detail</p>
         </div>
         <div className="destination-grid">

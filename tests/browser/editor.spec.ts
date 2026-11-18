@@ -82,8 +82,9 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(explore).toHaveAttribute("href", "#universal-cards");
   await expect(explore).toHaveCSS("border-top-style", "none");
   await expect(credit).toHaveAttribute("href", "https://vyshak.me");
+  await expect(page.getByRole("heading", { name: "Create Universal Cards", exact: true })).toBeVisible();
   await expect(page.getByText("All the details you choose, in one QR", { exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Individual cards" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Create Individual Cards", exact: true })).toBeVisible();
   await expect(page.getByText("One card for an app, link, or contact detail", { exact: true })).toBeVisible();
   await expect(page.getByRole("img", { name: /Apple Wallet illustration with HSBC, Citi, American Express, WhatsApp and LinkedIn/ })).toBeVisible();
   await expect(page.locator(".stack-whatsapp .destination-mark")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
