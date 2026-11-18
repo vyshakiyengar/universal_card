@@ -12,20 +12,30 @@
 .landing-actions > a:not(.button) { display: inline-flex; align-items: center; gap: 7px; font-weight: 690; font-size: 13px; text-decoration: none; color: #86112b; }
 .landing-art { position: relative; isolation: isolate; min-width: 0; min-height: 440px; margin: 0; display: grid; align-content: center; justify-items: center; padding: 25px 13px; }
 .landing-orbits { position: absolute; inset: -100%; z-index: -1; background: repeating-radial-gradient(ellipse at 51% 50%,#85233a00 0 26px,#85233a16 27px 28px,#85233a00 29px 40px); mask-image: linear-gradient(130deg, transparent 32%, black 45% 58%, transparent 68%); transform: rotate(20deg); }
-.device { width: min(100%, 252px); min-height: 350px; border: 2px solid #68474a; outline: 4px solid #271c20; overflow: hidden; border-radius: 34px; background: #21191b; padding: 12px 10px 11px; transform: rotate(8deg); box-shadow: 21px 23px 55px -10px #68102a72, inset 1px 0 4px #ffffff66; }
-.device-camera { width: 72px; height: 15px; background: #100b0d; border-radius: 30px; margin: 0 auto 13px; box-shadow: inset -2px 0 5px #553d49; }
-.device-screen { padding: 0 4px 3px; display: grid; gap: 9px; }
-.device-title { display: flex; align-items: center; gap: 7px; color: #fff9f6; font-size: 18px; font-weight: 700; letter-spacing: -.035em; margin-bottom: 2px; }
-.device-pass { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 5px; padding: 10px 9px; min-height: 105px; border-radius: 15px; color: #fff; box-shadow: inset 0 1px #fff4; }
-.device-pass-whatsapp { background: linear-gradient(125deg,#104d3c,#238961); }
-.device-pass-email { background: linear-gradient(125deg,#7f1434,#c33d59); }
-.device-pass > div > span { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 710; }
-.device-pass .destination-mark { width: 20px; height: 20px; border-radius: 5px; }
-.device-pass .destination-mark svg { width: 13px; height: 13px; }
-.device-pass strong, .device-pass small { display: block; }
-.device-pass strong { margin-top: 7px; font-size: 16px; line-height: 1.05; letter-spacing: -.04em; }
-.device-pass small { margin-top: 4px; font-size: 10px; }
-.device-pass .qr-code { width: 65px; height: 65px; border-radius: 3px; }
+.device { width: min(100%, 246px); border: 2px solid #655257; outline: 4px solid #211b21; overflow: hidden; border-radius: 37px; background: #342c32; padding: 4px; transform: rotate(6deg); box-shadow: 20px 24px 50px -12px #68102a72; }
+.device-screen { background: #f3f1f5; border-radius: 30px; min-height: 383px; padding: 10px 8px 0; display: flex; flex-direction: column; }
+.device-status { position: relative; display: flex; justify-content: space-between; align-items: center; min-height: 20px; margin: 0 7px 11px; font-size: 10px; font-weight: 750; color: #211921; }
+.device-status > span:last-child { display: flex; align-items: center; gap: 3px; }
+.device-camera { position: absolute; top: 1px; left: 50%; width: 56px; height: 13px; transform: translateX(-50%); background: #1b151b; border-radius: 30px; }
+.device-pass { display: flex; flex-direction: column; min-height: 266px; padding: 10px; border-radius: 12px; color: white; box-shadow: 0 7px 13px -6px #1218165c, inset 0 1px #fff4; }
+.device-pass-whatsapp, .device-stack-whatsapp { background: linear-gradient(145deg,#086148,#168360); }
+.device-pass-email, .device-stack-email { background: linear-gradient(145deg,#8a1435,#c03153); }
+.device-pass-brand { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 720; }
+.device-pass-brand .destination-mark, .device-stack .destination-mark { width: 22px; height: 22px; border-radius: 6px; }
+.device-pass-brand .destination-mark svg, .device-stack .destination-mark svg { width: 15px; height: 15px; }
+.device-pass-emblem { align-self: center; margin-top: 1px; }
+.device-pass-emblem .destination-mark { color: #fff; background: transparent; width: 52px; height: 52px; }
+.device-pass-emblem .destination-mark svg { width: 41px; height: 41px; }
+.device-pass-name { display: grid; margin-top: 5px; gap: 1px; }
+.device-pass-name span { font-size: 9px; text-transform: uppercase; letter-spacing: .08em; color: #fff3ed; }
+.device-pass-name strong { font-size: 15px; line-height: 1.1; }
+.device-pass-qr { margin-top: auto; display: grid; justify-items: center; gap: 4px; padding-top: 7px; }
+.device-pass-qr .qr-code { display: block; border-radius: 3px; }
+.device-pass-qr small { font-size: 9px; }
+.device-stack { position: relative; display: flex; align-items: flex-start; gap: 6px; padding: 8px; margin: auto 0 0; min-height: 43px; border: none; border-radius: 11px 11px 0 0; color: white; text-align: left; font-size: 12px; box-shadow: 0 -4px 0 -1px #f3aeaa, 0 -7px 0 -3px #4d203b; }
+.device-stack > svg { margin-left: auto; margin-top: 3px; }
+.device-stack:hover { filter: brightness(1.14); }
+.device-stack:focus-visible { outline-offset: -3px; outline-color: white; }
 .landing-art figcaption { margin-top: 16px; color: #65293a; font-size: 12px; font-weight: 680; }
 .how-section { margin-top: clamp(32px,6vw,69px); scroll-margin-top: 16px; }
 .how-section h2 { font-size: clamp(32px,4.7vw,58px); line-height: 1; letter-spacing: -.062em; }
@@ -44,8 +54,10 @@
   .landing-copy h1 { font-size: clamp(51px, 11vw, 75px); }
   .landing-copy p, .landing-actions { margin-top: 17px; }
   .landing-art { min-height: 356px; }
-  .device { width: 214px; min-height: 303px; }
-  .device-pass { min-height: 92px; }
-  .device-pass .qr-code { width: 55px; height: 55px; }
+  .device { width: 211px; }
+  .device-screen { min-height: 345px; }
+  .device-pass { min-height: 237px; }
+  .device-pass-emblem .destination-mark { width: 47px; height: 47px; }
+  .device-pass-emblem .destination-mark svg { width: 35px; height: 35px; }
   .how-list { grid-template-columns: minmax(0,1fr); }
 }

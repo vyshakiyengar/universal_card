@@ -61,7 +61,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
       <section className="studio-hero" aria-labelledby="page-title">
         <div className="hero-copy">
           <h1 id="page-title" tabIndex={-1}>Create a<br /> Wallet card.</h1>
-          <p>Share a single link or all your contact details with one scan.</p>
+          <p>Add the details you want to share, then save to create your QR.</p>
           <a className="hero-link" href="#individual-cards">Choose a card <ArrowDown size={17} /></a>
         </div>
         <div className="hero-art" aria-hidden="true">

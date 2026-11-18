@@ -7,8 +7,11 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Your contacts. In your Wallet." })).toBeVisible();
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
+  await page.getByRole("button", { name: "Show Email Wallet example" }).click();
   await expect(page.getByRole("img", { name: "Example Email QR" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Save your details" })).toBeVisible();
+  for (const title of ["Add your contact details", "Create your QR code", "Add it to Apple Wallet"]) {
+    await expect(page.getByRole("heading", { name: title })).toBeVisible();
+  }
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toHaveCount(0);
   await page.getByRole("link", { name: "Create my card" }).first().click();
   await expect(page).toHaveURL(/\/studio$/);
