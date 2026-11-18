@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, CreditCard, LayoutGrid, PenLine, Plus, Trash2, Wallet } from "lucide-react";
 import { cardLimits, makeCardPayload, type CardInput, type DestinationKind } from "@/lib/cards";
 import { buildCardQr } from "@/lib/qr";
+import { AppleWalletMark } from "./apple-wallet-mark";
 import { DestinationMark, destinations, UniversalFields } from "./card-fields";
 import { CardPreview, type Preview } from "./card-preview";
 
@@ -61,7 +62,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
       <section className="studio-hero" aria-labelledby="page-title">
         <div className="hero-copy">
           <h1 id="page-title" tabIndex={-1}>Create a<br /> Wallet card.</h1>
-          <p>Add the details you want to share, then save to create your QR.</p>
+          <p>Add your details and generate a card with your name and QR code.</p>
           <a className="hero-link" href="#individual-cards">Choose a card <ArrowDown size={17} /></a>
         </div>
         <div className="hero-art" aria-hidden="true">
@@ -83,9 +84,9 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
         <div className="destination-grid">
           {types.map((kind) => (
             <button key={kind} className="destination-card" type="button" disabled={!ready} onClick={() => create(kind)}>
-              <span className="tile-top"><DestinationMark kind={kind} /><ArrowUpRight size={19} className="tile-arrow" aria-hidden="true" /></span>
+              <span className="tile-top"><DestinationMark kind={kind} /><ArrowUpRight size={18} className="tile-arrow" aria-hidden="true" /></span>
               <strong>{destinations[kind].label}</strong>
-              <span className="tile-action">Create Apple Wallet card for {destinations[kind].label}</span>
+              <span className="tile-action"><AppleWalletMark /> Create Apple Wallet card for {destinations[kind].label}</span>
             </button>
           ))}
         </div>
@@ -95,8 +96,8 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
         <div className="section-heading"><h2 id="universal-title">Universal cards</h2></div>
         <button className="universal-choice" type="button" disabled={!ready} onClick={() => create("universal")}>
           <DestinationMark kind="universal" />
-          <span><strong>Create a universal Apple Wallet card</strong><small>Share multiple emails, phone numbers and links in a single contact.</small></span>
-          <span className="universal-arrow" aria-hidden="true"><ArrowRight size={21} /></span>
+          <span><strong className="universal-title"><AppleWalletMark /> Create a universal Apple Wallet card</strong><small>Share multiple emails, phone numbers and links in a single contact.</small></span>
+          <span className="universal-arrow" aria-hidden="true"><ArrowRight size={18} /></span>
         </button>
       </section>
     </>
@@ -244,7 +245,7 @@ export function CardStudio({ account, walletConfigured = false }: StudioProps = 
                 return (
                   <li className="manage-card" key={card.id}>
                     <DestinationMark kind={kind} />
-                    <div className="managed-name"><strong>{title}</strong><small>{card.draft.type === "individual" ? card.draft.value : "Universal contact"}</small></div>
+                    <div className="managed-name"><strong>{title}</strong><small>{card.draft.type === "individual" ? card.draft.value : "Universal contact"}</small><span className="managed-wallet"><AppleWalletMark /> Apple Wallet</span></div>
                     <div className="manage-actions">
                       <button className="button secondary" type="button" disabled={busy} aria-label={`Open ${title}`} onClick={() => open(card)}><CreditCard size={17} /> Open</button>
                       <button className="button secondary" type="button" disabled={busy} aria-label={`Edit ${title}`} onClick={() => edit(card)}><PenLine size={16} /> Edit</button>
@@ -270,7 +271,7 @@ export function CardStudio({ account, walletConfigured = false }: StudioProps = 
             <div className="focused-page">
               <button className="back-button" type="button" disabled={busy} onClick={() => navigate({ view: screen.id ? "manage" : "create" })}><ArrowLeft size={18} /> {screen.id ? "Manage cards" : "All card types"}</button>
               <div className="focused-heading">
-                <DestinationMark kind={kind} />
+                <div className="editor-kind"><DestinationMark kind={kind} /><span><AppleWalletMark /> Apple Wallet</span></div>
                 <h1 tabIndex={-1}>{screen.id ? `Edit your ${label} card` : kind === "universal" ? "Create a universal card" : `Create a ${label} Wallet card`}</h1>
                 <p>{kind === "universal" ? "Choose the details you want people to save." : `Enter the destination your ${label} QR will open.`}</p>
               </div>
@@ -313,7 +314,7 @@ export function CardStudio({ account, walletConfigured = false }: StudioProps = 
                   {draft.type === "universal" && <p className="privacy">Anyone who scans or photographs your QR can read and share the contact details you include.</p>}
                   {error && <p className="form-error" role="alert">{error}</p>}
                   <button className="button primary save-button" type="submit" disabled={!ready}>
-                    {busy ? "Saving…" : "Save details to add to Wallet"} <ArrowRight size={18} />
+                    {busy ? "Generating…" : "Generate your Apple Wallet card"} <ArrowRight size={18} />
                   </button>
                 </fieldset>
               </form>

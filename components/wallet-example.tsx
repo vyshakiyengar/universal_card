@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowUp, BatteryFull, Signal, Wifi } from "lucide-react";
 import { buildCardQr } from "@/lib/qr";
+import { AppleWalletMark } from "./apple-wallet-mark";
 import { DestinationMark } from "./card-fields";
 import { QrGraphic } from "./qr-graphic";
 
@@ -25,6 +26,7 @@ export function WalletExample() {
             <span>9:41</span><span className="device-camera" />
             <span><Signal size={10} /><Wifi size={11} /><BatteryFull size={13} /></span>
           </div>
+          <div className="device-wallet-label"><AppleWalletMark /> Apple Wallet</div>
           <div className={`device-pass device-pass-${kind}`} key={kind}>
             <div className="device-pass-brand"><DestinationMark kind={kind} /> {active.label}</div>
             <div className="device-pass-emblem"><DestinationMark kind={kind} /></div>

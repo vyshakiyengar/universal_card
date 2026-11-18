@@ -1,6 +1,7 @@
-import { CreditCard, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import type { CardInput } from "@/lib/cards";
 import { qrQuietZone as quietZone, type buildCardQr } from "@/lib/qr";
+import { AppleWalletMark } from "./apple-wallet-mark";
 import { DestinationMark, destinations } from "./card-fields";
 import { QrGraphic } from "./qr-graphic";
 
@@ -48,7 +49,7 @@ export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; p
   return (
     <section className="saved-preview" aria-label="Saved card">
       <div className="wallet-preview">
-        <div className="pass-brand"><DestinationMark kind={kind} /> {label}</div>
+        <div className="pass-top"><div className="pass-brand"><DestinationMark kind={kind} /> {label}</div><span className="pass-wallet"><AppleWalletMark /> Apple Wallet</span></div>
         <div className="pass-name">{name}</div>
         {detail && <div className="pass-detail">{detail}</div>}
         <div className="pass-barcode">
@@ -63,12 +64,15 @@ export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; p
           URL.createObjectURL(new Blob([preview.payload], { type: "text/vcard;charset=utf-8" })), `${filename}.vcf`,
         )}><Download size={16} /> vCard</button>}
       </div>
-      {walletUrl ? (
-        <a className="button wallet-button" href={walletUrl}><CreditCard size={20} /> Add to Apple Wallet</a>
-      ) : (
-        <button className="button wallet-button" type="button" disabled aria-describedby="wallet-preview-note"><CreditCard size={20} /> Add to Apple Wallet</button>
-      )}
-      {!walletUrl && <p id="wallet-preview-note" className="wallet-note">Preview only. Wallet downloads become available once signing is enabled.</p>}
+      <div className="wallet-action-card">
+        <AppleWalletMark />
+        <div><strong>Apple Wallet</strong><p id="wallet-preview-note">{walletUrl ? "Keep this card handy on your iPhone." : "Wallet installation coming soon."}</p></div>
+        {walletUrl ? (
+          <a className="button wallet-button" href={walletUrl}>Add to Apple Wallet</a>
+        ) : (
+          <button className="button wallet-button" type="button" disabled aria-describedby="wallet-preview-note">Add to Apple Wallet</button>
+        )}
+      </div>
     </section>
   );
 }

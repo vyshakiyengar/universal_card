@@ -1,25 +1,25 @@
 .landing-header .brand { text-decoration: none; }
 .landing-nav { justify-self: center; font-size: 14px; font-weight: 690; color: var(--muted); text-decoration: none; }
-.landing-nav:hover { color: var(--red); }
+.landing-nav:hover { color: var(--blue); }
 .landing { max-width: 1220px; margin-inline: auto; padding: 32px clamp(17px, 4vw, 50px) 65px; }
-.landing-hero { position: relative; display: grid; grid-template-columns: 1.06fr .94fr; align-items: center; min-height: 478px; overflow: hidden; border: 1px solid #eccacb; border-radius: 30px; background: radial-gradient(ellipse at 102% 26%,#ed6a74 0,transparent 48%), linear-gradient(126deg,#fff8f2 19%,#fce4de 57%,#e7a3a8); }
+.landing-hero { position: relative; display: grid; grid-template-columns: 1.06fr .94fr; align-items: center; min-height: 478px; overflow: hidden; border: 1px solid #d1dff5; border-radius: 30px; background: radial-gradient(ellipse at 102% 26%,#92b8ff 0,transparent 48%), linear-gradient(126deg,#f9fcff 19%,#e4eeff 57%,#bad1f7); }
 .landing-copy { position: relative; z-index: 1; padding: clamp(24px,5vw,62px); }
-.landing-copy h1 { color: #211417; font-size: clamp(47px,5.6vw,79px); line-height: .92; letter-spacing: -.082em; font-weight: 680; }
-.landing-copy h1 em { color: #ac1535; font-style: normal; }
-.landing-copy p { font-size: clamp(16px,2.2vw,18px); max-width: 36ch; line-height: 1.48; color: #5f4245; margin-top: 25px; }
+.landing-copy h1 { color: #15294a; font-size: clamp(47px,5.6vw,79px); line-height: .92; letter-spacing: -.082em; font-weight: 680; }
+.landing-copy h1 em { color: #2059b7; font-style: normal; }
+.landing-copy p { font-size: clamp(16px,2.2vw,18px); max-width: 36ch; line-height: 1.48; color: #435775; margin-top: 25px; }
 .landing-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 18px; margin-top: 26px; }
 .landing-actions .button, .landing-bottom { min-height: 50px; padding-inline: 18px; font-size: 14px; }
-.landing-actions > a:not(.button) { display: inline-flex; align-items: center; gap: 7px; font-weight: 690; font-size: 13px; text-decoration: none; color: #86112b; }
+.landing-actions > a:not(.button) { display: inline-flex; align-items: center; gap: 7px; font-weight: 690; font-size: 13px; text-decoration: none; color: #1b4a94; }
 .landing-art { position: relative; isolation: isolate; min-width: 0; min-height: 440px; margin: 0; display: grid; align-content: center; justify-items: center; padding: 25px 13px; }
-.landing-orbits { position: absolute; inset: -100%; z-index: -1; background: repeating-radial-gradient(ellipse at 51% 50%,#85233a00 0 26px,#85233a16 27px 28px,#85233a00 29px 40px); mask-image: linear-gradient(130deg, transparent 32%, black 45% 58%, transparent 68%); transform: rotate(20deg); }
-.device { width: min(100%, 246px); border: 2px solid #655257; outline: 4px solid #211b21; overflow: hidden; border-radius: 37px; background: #342c32; padding: 4px; transform: rotate(6deg); box-shadow: 20px 24px 50px -12px #68102a72; }
-.device-screen { background: #f3f1f5; border-radius: 30px; min-height: 383px; padding: 10px 8px 0; display: flex; flex-direction: column; }
-.device-status { position: relative; display: flex; justify-content: space-between; align-items: center; min-height: 20px; margin: 0 7px 11px; font-size: 10px; font-weight: 750; color: #211921; }
+.landing-orbits { position: absolute; inset: -100%; z-index: -1; background: repeating-radial-gradient(ellipse at 51% 50%,#29529a00 0 26px,#29529a16 27px 28px,#29529a00 29px 40px); mask-image: linear-gradient(130deg, transparent 32%, black 45% 58%, transparent 68%); transform: rotate(20deg); }
+.device { width: min(100%, 246px); border: 2px solid #91a9cd; outline: 4px solid #94afd6; overflow: hidden; border-radius: 37px; background: #c4d5ed; padding: 4px; transform: rotate(6deg); box-shadow: 20px 24px 50px -12px #254b9b55; }
+.device-screen { background: #f9fbfe; border-radius: 30px; min-height: 383px; padding: 10px 8px 0; display: flex; flex-direction: column; }
+.device-status { position: relative; display: flex; justify-content: space-between; align-items: center; min-height: 20px; margin: 0 7px 11px; font-size: 10px; font-weight: 750; color: #243751; }
 .device-status > span:last-child { display: flex; align-items: center; gap: 3px; }
-.device-camera { position: absolute; top: 1px; left: 50%; width: 56px; height: 13px; transform: translateX(-50%); background: #1b151b; border-radius: 30px; }
+.device-camera { position: absolute; top: 1px; left: 50%; width: 56px; height: 13px; transform: translateX(-50%); background: #344969; border-radius: 30px; }
 .device-pass { display: flex; flex-direction: column; min-height: 266px; padding: 10px; border-radius: 12px; color: white; box-shadow: 0 7px 13px -6px #1218165c, inset 0 1px #fff4; }
 .device-pass-whatsapp, .device-stack-whatsapp { background: linear-gradient(145deg,#086148,#168360); }
-.device-pass-email, .device-stack-email { background: linear-gradient(145deg,#8a1435,#c03153); }
+.device-pass-email, .device-stack-email { background: linear-gradient(145deg,#194b96,#4179cd); }
 .device-pass-brand { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 720; }
 .device-pass-brand .destination-mark, .device-stack .destination-mark { width: 22px; height: 22px; border-radius: 6px; }
 .device-pass-brand .destination-mark svg, .device-stack .destination-mark svg { width: 15px; height: 15px; }
@@ -27,21 +27,21 @@
 .device-pass-emblem .destination-mark { color: #fff; background: transparent; width: 52px; height: 52px; }
 .device-pass-emblem .destination-mark svg { width: 41px; height: 41px; }
 .device-pass-name { display: grid; margin-top: 5px; gap: 1px; }
-.device-pass-name span { font-size: 9px; text-transform: uppercase; letter-spacing: .08em; color: #fff3ed; }
+.device-pass-name span { font-size: 9px; text-transform: uppercase; letter-spacing: .08em; color: #f3f7ff; }
 .device-pass-name strong { font-size: 15px; line-height: 1.1; }
 .device-pass-qr { margin-top: auto; display: grid; justify-items: center; gap: 4px; padding-top: 7px; }
 .device-pass-qr .qr-code { display: block; border-radius: 3px; }
 .device-pass-qr small { font-size: 9px; }
-.device-stack { position: relative; display: flex; align-items: flex-start; gap: 6px; padding: 8px; margin: auto 0 0; min-height: 43px; border: none; border-radius: 11px 11px 0 0; color: white; text-align: left; font-size: 12px; box-shadow: 0 -4px 0 -1px #f3aeaa, 0 -7px 0 -3px #4d203b; }
+.device-stack { position: relative; display: flex; align-items: flex-start; gap: 6px; padding: 8px; margin: auto 0 0; min-height: 43px; border: none; border-radius: 11px 11px 0 0; color: white; text-align: left; font-size: 12px; box-shadow: 0 -4px 0 -1px #bdd1f4, 0 -7px 0 -3px #749cd7; }
 .device-stack > svg { margin-left: auto; margin-top: 3px; }
 .device-stack:hover { filter: brightness(1.14); }
 .device-stack:focus-visible { outline-offset: -3px; outline-color: white; }
-.landing-art figcaption { margin-top: 16px; color: #65293a; font-size: 12px; font-weight: 680; }
+.landing-art figcaption { margin-top: 16px; color: #385681; font-size: 12px; font-weight: 680; }
 .how-section { margin-top: clamp(32px,6vw,69px); scroll-margin-top: 16px; }
 .how-section h2 { font-size: clamp(32px,4.7vw,58px); line-height: 1; letter-spacing: -.062em; }
 .how-list { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 11px; padding: 0; list-style: none; margin-top: 17px; }
 .how-list li { background: var(--surface); border: 1px solid var(--line); border-radius: 17px; padding: 19px; }
-.how-icon { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 11px; color: var(--red); background: var(--blush); }
+.how-icon { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 11px; color: var(--blue); background: var(--ice); }
 .how-list h3 { margin-top: 10px; font-size: 18px; letter-spacing: -.031em; }
 .how-list p { margin-top: 5px; color: var(--muted); }
 .landing-bottom { margin-top: 18px; }
@@ -60,4 +60,17 @@
   .device-pass-emblem .destination-mark { width: 47px; height: 47px; }
   .device-pass-emblem .destination-mark svg { width: 35px; height: 35px; }
   .how-list { grid-template-columns: minmax(0,1fr); }
+}
+
+.landing-wallet-label, .device-wallet-label { display: inline-flex; align-items: center; gap: 7px; color: #304d78; font-weight: 700; }
+.landing-wallet-label { margin-bottom: 16px; font-size: 13px; }
+.device-wallet-label { margin: -2px 2px 7px; font-size: 10px; }
+.device-wallet-label .apple-wallet-mark { width: 15px; height: 15px; }
+.landing-copy h1 { font-size: clamp(43px, 5.1vw, 73px); }
+@media (max-width: 680px) {
+  .landing-copy h1 { font-size: clamp(42px, 10vw, 58px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .landing-copy { animation: settle-in .3s ease-out both; }
+  .device-pass { animation: settle-in .23s ease-out both; }
 }

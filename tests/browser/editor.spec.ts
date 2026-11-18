@@ -1,11 +1,14 @@
 import { readFile } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
 
-const save = /^Save details to add to Wallet$/;
+const save = /^Generate your Apple Wallet card$/;
 
 test("the public landing explains the steps and links to the studio", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Your contacts. In your Wallet." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Create a free contact QR for Apple Wallet." })).toBeVisible();
+  const icon = page.locator(".landing-wallet-label img");
+  await expect(icon).toBeVisible();
+  await expect.poll(() => icon.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
   await page.getByRole("button", { name: "Show Email Wallet example" }).click();
   await expect(page.getByRole("img", { name: "Example Email QR" })).toBeVisible();
@@ -39,6 +42,7 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
   await expect(page.getByRole("heading", { name: "Your card is ready." })).toBeVisible();
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Add to Apple Wallet" })).toBeDisabled();
+  await expect(page.getByText("Wallet installation coming soon.")).toBeVisible();
 
   const vcfStart = page.waitForEvent("download");
   await page.getByRole("button", { name: "vCard", exact: true }).click();
