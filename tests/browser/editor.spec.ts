@@ -54,7 +54,11 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(page.getByRole("img", { name: /Apple Wallet illustration with HSBC, Citi, American Express, WhatsApp and LinkedIn/ })).toBeVisible();
   await expect(page.locator(".stack-whatsapp .destination-mark")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(page.getByText("Open your Wallet card and let someone scan it to get your details in seconds.")).toHaveCount(0);
-  await expect(page.getByText("When someone scans your QR, they receive a vCard they can save to Contacts.")).toBeVisible();
+  await expect(page.getByText("Scan to receive a vCard you can save to Contacts.")).toBeVisible();
+  if (page.viewportSize()!.width <= 680) {
+    await expect(page.getByRole("button", { name: /Create Apple Wallet card for your WhatsApp/ })).toHaveCSS("min-height", "56px");
+    await expect(page.locator(".tile-action").first()).toHaveCSS("clip-path", "inset(50%)");
+  }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
 });
 

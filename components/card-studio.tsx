@@ -79,7 +79,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
         </div>
         <button className="universal-choice" type="button" disabled={!ready} onClick={() => create("universal")}>
           <DestinationMark kind="universal" />
-          <span><strong className="universal-title"><AppleWalletMark /> Universal card with multiple links</strong><small>When someone scans your QR, they receive a vCard they can save to Contacts.</small></span>
+          <span><strong className="universal-title"><AppleWalletMark /> Universal card with multiple links</strong><small>Scan to receive a vCard you can save to Contacts.</small></span>
           <span className="universal-arrow" aria-hidden="true"><ArrowRight size={18} /></span>
         </button>
       </section>

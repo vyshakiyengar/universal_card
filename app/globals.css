@@ -194,8 +194,8 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .stack-window { padding: 5px 4px 0; border-radius: 12px; }
   .stack-wallet-label { font-size: 9px; gap: 4px; padding: 1px 3px 5px; }
   .stack-wallet-label .apple-wallet-mark { width: 12px; height: 12px; }
-  .stack-pass { height: 40px; gap: 4px; padding: 4px 5px; border-radius: 6px 6px 0 0; font-size: 9px; line-height: 12px; }
-  .stack-pass + .stack-pass { margin-top: -20px; }
+  .stack-pass { height: 36px; gap: 4px; padding: 4px 5px; border-radius: 6px 6px 0 0; font-size: 9px; line-height: 12px; }
+  .stack-pass + .stack-pass { margin-top: -18px; }
   .stack-pass .destination-mark { width: 12px; height: 12px; }
   .stack-pass .destination-mark svg { width: 12px; height: 12px; }
   .stack-citi-word { font-size: 13px; }
@@ -207,8 +207,13 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .universal-choice > .destination-mark { width: 35px; height: 35px; }
   .universal-choice strong { font-size: 16px; }
   .destination-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
-  .destination-card { min-height: 112px; padding: 10px; }
-  .tile-action { font-size: 12px; }
+  .destination-card { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; min-height: 56px; padding: 8px 10px; }
+  .destination-card strong { font-size: 15px; line-height: 1.2; }
+  .tile-top { margin: 0; }
+  .tile-top .destination-mark { width: 29px; height: 29px; }
+  .tile-top .destination-mark svg { width: 17px; height: 17px; }
+  .tile-arrow { display: none; }
+  .tile-action { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; white-space: nowrap; clip-path: inset(50%); }
   .manage-card { grid-template-columns: auto minmax(0,1fr); gap: 9px; }
   .manage-actions { grid-column: 2; flex-wrap: wrap; }
 }
