@@ -33,6 +33,12 @@ test("the public landing explains the steps and links to the studio", async ({ p
     await expect(headerAction).toBeInViewport({ ratio: 1 });
     await expect(createAction).toBeInViewport({ ratio: 1 });
     await expect(credit).toBeInViewport({ ratio: 1 });
+    const buttonPosition = (await createAction.boundingBox())!;
+    const creditPosition = (await credit.boundingBox())!;
+    expect(creditPosition.y).toBeGreaterThan(buttonPosition.y + buttonPosition.height);
+    for (const step of await page.locator(".how-list li").all()) {
+      await expect(step).toHaveCSS("border-bottom-width", "0px");
+    }
     await createAction.click();
   } else {
     await expect(headerAction).toBeInViewport({ ratio: 1 });

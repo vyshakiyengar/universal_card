@@ -37,11 +37,11 @@ export default async function Home() {
             <li><span aria-hidden="true">3</span><h2>Add it to Apple Wallet</h2></li>
           </ol>
         </section>
+        <Link className="create-card-link mobile-create-action" href={cta}>
+          Create a free card <ArrowRight size={15} aria-hidden="true" />
+        </Link>
       </main>
       <ProjectCredit />
-      <Link className="create-card-link mobile-create-action" href={cta}>
-        Create a free card <ArrowRight size={15} aria-hidden="true" />
-      </Link>
     </>
   );
 }
