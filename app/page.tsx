@@ -32,6 +32,8 @@ export default async function Home() {
           <WalletExample />
         </section>
 
+        <p className="hero-description">Keep your contact QR in Apple Wallet, ready to share at your next meeting or networking event.</p>
+
         <section className="how-section" aria-label="How it works">
           <ol className="how-list">
             <li><span aria-hidden="true">1</span><h2>Add your contact details</h2></li>

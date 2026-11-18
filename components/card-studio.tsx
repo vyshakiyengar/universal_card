@@ -66,11 +66,13 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
     <>
       <section className="studio-hero" aria-labelledby="page-title">
         <div className="hero-copy">
-          <h1 id="page-title" tabIndex={-1}>Make networking easier with a contact QR in Apple Wallet.</h1>
+          <h1 id="page-title" tabIndex={-1}>Make networking easy with a contact QR in your Apple Wallet.</h1>
           <a className="hero-link" href="#universal-cards">Choose a card <ArrowDown size={17} /></a>
         </div>
         <WalletStack />
       </section>
+
+      <p className="hero-description">Open your Wallet card and let someone scan it to get your details in seconds.</p>
 
       <section id="universal-cards" className="chooser-section universal-section" aria-labelledby="universal-title">
         <div className="section-heading">
