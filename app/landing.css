@@ -70,10 +70,20 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
 .device-wallet-label .apple-wallet-mark { width: 19px; height: 19px; }
 .scan-example {
   width: min(100%, 920px);
-  margin: 30px auto 0;
+  margin: 6px auto 0;
 }
+.scan-example-jump {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 34px;
+  margin-inline: auto;
+  color: var(--muted);
+}
+.scan-example-jump:hover { color: var(--action); }
 .scan-example h2 {
   margin-bottom: 6px;
+  scroll-margin-top: 78px;
   font-family: var(--heading);
   font-size: clamp(23px, 3vw, 32px);
   font-weight: 640;
@@ -277,7 +287,7 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
   .device-status { margin-bottom: 5px; }
   .device-pass { min-height: 198px; }
   .device-pass-name { margin-top: 13px; }
-  .scan-example { margin-top: 23px; }
+  .scan-example { margin-top: 2px; }
   .scan-example-flow { grid-template-columns: minmax(0, 1fr); }
   .scan-example-screen { height: 165px; }
 }

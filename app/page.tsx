@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowRight, QrCode, Scan, Send } from "lucide-react";
+import { ArrowDown, ArrowRight, QrCode, Scan, Send } from "lucide-react";
 import { AppleWalletMark } from "@/components/apple-wallet-mark";
 import { DestinationMark } from "@/components/card-fields";
 import { HeyaWordmark } from "@/components/heya-wordmark";
@@ -58,6 +58,9 @@ export default async function Home() {
         </section>
 
         <section className="scan-example" aria-labelledby="how-it-works">
+          <a className="scan-example-jump" href="#how-it-works" aria-label="Go to the three steps">
+            <ArrowDown size={16} strokeWidth={1.35} aria-hidden="true" />
+          </a>
           <h2 id="how-it-works">3 simple steps</h2>
           <p className="scan-example-options">The example shows WhatsApp. The same steps work for any contact option.</p>
           <ol className="scan-example-flow" role="list">

@@ -24,6 +24,8 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(platforms).toBeVisible();
   await expect.poll(() => platforms.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   const example = page.getByRole("region", { name: "3 simple steps", exact: true });
+  await expect(example.getByRole("link", { name: "Go to the three steps" })).toHaveAttribute("href", "#how-it-works");
+  await expect(example.locator(".scan-example-jump svg")).toHaveAttribute("stroke-width", "1.35");
   await expect(example.getByRole("heading", { level: 3 })).toHaveText([
     "Create and add your card", "Someone scans your Heya card in Apple Wallet", "They open your chat or contact details",
   ]);
