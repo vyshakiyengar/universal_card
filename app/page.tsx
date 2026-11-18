@@ -26,7 +26,7 @@ export default async function Home() {
       <main className="landing">
         <section className="landing-hero" aria-labelledby="landing-title">
           <div className="landing-copy">
-            <h1 id="landing-title">Create a free contact QR for <em>Apple Wallet.</em></h1>
+            <h1 id="landing-title">Create your free contact QR cards on <em>Apple Wallet</em></h1>
             <Link className="create-card-link landing-cta" href={cta}>{createLabel} <ArrowRight size={15} aria-hidden="true" /></Link>
           </div>
           <WalletExample />

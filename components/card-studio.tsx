@@ -72,12 +72,10 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
         <WalletStack />
       </section>
 
-      <p className="hero-description">Open your Wallet card and let someone scan it to get your details in seconds.</p>
-
       <section id="universal-cards" className="chooser-section universal-section" aria-labelledby="universal-title">
         <div className="section-heading">
           <h2 id="universal-title">Universal cards</h2>
-          <p>Share multiple contact details in one QR code.</p>
+          <p>Multiple details, one QR</p>
         </div>
         <button className="universal-choice" type="button" disabled={!ready} onClick={() => create("universal")}>
           <DestinationMark kind="universal" />
@@ -89,7 +87,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
       <section id="individual-cards" className="chooser-section" aria-labelledby="individual-title">
         <div className="section-heading">
           <h2 id="individual-title">Individual cards</h2>
-          <p>One Apple Wallet card for each contact detail.</p>
+          <p>One detail per card</p>
         </div>
         <div className="destination-grid">
           {types.map((kind) => (
@@ -240,7 +238,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
         {screen.view === "manage" && (
           <>
             <div className="manage-heading">
-              <div><h1 tabIndex={-1}>Manage cards.</h1><p>{online ? "Your saved Wallet cards." : "Cards saved in this browser."}</p></div>
+              <div><h1 tabIndex={-1}>Manage cards.</h1>{!online && <p>Cards saved in this browser.</p>}</div>
               <button type="button" className="button primary" disabled={!ready || busy} onClick={() => navigate({ view: "create" })}><Plus size={18} /> Create a card</button>
             </div>
             {error && <p className="form-error" role="alert">{error}</p>}
@@ -278,8 +276,8 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
               <button className="back-button" type="button" disabled={busy} onClick={() => navigate({ view: screen.id ? "manage" : "create" })}><ArrowLeft size={18} /> {screen.id ? "Manage cards" : "All card types"}</button>
               <div className="focused-heading">
                 <div className="editor-kind"><DestinationMark kind={kind} /><span><AppleWalletMark /> Apple Wallet</span></div>
-                <h1 tabIndex={-1}>{screen.id ? `Edit your ${label} card` : kind === "universal" ? "Create a universal card" : `Create a ${label} Wallet card`}</h1>
-                <p>{kind === "universal" ? "Choose the details to share in your vCard." : (kind === "url" || kind === "website") ? "Use any web link you want your QR to open." : `Enter the destination your ${label} QR will open.`}</p>
+                <h1 tabIndex={-1}>{screen.id ? `Edit your ${label} card` : kind === "universal" ? "Create a universal card" : `Create your ${label} card`}</h1>
+                {kind === "universal" && <p>Choose the details to share in your vCard.</p>}
               </div>
               <form className="editor" onSubmit={save} noValidate>
                 <fieldset disabled={busy}>
@@ -323,7 +321,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
             <div className="result-heading">
               {screen.justSaved && <span className="saved-tick" aria-hidden="true"><Check size={22} /></span>}
               <h1 tabIndex={-1}>{screen.justSaved ? "Your card is ready." : screen.card.draft.title}</h1>
-              <p>{screen.card.draft.type === "universal" ? "Scan the QR to receive a vCard you can save to Contacts." : (screen.card.draft.kind === "url" || screen.card.draft.kind === "website") ? "Scan the QR to open this link." : `Scan the QR to open ${destinations[screen.card.draft.kind].label}.`}</p>
+              {screen.card.draft.type === "universal" && <p>Scan the QR to receive a vCard you can save to Contacts.</p>}
             </div>
             <CardPreview draft={screen.card.draft} preview={screen.preview} walletUrl={online && walletConfigured ? `/api/cards/${screen.card.id}/wallet` : undefined} />
             <button className="button secondary result-edit" type="button" onClick={() => edit(screen.card)}><PenLine size={16} /> Edit details</button>

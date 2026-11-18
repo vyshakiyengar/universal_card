@@ -8,9 +8,9 @@ export function WalletStack() {
         <div className="stack-wallet-label"><AppleWalletMark /> Apple Wallet</div>
         <div className="stack-passes">
           <div className="stack-pass stack-hsbc">
-            <svg viewBox="0 0 36 20" width="26" height="15" aria-hidden="true">
-              <path fill="#fff" d="M8 0h20l8 10-8 10H8L0 10z" />
-              <path fill="#e21932" d="m8 0 10 10L8 20 0 10zm20 0 8 10-8 10-10-10zM8 0h20L18 10zm0 20 10-10 10 10z" />
+            <svg viewBox="0 0 36 18" width="26" height="13" aria-hidden="true">
+              <path fill="#e21932" d="M9 0h18l9 9-9 9H9L0 9z" />
+              <path fill="#fff" d="M9 0l9 9-9 9zm18 0v18l-9-9z" />
             </svg>
             <span>HSBC</span>
           </div>

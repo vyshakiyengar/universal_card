@@ -5,7 +5,7 @@ const save = /^Generate your Apple Wallet card$/;
 
 test("the public landing explains the steps and links to the studio", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Create a free contact QR for Apple Wallet." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Create your free contact QR cards on Apple Wallet" })).toBeVisible();
   const icon = page.locator(".device-wallet-label img");
   await expect(icon).toBeVisible();
   await expect.poll(() => icon.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
@@ -48,6 +48,8 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(credit).toHaveAttribute("href", "https://vyshak.me");
   await expect(page.getByRole("heading", { name: "Individual cards" })).toBeVisible();
   await expect(page.getByRole("img", { name: /Apple Wallet illustration with HSBC, Citi, American Express, WhatsApp and LinkedIn/ })).toBeVisible();
+  await expect(page.locator(".stack-whatsapp .destination-mark")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(page.getByText("Open your Wallet card and let someone scan it to get your details in seconds.")).toHaveCount(0);
   await expect(page.getByText("When someone scans your QR, they receive a vCard they can save to Contacts.")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
 });
