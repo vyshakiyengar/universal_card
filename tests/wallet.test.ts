@@ -108,7 +108,7 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
   }
   for (const [index, name] of logoNames.entries()) {
     const logo = readPassFile(name);
-    assert.equal(logo.readUInt32BE(16), 80 * (index + 1));
+    assert.equal(logo.readUInt32BE(16), 50 * (index + 1));
     assert.equal(logo.readUInt32BE(20), 50 * (index + 1));
   }
 

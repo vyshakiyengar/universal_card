@@ -136,3 +136,13 @@ test("saved values work in both directions without replacing details already ent
   assert.deepEqual(combined.emails, contact.emails);
   assert.ok(makeCardPayload(combined).payload.includes("URL:https://vyshak.me/"));
 });
+
+test("Website, Custom link and Universal website fields accept bare domains", () => {
+  for (const value of ["company.org", "www.museum.co.uk/visit", "bücher.de/katalog?q=1#top"]) {
+    const target = new URL(`https://${value}`).href;
+    for (const kind of ["url", "website"]) {
+      assert.equal(makeCardPayload({ type: "individual", title: "Web", kind, value }).payload, target);
+      assert.ok(makeCardPayload({ type: "universal", title: "Web", links: [{ kind, value }] }).payload.includes("URL:" + target));
+    }
+  }
+});

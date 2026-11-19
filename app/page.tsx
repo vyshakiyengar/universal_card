@@ -99,6 +99,14 @@ export default async function Home() {
           </ol>
         </section>
 
+        <section className="landing-faq" aria-labelledby="faq-heading">
+          <h2 id="faq-heading">Frequently asked questions</h2>
+          <details><summary>Is Heya free?</summary><p>Yes. You can create, save and share your contact cards for free.</p></details>
+          <details><summary>Which card should I create?</summary><p>Choose Universal to share several contact details in one scan. Choose Individual to open one destination, such as a WhatsApp chat or your website.</p></details>
+          <details><summary>Does the person scanning need Heya?</summary><p>No account is needed. A compatible phone camera can read the QR. Anyone who has the image can scan the details you included.</p></details>
+          <details><summary>How can I share my card?</summary><p>Open it in Manage cards to show the QR, share the full card image, or download a PNG. Universal cards also include a downloadable vCard for Contacts.</p></details>
+        </section>
+
         <Link className="create-card-link mobile-create-action" href={cta}>
           {createLabel} <ArrowRight size={15} aria-hidden="true" />
         </Link>

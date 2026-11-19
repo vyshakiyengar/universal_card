@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, Check, LayoutGrid, PenLine, Plus, QrCode, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, Check, LayoutGrid, PenLine, Plus, Trash2 } from "lucide-react";
 import { cardKindLabels, cardLimits, makeCardPayload, type CardInput, type DestinationKind } from "@/lib/cards";
 import { prepareCardPhoto } from "@/lib/card-photo";
 import { savedDetail, addIndividualDetails } from "@/lib/saved-details";
@@ -155,7 +155,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
   }
 
   function create(kind: EntryKind) {
-    const draft = newDraft(kind, account?.firstName ?? "");
+    let draft = newDraft(kind, account?.firstName ?? "");
     if (draft.type === "individual") {
       const previous = savedDetail(cards.map(card => card.draft), draft.kind);
       if (previous) {
@@ -163,6 +163,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
         draft.name = previous.name || draft.name;
       }
     }
+    if (draft.type === "universal") draft = addIndividualDetails(draft, cards.map(card => card.draft));
     navigate({ view: "edit", draft, original: draft });
   }
 
@@ -262,12 +263,14 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
                 const title = card.draft.title;
                 return (
                   <li className="manage-card" key={card.id}>
-                    <DestinationMark kind={kind} />
-                    <div className="managed-name"><strong>{title}</strong><small>{card.draft.type === "individual" ? card.draft.value : "Universal contact"}</small><span className="managed-wallet"><AppleWalletMark /> Apple Wallet</span></div>
+                    <button className="managed-open" type="button" disabled={busy} aria-label={`Open ${title}`} onClick={() => open(card)}>
+                      <DestinationMark kind={kind} />
+                      <span className="managed-name"><strong>{title}</strong><small>{card.draft.type === "individual" ? card.draft.value : card.draft.name || "Universal contact"}</small></span>
+                      <ArrowRight size={16} />
+                    </button>
                     <div className="manage-actions">
-                      <button className="button secondary" type="button" disabled={busy} aria-label={`Open ${title}`} onClick={() => open(card)}><QrCode size={16} /> Open</button>
-                      <button className="button secondary" type="button" disabled={busy} aria-label={`Edit ${title}`} onClick={() => edit(card)}><PenLine size={16} /> Edit</button>
-                      <button className="icon-button delete-button" type="button" disabled={busy} aria-label={`Delete ${title}`} onClick={() => void remove(card)}><Trash2 size={17} /></button>
+                      <button className="icon-button" type="button" disabled={busy} aria-label={`Edit ${title}`} title="Edit" onClick={() => edit(card)}><PenLine size={16} /></button>
+                      <button className="icon-button delete-button" type="button" disabled={busy} aria-label={`Delete ${title}`} title="Delete" onClick={() => void remove(card)}><Trash2 size={16} /></button>
                     </div>
                   </li>
                 );
@@ -325,8 +328,6 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
                       {draft.photo && <div><img src={draft.photo} alt="Card photo" width={48} height={48} />
                         <button type="button" className="text-button" onClick={() => change({ ...draft, photo: undefined })}>Remove photo</button></div>}
                     </div>
-                    {cards.some(card => card.draft.type === "individual") && <button type="button" className="text-button"
-                      onClick={() => change(addIndividualDetails(draft, cards.map(card => card.draft)))}>Use saved individual details</button>}
                     <UniversalFields draft={draft} onChange={change} />
                   </>}
                   {editing.id && (
@@ -356,8 +357,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
               {screen.arrival !== "opened" && <span className="saved-tick"><Check size={12} aria-hidden="true" /><span className="visually-hidden" role="status">Card saved.</span></span>}
               <h1 tabIndex={-1}>Your {cardKindLabels[getKind(screen.card.draft)]} Heya Card</h1>
             </div>
-            <CardPreview created={screen.arrival === "created"} draft={screen.card.draft} preview={screen.preview} walletUrl={online && walletConfigured ? `/api/cards/${screen.card.id}/wallet` : undefined} />
-            <button className="button secondary result-edit" type="button" onClick={() => edit(screen.card)}><PenLine size={16} /> Edit details</button>
+            <CardPreview onEdit={() => edit(screen.card)} created={screen.arrival === "created"} draft={screen.card.draft} preview={screen.preview} walletUrl={online && walletConfigured ? `/api/cards/${screen.card.id}/wallet` : undefined} />
           </div>
         )}
       </main>

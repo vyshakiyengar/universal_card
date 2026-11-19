@@ -159,16 +159,18 @@ test("landing rotates every 1.5 seconds with reduced motion and can pause", asyn
   await expect(pause).toBeVisible();
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
   await expect(page.locator(".device-pass")).toHaveCSS("animation-name", "none");
+  const sampleHeight = await page.locator(".device-pass").evaluate(card => card.clientHeight);
   for (const label of ["Universal card", "Email", "LinkedIn", "Instagram", "Phone", "Website", "Custom link", "Snapchat", "WhatsApp"]) {
     await page.clock.runFor(1_500);
     await expect(page.getByRole("img", { name: `Example ${label} QR` })).toBeVisible();
+    expect(await page.locator(".device-pass").evaluate(card => card.clientHeight)).toBe(sampleHeight);
   }
   await pause.click();
   await page.clock.runFor(3_000);
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
 });
 
-test("shares the public Heya link and the saved QR image with browser fallbacks", async ({ page }) => {
+test("shares and downloads the full card image with browser fallbacks", async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperties(navigator, {
       canShare: { configurable: true, value: () => true },
@@ -189,22 +191,18 @@ test("shares the public Heya link and the saved QR image with browser fallbacks"
   await page.goto("/");
   const footerShare = page.getByRole("button", { name: "Share Heya with friends" });
   const documentRoot = page.locator("html");
-  const site = "https://www.heya.cards/";
-  await footerShare.click();
-  await expect(documentRoot).toHaveAttribute("data-shared", JSON.stringify({ url: site }));
-  await page.evaluate(() => Object.defineProperty(navigator, "canShare", { configurable: true, value: () => false }));
-  await footerShare.click();
-  await expect(documentRoot).toHaveAttribute("data-copied", site);
-  await expect(page.getByText("Heya link copied.")).toBeVisible();
-
+  await expect(footerShare).toHaveCount(0);
+  const faq = page.getByRole("region", { name: "Frequently asked questions" });
+  await faq.getByText("How can I share my card?").click();
+  await expect(faq.getByText(/share the full card image/)).toBeVisible();
   await page.goto("/studio");
-  await expect(footerShare).toBeVisible();
-  await expect(page.getByRole("button", { name: "Share QR" })).toHaveCount(0);
+  await expect(footerShare).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Share card" })).toHaveCount(0);
   await page.getByRole("button", { name: /Create Apple Wallet card for your Email/ }).click();
   await page.getByLabel("Email address").fill("alex@example.com");
   await page.getByRole("button", { name: save }).click();
   const qr = page.getByRole("img", { name: "Scannable card QR" });
-  const share = page.getByRole("button", { name: "Share QR" });
+  const share = page.getByRole("button", { name: "Share card" });
   await expect(qr).toBeVisible();
   await share.click();
   await expect(documentRoot).toHaveAttribute("data-shared", JSON.stringify({
@@ -216,8 +214,12 @@ test("shares the public Heya link and the saved QR image with browser fallbacks"
   await page.evaluate(() => Object.defineProperty(navigator, "canShare", { configurable: true, value: () => false }));
   const download = page.waitForEvent("download");
   await share.click();
-  expect((await download).suggestedFilename()).toBe("Email.png");
-  await expect(page.getByText("QR image downloaded.")).toBeVisible();
+  const sharedDownload = await download;
+  expect(sharedDownload.suggestedFilename()).toBe("Email.png");
+  const png = await readFile(await sharedDownload.path());
+  expect(png.readUInt32BE(16)).toBe(1260);
+  expect(png.readUInt32BE(20)).toBeGreaterThan(png.readUInt32BE(16));
+  await expect(page.getByText("Card image downloaded.")).toBeVisible();
 });
 
 test("save a Universal card before producing a QR, export it and reopen it", async ({ page }) => {
@@ -257,7 +259,7 @@ test("save a Universal card before producing a QR, export it and reopen it", asy
   expect(content).toContain("\r\nEMAIL;TYPE=home:zoe.home@example.com\r\n");
 
   const pngStart = page.waitForEvent("download");
-  await page.getByRole("button", { name: "QR image" }).click();
+  await page.getByRole("button", { name: "Download card" }).click();
   const png = await pngStart;
   expect((await readFile(await png.path())).subarray(0, 8).toString("hex")).toBe("89504e470d0a1a0a");
 
@@ -406,4 +408,18 @@ test("a Universal photo stays off the QR and saved details prefill new cards", a
   await page.getByRole("button", { name: "Create cards", exact: true }).click();
   await page.getByRole("button", { name: /Create Apple Wallet card for your LinkedIn/ }).click();
   await expect(page.getByLabel("LinkedIn profile URL")).toHaveValue("https://www.linkedin.com/in/example");
+});
+
+test("new Universal cards open with saved individual values already in editable fields", async ({ page }) => {
+  await page.goto("/studio");
+  await page.getByRole("button", { name: /Create Apple Wallet card for your website/ }).click();
+  await page.getByLabel("Website URL").fill("museum.example.org/exhibitions");
+  await page.getByRole("button", { name: save }).click();
+  await page.getByRole("button", { name: "Create cards", exact: true }).click();
+  await page.getByRole("button", { name: /^Universal card Scanning/ }).click();
+  await expect(page.getByLabel("Link 1", { exact: true })).toHaveValue("museum.example.org/exhibitions");
+  await expect(page.getByRole("button", { name: /Use saved individual details/ })).toHaveCount(0);
+  await page.getByLabel("Link 1", { exact: true }).fill("another.example.com");
+  await page.getByRole("button", { name: save }).click();
+  await expect(page.getByRole("heading", { name: "Your Universal Heya Card" })).toBeVisible();
 });

@@ -60,7 +60,7 @@ export function WalletExample() {
           <div className="device-wallet-label"><AppleWalletMark /> Apple Wallet</div>
           <div className="device-pass" style={walletSurfaceStyle(kind)} key={kind}>
             <div className="device-pass-brand"><DestinationMark kind={kind} /> {label}</div>
-            <div className="device-pass-name"><strong>Alan Turing</strong><span className="pass-links" aria-hidden="true" /></div>
+            <div className="device-pass-name"><strong>Alan Turing</strong></div>
             <div className="device-pass-qr">
               <QrGraphic code={active} label={`Example ${label} QR`} maxWidth={91} />
               <small>{walletCardDesign(kind).action}</small>

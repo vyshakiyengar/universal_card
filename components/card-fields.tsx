@@ -11,8 +11,8 @@ export const destinations = {
   phone: { label: cardKindLabels.phone, field: "Phone number", hint: "+44 7700 900123", inputType: "tel" },
   instagram: { label: cardKindLabels.instagram, field: "Instagram username or URL", hint: "@yourname", inputType: "text" },
   snapchat: { label: cardKindLabels.snapchat, field: "Snapchat username or profile link", hint: "@yourname", inputType: "text" },
-  website: { label: cardKindLabels.website, field: "Website URL", hint: "https://example.com", inputType: "url" },
-  url: { label: cardKindLabels.url, field: "Link URL", hint: "https://example.com", inputType: "url" },
+  website: { label: cardKindLabels.website, field: "Website URL", hint: "example.com", inputType: "url" },
+  url: { label: cardKindLabels.url, field: "Link URL", hint: "example.com", inputType: "url" },
 } as const;
 
 export const scanDescriptions = {

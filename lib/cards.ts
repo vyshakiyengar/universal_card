@@ -196,7 +196,7 @@ function destinationValue(kind: DestinationKind, value: string): string {
     case "website":
     case "url": {
       const bareDomain = /^(?:[\p{L}\p{N}-]+\.)+[\p{L}\p{N}-]+(?::\d+)?(?:[/?#]|$)/u.test(value);
-      const url = readWebUrl(bareDomain ? `https://${value}` : value, "Enter a web address, such as vyshak.me.");
+      const url = readWebUrl(bareDomain ? `https://${value}` : value, "Enter a web address, such as example.com.");
       const path = `${url.pathname}${url.search}${url.hash}`;
       // WHATWG URLs can leave some characters unescaped that RFC 3986 excludes from URI values.
       return url.origin + path.replace(/[\[\]^|]/g, (character) => encodeURIComponent(character));
