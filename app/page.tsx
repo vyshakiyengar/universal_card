@@ -42,17 +42,7 @@ export default async function Home() {
           <div className="landing-copy">
             <h1 id="landing-title">Create your free <span>contact cards</span> for <em>Apple Wallet</em></h1>
             <p className="landing-intro">{introduction}</p>
-            <div className="landing-actions">
-              <Link className="create-card-link landing-cta" href={cta}>{createLabel} <ArrowRight size={15} aria-hidden="true" /></Link>
-              <Image
-                className="landing-platforms"
-                src="/images/landing-platforms.png"
-                alt="Available card types include WhatsApp, phone, Instagram, email, LinkedIn, Snapchat, website, custom link and Universal card"
-                width={216}
-                height={22}
-                unoptimized
-              />
-            </div>
+            <Link className="create-card-link landing-cta" href={cta}>{createLabel} <ArrowRight size={15} aria-hidden="true" /></Link>
           </div>
           <WalletExample />
         </section>
@@ -92,7 +82,7 @@ export default async function Home() {
                   </div>
                 </div>
               </div>
-              <h3>Someone scans your Heya card in Apple Wallet</h3>
+              <h3>Someone scans the QR code on your Heya card in the Apple Wallet</h3>
             </li>
             <li>
               <div className="scan-example-screen scan-example-chat" aria-hidden="true">

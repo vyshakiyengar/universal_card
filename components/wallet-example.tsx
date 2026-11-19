@@ -29,7 +29,7 @@ const examples = {
 } as const;
 
 const exampleKinds = ["whatsapp", "universal", "email", "linkedin", "instagram", "phone", "website", "url", "snapchat"] as const;
-const rotationDelay = 1_250;
+const rotationDelay = 1_500;
 
 function exampleLabel(kind: (typeof exampleKinds)[number]) {
   return kind === "universal" ? "Universal card" : destinations[kind].label;

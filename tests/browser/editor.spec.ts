@@ -23,12 +23,14 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(tray.locator(".destination-mark")).toHaveCount(9);
   await expect(tray).toHaveCSS("background-color", "rgb(239, 239, 237)");
   await expect(tray.locator('[data-active="true"] .destination-mark')).toHaveCSS("color", "rgb(55, 59, 56)");
-  const platforms = page.locator(".landing-platforms");
+  await expect(page.locator(".landing-platforms")).toHaveCount(0);
   const example = page.getByRole("region", { name: "3 simple steps", exact: true });
   await expect(example.getByRole("link", { name: "Go to the three steps" })).toHaveAttribute("href", "#how-it-works");
   await expect(example.locator(".scan-example-jump svg")).toHaveAttribute("stroke-width", "1.35");
   await expect(example.getByRole("heading", { level: 3 })).toHaveText([
-    "Create and add your Heya card in Apple Wallet", "Someone scans your Heya card in Apple Wallet", "They open your chat or contact details",
+    "Create and add your Heya card in Apple Wallet",
+    "Someone scans the QR code on your Heya card in the Apple Wallet",
+    "They open your chat or contact details",
   ]);
   await expect(example.locator(".scan-example-flow p")).toHaveCount(0);
   await expect(example.locator(".scan-camera-wallet")).toHaveText("Apple Wallet");
@@ -52,7 +54,6 @@ test("the public landing explains the steps and links to the studio", async ({ p
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
 
   if (page.viewportSize()!.width <= 680) {
-    await expect(platforms).toBeHidden();
     await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" }));
     await expect(headerAction).toBeInViewport({ ratio: 1 });
     await expect(createAction).toBeInViewport({ ratio: 1 });
@@ -64,12 +65,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
     expect(buttonPosition.y).toBeGreaterThan(examplePosition.y + examplePosition.height);
     await createAction.click();
   } else {
-    await expect(platforms).toBeVisible();
-    await expect(platforms).toHaveCSS("width", "216px");
-    await expect.poll(() => platforms.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
-    const buttonPosition = (await createAction.boundingBox())!;
-    const platformsPosition = (await platforms.boundingBox())!;
-    expect(platformsPosition.x).toBeGreaterThan(buttonPosition.x + buttonPosition.width);
+    await expect(createAction).toBeInViewport({ ratio: 1 });
     await expect(headerAction).toBeInViewport({ ratio: 1 });
     await headerAction.click();
   }
@@ -130,7 +126,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
 });
 
-test("landing rotates every 1.25 seconds with reduced motion and can pause", async ({ page }) => {
+test("landing rotates every 1.5 seconds with reduced motion and can pause", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.clock.install();
   await page.goto("/");
@@ -139,11 +135,11 @@ test("landing rotates every 1.25 seconds with reduced motion and can pause", asy
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
   await expect(page.locator(".device-pass")).toHaveCSS("animation-name", "none");
   for (const label of ["Universal card", "Email", "LinkedIn", "Instagram", "Phone", "Website", "Custom link", "Snapchat", "WhatsApp"]) {
-    await page.clock.runFor(1_250);
+    await page.clock.runFor(1_500);
     await expect(page.getByRole("img", { name: `Example ${label} QR` })).toBeVisible();
   }
   await pause.click();
-  await page.clock.runFor(2_500);
+  await page.clock.runFor(3_000);
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
 });
 
