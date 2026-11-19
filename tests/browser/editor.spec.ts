@@ -32,6 +32,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
     "Someone scans the QR code on your Heya card in the Apple Wallet",
     "They open your chat or contact details",
   ]);
+  await expect(example.getByText("It’s free!", { exact: true })).toHaveCSS("color", "rgb(36, 91, 89)");
   await expect(example.locator(".scan-example-flow p")).toHaveCount(0);
   await expect(example.locator(".scan-camera-wallet")).toHaveText("Apple Wallet");
   await expect(example.locator(".scan-camera-wallet img")).toHaveCSS("width", "18px");
@@ -80,6 +81,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(explore).toHaveCSS("border-top-style", "none");
   const freeNote = page.getByText("It’s free!", { exact: true });
   await expect(freeNote).toBeVisible();
+  await expect(freeNote).toHaveCSS("color", "rgb(36, 91, 89)");
   expect((await freeNote.boundingBox())!.y).toBeGreaterThanOrEqual((await explore.boundingBox())!.y + (await explore.boundingBox())!.height);
   await expect(credit).toHaveAttribute("href", "https://vyshak.me");
   await expect(credit).toHaveCSS("text-decoration-line", "underline");

@@ -71,7 +71,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
           </h1>
           <div className="hero-actions">
             <a className="hero-link" href="#universal-cards">Explore Heya cards <ArrowDown size={17} aria-hidden="true" /></a>
-            <p className="hero-note">It’s free!</p>
+            <p className="hero-note free-accent">It’s free!</p>
           </div>
         </div>
         <WalletStack />

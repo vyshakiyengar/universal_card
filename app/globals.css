@@ -80,7 +80,8 @@ a.brand { text-decoration: none; }
 .hero-actions { display: grid; justify-items: start; margin-top: 17px; }
 .hero-link { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding-block: 7px; color: var(--action); font-size: 12px; font-weight: 560; text-decoration: none; }
 .hero-link:hover { color: var(--action-hover); text-decoration: underline; text-underline-offset: 3px; }
-.hero-note { color: var(--muted); font-size: 11px; font-weight: 410; }
+.hero-note { font-size: 11px; font-weight: 410; }
+.free-accent { color: var(--accent-teal); white-space: nowrap; }
 .wallet-stack { width: min(100%, 295px); margin: 0; padding: 24px 17px; justify-self: center; }
 .stack-window {
   position: relative;
