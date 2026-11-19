@@ -39,7 +39,7 @@ export async function makeCardImage(options: {
   const design = walletCardDesign(kind);
   const svg = mark.cloneNode(true) as SVGSVGElement;
   svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-  svg.setAttribute("color", design.foreground);
+  svg.setAttribute("color", design.surfaceInk);
   svg.setAttribute("width", "60");
   svg.setAttribute("height", "60");
   const [platform, wallet, portrait] = await Promise.all([
@@ -68,10 +68,15 @@ export async function makeCardImage(options: {
   ctx.roundRect(0, 0, width, height, 20);
   ctx.clip();
   const wash = ctx.createLinearGradient(0, top, width, 0);
-  wash.addColorStop(0, design.background);
-  wash.addColorStop(.55, design.middle);
+  wash.addColorStop(0, design.base);
+  wash.addColorStop(.5, design.middle);
   wash.addColorStop(1, design.light);
   ctx.fillStyle = wash;
+  ctx.fillRect(0, 0, width, top);
+  const sheen = ctx.createRadialGradient(width, 0, 0, width, 0, Math.max(width, top) * .74);
+  sheen.addColorStop(0, design.glow);
+  sheen.addColorStop(1, design.glow + "00");
+  ctx.fillStyle = sheen;
   ctx.fillRect(0, 0, width, top);
   ctx.save();
   ctx.beginPath(); ctx.rect(0, 0, width, top); ctx.clip();
@@ -80,7 +85,7 @@ export async function makeCardImage(options: {
     ctx.beginPath(); ctx.ellipse(525, top+170, r, r*.72, -.3, 0, 2*Math.PI); ctx.stroke();
   }
   ctx.restore();
-  ctx.fillStyle = design.foreground;
+  ctx.fillStyle = design.surfaceInk;
   ctx.drawImage(platform, 23, 21, 20, 20);
   ctx.font = '650 16px "Instrument Sans Variable", sans-serif';
   ctx.fillText(label, 51, 37);
