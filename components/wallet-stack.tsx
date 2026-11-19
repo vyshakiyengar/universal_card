@@ -1,3 +1,4 @@
+import { walletSurfaceStyle } from "@/lib/wallet-card-design";
 import { buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
 import { DestinationMark } from "./card-fields";
@@ -27,9 +28,9 @@ export function WalletStack() {
               </div>
             </div>
             <div className="stack-pass stack-citi"><div className="stack-pass-label"><span className="stack-citi-word">citi</span></div></div>
-            <div className="stack-pass stack-linkedin"><div className="stack-pass-label"><DestinationMark kind="linkedin" /> LinkedIn</div></div>
+            <div className="stack-pass stack-linkedin" style={walletSurfaceStyle("linkedin")}><div className="stack-pass-label"><DestinationMark kind="linkedin" /> LinkedIn</div></div>
             <div className="stack-pass stack-universal"><div className="stack-pass-label"><DestinationMark kind="universal" /> Universal card</div></div>
-            <div className="stack-pass stack-whatsapp">
+            <div className="stack-pass stack-whatsapp" style={walletSurfaceStyle("whatsapp")}>
               <div className="stack-pass-label"><DestinationMark kind="whatsapp" /> WhatsApp</div>
               <div className="stack-details">
                 <strong>Alan Turing</strong>

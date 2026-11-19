@@ -106,6 +106,13 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
           ))}
         </div>
       </section>
+      <aside className="studio-faq" aria-label="Studio FAQ">
+        <details className="faq-question">
+          <summary>What will someone see when they scan my card?</summary>
+          <div><p>A Universal card opens a contact they can review and save. An Individual card takes them to the destination you chose. For example, a WhatsApp card opens your chat.</p>
+            <p><Link href="/faq">Explore the Heya FAQ</Link></p></div>
+        </details>
+      </aside>
     </>
   );
 }

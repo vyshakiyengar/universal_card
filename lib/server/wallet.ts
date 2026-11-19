@@ -95,7 +95,7 @@ export function createWalletPass(
   buildCardQr(payload);
   const kind = card.type === "universal" ? "universal" : card.kind;
   const label = kind === "universal" ? "Universal card" : cardKindLabels[kind];
-  const { background, action } = walletCardDesign(kind);
+  const { background, foreground, action } = walletCardDesign(kind);
   const assets = join(process.cwd(), "lib/server/wallet-assets");
 
   const pass = new PKPass(
@@ -128,8 +128,8 @@ export function createWalletPass(
       description: "Heya Cards business card",
       logoText: label,
       backgroundColor: background,
-      foregroundColor: "rgb(255, 255, 255)",
-      labelColor: "rgb(220, 233, 255)",
+      foregroundColor: foreground,
+      labelColor: foreground,
     },
   );
 

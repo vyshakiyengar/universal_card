@@ -118,9 +118,9 @@ a.brand { text-decoration: none; }
 .stack-citi { --layer: 1; background: linear-gradient(108deg,#d7eaf6,#9dbed8); color: #163e69; }
 .stack-citi-word { position: relative; font-size: clamp(7px, 5.7cqi, 16px); font-weight: 710; letter-spacing: -.055em; }
 .stack-citi-word::before { position: absolute; content: ""; width: 4.8cqi; height: 2.2cqi; border-top: 1px solid #ca303d; border-radius: 50%; left: 1.7cqi; top: -1.1cqi; }
-.stack-linkedin { --layer: 2; background: linear-gradient(105deg,#143e6c,#205d91); }
+.stack-linkedin { --layer: 2; background: linear-gradient(105deg,var(--pass-background),var(--pass-light)); color: var(--pass-ink); }
 .stack-universal { --layer: 3; background: linear-gradient(110deg,#f4f3eb,#dcdccd); color: #2b433b; }
-.stack-whatsapp { --layer: 4.1; background: radial-gradient(ellipse at 107% 40%, #5aa98b50, transparent 56%), linear-gradient(140deg,#0a4939,#106850 76%); }
+.stack-whatsapp { --layer: 4.1; background: linear-gradient(140deg,var(--pass-background),var(--pass-light)); color: var(--pass-ink); }
 .stack-whatsapp .stack-pass-label { padding-block: 2.9cqi; font-size: clamp(7px, 5cqi, 14px); }
 .stack-pass .destination-mark { width: 5.7cqi; height: 5.7cqi; background: transparent; color: inherit; }
 .stack-pass .destination-mark svg { width: 100%; height: 100%; }
@@ -151,9 +151,9 @@ a.brand { text-decoration: none; }
 .mark-linkedin { color: #0663a6; background: #e4f1fb; }
 .mark-whatsapp { color: #17643f; background: #e1f4e8; }
 .mark-instagram { color: #a71f59; background: #fce7ee; }
-.mark-snapchat { color: #5f4b0b; background: #fff3b7; }
+.mark-snapchat { color: #121d16; background: #fffc00; }
 .mark-email { color: #245394; background: #e8f2ff; }
-.mark-phone { color: #4b5aa1; background: #ecf0ff; }
+.mark-phone { color: #136535; background: #e2f5e8; }
 .mark-url { color: #1d6474; background: #e4f1f2; }
 .universal-choice { width: 100%; display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 14px; padding: 17px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-align: left; border-radius: 12px; transition: box-shadow .18s ease, border-color .18s ease; }
 .mark-universal { background: #e9eff5; color: var(--action); }
@@ -224,15 +224,14 @@ input::placeholder { color: var(--muted); opacity: 1; }
 }
 .pass-face, .device-pass {
   background-color: var(--pass-background);
-  background-image: radial-gradient(ellipse at 106% -18%, var(--pass-light), transparent 66%),
-    linear-gradient(135deg, transparent 22%, #0610113d);
+  background-image: linear-gradient(48deg, var(--pass-background), var(--pass-middle) 55%, var(--pass-light));
 }
 .pass-face {
   position: relative;
   isolation: isolate;
   overflow: hidden;
   padding: clamp(16px, 5.5cqi, 25px);
-  color: #fffcf4;
+  color: var(--pass-ink);
 }
 .pass-face::before {
   content: "";
@@ -246,7 +245,7 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .pass-platform { display: inline-flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 660; line-height: 1.15; }
 .pass-platform .destination-mark { width: 21px; height: 21px; background: transparent; color: inherit; }
 .pass-platform .destination-mark svg { width: 20px; height: 20px; }
-.pass-wallet { display: inline-flex; align-items: center; gap: 5px; color: #f2f3ed; font-size: 10px; font-weight: 550; white-space: nowrap; }
+.pass-wallet { display: inline-flex; align-items: center; gap: 5px; color: inherit; font-size: 10px; font-weight: 550; white-space: nowrap; }
 .pass-wallet .apple-wallet-mark { width: 14px; height: 14px; }
 .pass-identity {
   display: grid;
@@ -259,7 +258,7 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .pass-holder { min-width: 0; }
 .pass-name { font: 485 clamp(28px, 10.1cqi, 47px)/1.03 var(--heading); letter-spacing: -.047em; text-wrap: balance; overflow-wrap: anywhere; }
 .pass-name[data-long="true"] { font-size: clamp(23px, 7cqi, 31px); }
-.pass-detail { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 8px; color: #eef1e7; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
+.pass-detail { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 8px; color: inherit; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
 .pass-links {
   display: block;
   aspect-ratio: 1;
@@ -434,3 +433,18 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .pass-photo { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 1px solid #ffffff80; }
 .photo-field > div { display: flex; align-items: center; gap: 10px; }
 .photo-field img { border-radius: 50%; }
+
+.studio-faq { margin-top: 28px; }
+.faq-page { width: min(calc(100% - 36px), 720px); margin: 0 auto; padding: clamp(34px, 6vw, 76px) 0; }
+.faq-page h1 { font: 560 clamp(34px, 6vw, 57px)/1.06 var(--heading); letter-spacing: -.04em; }
+.faq-page section { margin-top: clamp(26px, 5vw, 48px); }
+.faq-page h2 { margin: 0 0 8px; font: 550 clamp(21px, 3.5vw, 29px)/1.15 var(--heading); color: var(--action); }
+.faq-question { border-bottom: 1px solid var(--line); }
+.faq-question summary { padding: 15px 0; cursor: pointer; font-weight: 580; }
+.faq-question > div { max-width: 64ch; padding-bottom: 16px; color: var(--muted); }
+.faq-question p + p { margin-top: 10px; }
+.faq-question strong { color: var(--ink); font-weight: 600; }
+.faq-destinations { margin: 0 0 14px; display: grid; grid-template-columns: auto minmax(0,1fr); gap: 9px 16px; }
+.faq-destinations dt { font-weight: 620; color: var(--ink); }
+.faq-destinations dd { margin: 0; }
+.faq-more { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 8px; color: var(--action); font-weight: 550; }

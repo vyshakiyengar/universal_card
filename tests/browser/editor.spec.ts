@@ -193,8 +193,8 @@ test("shares and downloads the full card image with browser fallbacks", async ({
   const documentRoot = page.locator("html");
   await expect(footerShare).toHaveCount(0);
   const faq = page.getByRole("region", { name: "Frequently asked questions" });
-  await faq.getByText("How can I share my card?").click();
-  await expect(faq.getByText(/share the full card image/)).toBeVisible();
+  await faq.getByText("How does someone scan my card?").click();
+  await expect(faq.getByText(/point it at the whole square/)).toBeVisible();
   await page.goto("/studio");
   await expect(footerShare).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Share card" })).toHaveCount(0);
@@ -422,4 +422,20 @@ test("new Universal cards open with saved individual values already in editable 
   await page.getByLabel("Link 1", { exact: true }).fill("another.example.com");
   await page.getByRole("button", { name: save }).click();
   await expect(page.getByRole("heading", { name: "Your Universal Heya Card" })).toBeVisible();
+});
+
+
+test("the public FAQ is reachable from the landing page and Studio", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: /Read the full FAQ/ }).click();
+  await expect(page).toHaveURL(/\/faq$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Frequently asked questions");
+  await page.getByText("What opens when someone scans an Individual card?", { exact: true }).click();
+  await expect(page.locator(".faq-destinations dt")).toHaveCount(8);
+  await expect(page.getByText(/A chat with your number/)).toBeVisible();
+  await page.getByText("How do I add my Heya card to Apple Wallet?", { exact: true }).click();
+  await expect(page.getByText(/Wallet installation coming soon/)).toBeVisible();
+  await page.goto("/studio");
+  await page.getByRole("contentinfo").getByRole("link", { name: "FAQ" }).click();
+  await expect(page.getByRole("heading", { name: "Getting started" })).toBeVisible();
 });
