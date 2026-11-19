@@ -28,7 +28,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(example.getByRole("link", { name: "Go to the three steps" })).toHaveAttribute("href", "#how-it-works");
   await expect(example.locator(".scan-example-jump svg")).toHaveAttribute("stroke-width", "1.35");
   await expect(example.getByRole("heading", { level: 3 })).toHaveText([
-    "Create and add your Heya card in Apple Wallet",
+    "Create and add your Heya card in Apple Wallet. It’s free!",
     "Someone scans the QR code on your Heya card in the Apple Wallet",
     "They open your chat or contact details",
   ]);
@@ -78,6 +78,9 @@ test("the public landing explains the steps and links to the studio", async ({ p
   const explore = page.getByRole("link", { name: "Explore Heya cards" });
   await expect(explore).toHaveAttribute("href", "#universal-cards");
   await expect(explore).toHaveCSS("border-top-style", "none");
+  const freeNote = page.getByText("It’s free!", { exact: true });
+  await expect(freeNote).toBeVisible();
+  expect((await freeNote.boundingBox())!.y).toBeGreaterThanOrEqual((await explore.boundingBox())!.y + (await explore.boundingBox())!.height);
   await expect(credit).toHaveAttribute("href", "https://vyshak.me");
   await expect(credit).toHaveCSS("text-decoration-line", "underline");
   await expect(page.getByRole("heading", { name: "Create Universal Cards", exact: true })).toBeVisible();

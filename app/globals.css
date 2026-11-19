@@ -77,8 +77,10 @@ a.brand { text-decoration: none; }
 .hero-copy h1 { max-width: 23ch; font-family: var(--heading); font-size: clamp(28px, 3.15vw, 45px); line-height: 1.06; letter-spacing: -.043em; font-weight: 620; text-wrap: balance; }
 .hero-copy h1 em { color: var(--action); font-style: normal; white-space: nowrap; }
 .hero-alternative { color: var(--accent-teal); }
-.hero-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 17px; min-height: 40px; padding-block: 7px; color: var(--action); font-size: 12px; font-weight: 560; text-decoration: none; }
+.hero-actions { display: grid; justify-items: start; margin-top: 17px; }
+.hero-link { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding-block: 7px; color: var(--action); font-size: 12px; font-weight: 560; text-decoration: none; }
 .hero-link:hover { color: var(--action-hover); text-decoration: underline; text-underline-offset: 3px; }
+.hero-note { color: var(--muted); font-size: 11px; font-weight: 410; }
 .wallet-stack { width: min(100%, 295px); margin: 0; padding: 24px 17px; justify-self: center; }
 .stack-window {
   position: relative;
@@ -239,7 +241,8 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .hero-copy { display: contents; }
   .hero-copy h1 { grid-area: 1 / 1; max-width: 20ch; font-size: clamp(18px, 4.85vw, 24px); line-height: 1.12; text-wrap: pretty; }
   .hero-copy h1 em { white-space: normal; }
-  .hero-link { grid-area: 2 / 1 / auto / -1; justify-self: start; gap: 5px; margin: 0; min-height: 44px; color: var(--muted); font-size: 11px; font-weight: 450; }
+  .hero-actions { grid-area: 2 / 1 / auto / -1; justify-self: start; margin: 0; padding-bottom: 8px; }
+  .hero-link { gap: 5px; min-height: 44px; color: var(--muted); font-size: 11px; font-weight: 450; }
   .hero-link svg { width: 12px; height: 12px; stroke-width: 1.5; }
   .wallet-stack { grid-area: 1 / 2; width: min(94%, 138px); padding: 0; }
   .stack-window { border-radius: 17px; }

@@ -66,7 +66,7 @@ export default async function Home() {
                   />
                 </div>
               </div>
-              <h3>Create and add your Heya card in Apple Wallet</h3>
+              <h3>Create and add your Heya card in Apple Wallet. It’s free!</h3>
             </li>
             <li>
               <div className="scan-example-screen scan-example-camera" aria-hidden="true">

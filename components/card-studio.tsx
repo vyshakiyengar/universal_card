@@ -69,7 +69,10 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
           <h1 id="page-title" tabIndex={-1}>
             One <em>Apple Wallet</em> card for all your contact details, or <span className="hero-alternative">one for each</span>.
           </h1>
-          <a className="hero-link" href="#universal-cards">Explore Heya cards <ArrowDown size={17} aria-hidden="true" /></a>
+          <div className="hero-actions">
+            <a className="hero-link" href="#universal-cards">Explore Heya cards <ArrowDown size={17} aria-hidden="true" /></a>
+            <p className="hero-note">It’s free!</p>
+          </div>
         </div>
         <WalletStack />
       </section>
