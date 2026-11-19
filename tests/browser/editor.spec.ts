@@ -349,8 +349,10 @@ test("created and reopened cards reveal the name while the QR stays still", asyn
   await page.getByRole("button", { name: "Open Email" }).click();
   await expect(holder).toHaveCSS("animation-duration", "0.24s");
   await expect(holder).toHaveCSS("animation-name", "holder-reveal");
-  expect(await sweep()).toBe("none");
+  expect(await sweep()).toBe("pass-light");
   await expect(card).toHaveCSS("animation-name", "none");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  expect(await sweep()).toBe("none");
 });
 
 test("validate QR density when saving", async ({ page }) => {

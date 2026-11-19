@@ -376,13 +376,18 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .wallet-preview[data-arrival="opened"] .pass-holder { animation: holder-reveal .24s ease-out both; }
   .managed-open > svg:last-child { transition: transform .18s ease-out; }
   .managed-open:is(:hover, :focus-visible) > svg:last-child { transform: translateX(3px); }
-  .wallet-preview[data-arrival="created"] .pass-face::after, .device-pass::after {
+  .wallet-preview:is([data-arrival="created"], [data-arrival="opened"]) .pass-face::after, .device-pass::after {
     content: "";
     position: absolute;
     inset: -45% -20%;
     pointer-events: none;
     background: linear-gradient(106deg, transparent 38%, #fff8d815 48%, #fff8d829 50%, transparent 62%);
     animation: pass-light .95s .07s ease-in-out both;
+  }
+  .wallet-preview[data-arrival="opened"] .pass-face::after {
+    background: linear-gradient(106deg, transparent 34%, #fff8e419 44%, #fff8e447 50%, #fff8e419 53%, transparent 65%);
+    animation-duration: 1.15s;
+    animation-delay: .18s;
   }
   .button:not(:disabled) { transition: background-color .16s ease, border-color .16s ease; }
   .stack-whatsapp { animation: wallet-card-lift 1.7s cubic-bezier(.22,.8,.29,1); }
