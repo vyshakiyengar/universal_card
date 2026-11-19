@@ -23,22 +23,18 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(tray.locator(".destination-mark")).toHaveCount(9);
   await expect(tray).toHaveCSS("background-color", "rgb(239, 239, 237)");
   await expect(tray.locator('[data-active="true"] .destination-mark')).toHaveCSS("color", "rgb(55, 59, 56)");
-  const platforms = page.getByRole("img", { name: /Available card types include WhatsApp.*LinkedIn.*Universal card/ });
-  await expect(platforms).toBeVisible();
-  await expect.poll(() => platforms.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+  const platforms = page.locator(".landing-platforms");
   const example = page.getByRole("region", { name: "3 simple steps", exact: true });
   await expect(example.getByRole("link", { name: "Go to the three steps" })).toHaveAttribute("href", "#how-it-works");
   await expect(example.locator(".scan-example-jump svg")).toHaveAttribute("stroke-width", "1.35");
   await expect(example.getByRole("heading", { level: 3 })).toHaveText([
     "Create and add your Heya card in Apple Wallet", "Someone scans your Heya card in Apple Wallet", "They open your chat or contact details",
   ]);
-  await expect(example.getByText("Choose WhatsApp, any other contact detail, or all your details on one card. It’s free.")).toBeVisible();
+  await expect(example.locator(".scan-example-flow p")).toHaveCount(0);
   await expect(example.locator(".scan-camera-wallet")).toHaveText("Apple Wallet");
   await expect(example.locator(".scan-camera-wallet img")).toHaveCSS("width", "18px");
   await expect.poll(() => example.locator(".scan-camera-wallet img").evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
   await expect(example.getByText(/The same steps work for any contact option/)).toBeVisible();
-  await expect(example.getByText(/Open the card to show its QR code/)).toBeVisible();
-  await expect(example.getByText(/A WhatsApp card opens your chat/)).toBeVisible();
   const sampleForm = example.getByRole("img", { name: /WhatsApp form with a sample number/ });
   await sampleForm.scrollIntoViewIfNeeded();
   await expect.poll(() => sampleForm.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
@@ -56,7 +52,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
 
   if (page.viewportSize()!.width <= 680) {
-    await expect(platforms).toHaveCSS("width", "180px");
+    await expect(platforms).toBeHidden();
     await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" }));
     await expect(headerAction).toBeInViewport({ ratio: 1 });
     await expect(createAction).toBeInViewport({ ratio: 1 });
@@ -68,7 +64,9 @@ test("the public landing explains the steps and links to the studio", async ({ p
     expect(buttonPosition.y).toBeGreaterThan(examplePosition.y + examplePosition.height);
     await createAction.click();
   } else {
+    await expect(platforms).toBeVisible();
     await expect(platforms).toHaveCSS("width", "216px");
+    await expect.poll(() => platforms.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
     const buttonPosition = (await createAction.boundingBox())!;
     const platformsPosition = (await platforms.boundingBox())!;
     expect(platformsPosition.x).toBeGreaterThan(buttonPosition.x + buttonPosition.width);
@@ -87,10 +85,10 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(credit).toHaveAttribute("href", "https://vyshak.me");
   await expect(page.getByRole("heading", { name: "Create Universal Cards", exact: true })).toBeVisible();
   await expect(page.locator("#universal-title span")).toHaveCSS("color", "rgb(36, 74, 115)");
-  await expect(page.getByText("All contact details you choose to share in one QR", { exact: true })).toBeVisible();
+  await expect(page.getByText("(All contact details in one card)", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Create Individual Cards", exact: true })).toBeVisible();
   await expect(page.locator("#individual-title span")).toHaveCSS("color", "rgb(36, 91, 89)");
-  await expect(page.getByText("One card for an app, link, or contact detail", { exact: true })).toBeVisible();
+  await expect(page.getByText("(Separate cards for each)", { exact: true })).toBeVisible();
   const stack = page.getByRole("img", { name: /Apple Wallet illustration with HSBC, Citi, American Express, WhatsApp and LinkedIn/ });
   await expect(stack).toBeVisible();
   await expect(page.locator(".stack-whatsapp .destination-mark")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
@@ -114,11 +112,25 @@ test("the public landing explains the steps and links to the studio", async ({ p
     for (const arrow of await mobileArrows.all()) {
       await expect(arrow).toBeVisible();
     }
+    await page.setViewportSize({ width: 320, height: 740 });
+    await page.evaluate(() => document.fonts.ready);
+    for (const heading of await page.locator(".chooser-section .section-heading").all()) {
+      const title = (await heading.locator("h2").boundingBox())!;
+      const caption = (await heading.locator("p").boundingBox())!;
+      expect(caption.x).toBeGreaterThan(title.x + title.width);
+      expect(caption.y).toBeLessThan(title.y + title.height);
+    }
+    const legalLinks = page.getByRole("navigation", { name: "Site information" });
+    const signature = (await credit.boundingBox())!;
+    const legal = (await legalLinks.boundingBox())!;
+    expect(legal.x).toBeGreaterThan(signature.x + signature.width);
+    expect(legal.y).toBeLessThan(signature.y + signature.height);
+    await expect(credit).toHaveCSS("color", "rgb(36, 91, 89)");
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
 });
 
-test("landing rotates every two seconds with reduced motion and can pause", async ({ page }) => {
+test("landing rotates every 1.25 seconds with reduced motion and can pause", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.clock.install();
   await page.goto("/");
@@ -127,12 +139,64 @@ test("landing rotates every two seconds with reduced motion and can pause", asyn
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
   await expect(page.locator(".device-pass")).toHaveCSS("animation-name", "none");
   for (const label of ["Universal card", "Email", "LinkedIn", "Instagram", "Phone", "Website", "Custom link", "Snapchat", "WhatsApp"]) {
-    await page.clock.runFor(2_000);
+    await page.clock.runFor(1_250);
     await expect(page.getByRole("img", { name: `Example ${label} QR` })).toBeVisible();
   }
   await pause.click();
-  await page.clock.runFor(4_000);
+  await page.clock.runFor(2_500);
   await expect(page.getByRole("img", { name: "Example WhatsApp QR" })).toBeVisible();
+});
+
+test("shares the public Heya link and the saved QR image with browser fallbacks", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperties(navigator, {
+      canShare: { configurable: true, value: () => true },
+      share: {
+        configurable: true,
+        value: async ({ files, url }: ShareData) => {
+          const file = files?.[0];
+          const header = file ? [...new Uint8Array(await file.slice(0, 8).arrayBuffer())] : undefined;
+          document.documentElement.dataset.shared = JSON.stringify({ url, name: file?.name, type: file?.type, header });
+        },
+      },
+      clipboard: {
+        configurable: true,
+        value: { writeText: async (value: string) => { document.documentElement.dataset.copied = value; } },
+      },
+    });
+  });
+  await page.goto("/");
+  const footerShare = page.getByRole("button", { name: "Share Heya with friends" });
+  const documentRoot = page.locator("html");
+  const site = "https://www.heya.cards/";
+  await footerShare.click();
+  await expect(documentRoot).toHaveAttribute("data-shared", JSON.stringify({ url: site }));
+  await page.evaluate(() => Object.defineProperty(navigator, "canShare", { configurable: true, value: () => false }));
+  await footerShare.click();
+  await expect(documentRoot).toHaveAttribute("data-copied", site);
+  await expect(page.getByText("Heya link copied.")).toBeVisible();
+
+  await page.goto("/studio");
+  await expect(footerShare).toBeVisible();
+  await expect(page.getByRole("button", { name: "Share QR" })).toHaveCount(0);
+  await page.getByRole("button", { name: /Create Apple Wallet card for your Email/ }).click();
+  await page.getByLabel("Email address").fill("alex@example.com");
+  await page.getByRole("button", { name: save }).click();
+  const qr = page.getByRole("img", { name: "Scannable card QR" });
+  const share = page.getByRole("button", { name: "Share QR" });
+  await expect(qr).toBeVisible();
+  await share.click();
+  await expect(documentRoot).toHaveAttribute("data-shared", JSON.stringify({
+    name: "Email.png", type: "image/png", header: [137, 80, 78, 71, 13, 10, 26, 10],
+  }));
+  const imagePosition = (await qr.boundingBox())!;
+  expect((await share.boundingBox())!.y).toBeGreaterThan(imagePosition.y + imagePosition.height);
+
+  await page.evaluate(() => Object.defineProperty(navigator, "canShare", { configurable: true, value: () => false }));
+  const download = page.waitForEvent("download");
+  await share.click();
+  expect((await download).suggestedFilename()).toBe("Email.png");
+  await expect(page.getByText("QR image downloaded.")).toBeVisible();
 });
 
 test("save a Universal card before producing a QR, export it and reopen it", async ({ page }) => {

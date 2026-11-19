@@ -77,7 +77,6 @@ export default async function Home() {
                 </div>
               </div>
               <h3>Create and add your Heya card in Apple Wallet</h3>
-              <p>Choose WhatsApp, any other contact detail, or all your details on one card. It’s free.</p>
             </li>
             <li>
               <div className="scan-example-screen scan-example-camera" aria-hidden="true">
@@ -94,7 +93,6 @@ export default async function Home() {
                 </div>
               </div>
               <h3>Someone scans your Heya card in Apple Wallet</h3>
-              <p>Open the card to show its QR code to their phone camera.</p>
             </li>
             <li>
               <div className="scan-example-screen scan-example-chat" aria-hidden="true">
@@ -107,7 +105,6 @@ export default async function Home() {
                 </div>
               </div>
               <h3>They open your chat or contact details</h3>
-              <p>A WhatsApp card opens your chat. A Universal card lets them save your contact.</p>
             </li>
           </ol>
         </section>

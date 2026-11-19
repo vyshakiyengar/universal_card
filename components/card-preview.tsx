@@ -1,7 +1,8 @@
-import { Download } from "lucide-react";
-import type { CSSProperties } from "react";
+import { Download, Share2 } from "lucide-react";
+import { useState, type CSSProperties } from "react";
 import { cardKindLabels, type CardInput } from "@/lib/cards";
 import { qrQuietZone as quietZone, type buildCardQr } from "@/lib/qr";
+import { tryNativeShare } from "@/lib/share";
 import { walletCardColors } from "@/lib/wallet-card-design";
 import { AppleWalletMark } from "./apple-wallet-mark";
 import { DestinationMark, scanDescriptions } from "./card-fields";
@@ -9,7 +10,6 @@ import { HeyaWordmark } from "./heya-wordmark";
 import { QrGraphic } from "./qr-graphic";
 
 export type Preview = { code: ReturnType<typeof buildCardQr>; payload: string };
-
 
 function download(url: string, filename: string) {
   const link = document.createElement("a");
@@ -21,7 +21,7 @@ function download(url: string, filename: string) {
   window.setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
-function downloadPng({ size, modules }: Preview["code"], filename: string) {
+function makeQrImage({ size, modules }: Preview["code"], filename: string) {
   const canvas = document.createElement("canvas");
   const scale = 8;
   canvas.width = canvas.height = (size + quietZone * 2) * scale;
@@ -33,12 +33,15 @@ function downloadPng({ size, modules }: Preview["code"], filename: string) {
   modules.forEach((value, index) => {
     if (value) context.fillRect((index % size + quietZone) * scale, (Math.floor(index / size) + quietZone) * scale, scale, scale);
   });
-  canvas.toBlob((file) => {
-    if (file) download(URL.createObjectURL(file), `${filename}.png`);
-  });
+  // Encode synchronously so the share sheet can open under the original click.
+  const base64 = canvas.toDataURL("image/png").split(",")[1];
+  const bytes = Uint8Array.from(atob(base64), (character) => character.charCodeAt(0));
+  return new File([bytes], `${filename}.png`, { type: "image/png" });
 }
 
 export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; preview: Preview; walletUrl?: string }) {
+  const [sharing, setSharing] = useState(false);
+  const [shareStatus, setShareStatus] = useState("");
   const isUniversal = draft.type === "universal";
   const kind = isUniversal ? "universal" : draft.kind;
   const label = isUniversal ? "Universal card" : cardKindLabels[kind];
@@ -53,6 +56,31 @@ export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; p
     ? [draft.jobTitle.trim(), draft.company.trim()].filter(Boolean).join(" · ")
     : draft.kind === "linkedin" ? "" : draft.value.trim().replace(/^https?:\/\/(?:www\.)?/, "").replace(/\/$/, "");
   const filename = draft.title.trim().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "universal-card";
+
+  async function shareQr() {
+    setSharing(true);
+    setShareStatus("");
+    try {
+      const file = makeQrImage(preview.code, filename);
+      if (!file) {
+        setShareStatus("The QR image couldn’t be created.");
+        return;
+      }
+      if (await tryNativeShare({ files: [file] })) return;
+      download(URL.createObjectURL(file), file.name);
+      setShareStatus("QR image downloaded.");
+    } catch {
+      setShareStatus("The QR image couldn’t be shared. Try downloading it.");
+    } finally {
+      setSharing(false);
+    }
+  }
+
+  function downloadQr() {
+    const file = makeQrImage(preview.code, filename);
+    if (file) download(URL.createObjectURL(file), file.name);
+    else setShareStatus("The QR image couldn’t be created.");
+  }
 
   return (
     <section className="saved-preview" aria-label="Saved card">
@@ -71,11 +99,13 @@ export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; p
       </div>
       {preview.code.density === "dense" && <p className="density-note" role="status">This QR is dense. Test it on another phone before sharing.</p>}
       <div className="preview-actions">
-        <button className="button secondary" type="button" onClick={() => downloadPng(preview.code, filename)}><Download size={16} /> QR image</button>
+        <button className="button primary" type="button" disabled={sharing} onClick={shareQr}><Share2 size={16} aria-hidden="true" /> Share QR</button>
+        <button className="button secondary" type="button" onClick={downloadQr}><Download size={16} /> QR image</button>
         {isUniversal && <button className="button secondary" type="button" onClick={() => download(
           URL.createObjectURL(new Blob([preview.payload], { type: "text/vcard;charset=utf-8" })), `${filename}.vcf`,
         )}><Download size={16} /> vCard</button>}
       </div>
+      <p className="share-status" role="status">{shareStatus}</p>
       <div className="wallet-action-card">
         <AppleWalletMark />
         <div><strong>Apple Wallet</strong><p id="wallet-preview-note">{walletUrl ? "Keep this card handy on your iPhone." : "Wallet installation coming soon."}</p></div>

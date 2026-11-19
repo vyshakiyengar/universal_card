@@ -77,7 +77,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
       <section id="universal-cards" className="chooser-section universal-section" aria-labelledby="universal-title">
         <div className="section-heading">
           <h2 id="universal-title">Create <span>Universal</span> Cards</h2>
-          <p>All contact details you choose to share in one QR</p>
+          <p>(All contact details in one card)</p>
         </div>
         <button className="universal-choice" type="button" disabled={!ready} onClick={() => create("universal")}>
           <DestinationMark kind="universal" />
@@ -89,7 +89,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
       <section id="individual-cards" className="chooser-section" aria-labelledby="individual-title">
         <div className="section-heading">
           <h2 id="individual-title">Create <span>Individual</span> Cards</h2>
-          <p>One card for an app, link, or contact detail</p>
+          <p>(Separate cards for each)</p>
         </div>
         <div className="destination-grid">
           {types.map((kind) => (

@@ -6,6 +6,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: Parisienne;
+  src: url("/fonts/parisienne-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   --paper: #f7f6f2;
   --surface: #fffefa;
@@ -63,6 +71,14 @@ a.brand { text-decoration: none; }
 }
 .project-credit a { color: var(--ink); font-weight: 600; text-decoration-color: #a29f91; text-underline-offset: 3px; }
 .project-credit a:hover { text-decoration-color: currentColor; }
+.project-credit .share-heya { min-height: 44px; margin-bottom: 6px; }
+.project-meta { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 5px 12px; text-align: start; }
+.project-by { display: flex; align-items: baseline; gap: 5px; }
+.project-credit .project-signature { color: var(--accent-teal); font: 400 clamp(20px, 5.7vw, 26px)/1.2 Parisienne, Georgia, serif; text-decoration: none; white-space: nowrap; }
+.project-credit .project-signature:hover { text-decoration: underline; text-decoration-thickness: 1px; }
+.project-meta nav { display: flex; gap: clamp(9px, 2vw, 14px); margin-inline-start: auto; }
+.share-status { color: var(--muted); font-size: 13px; text-align: center; }
+.share-status:not(:empty) { margin-bottom: 9px; }
 
 .studio-hero { isolation: isolate; display: grid; grid-template-columns: 1.2fr .8fr; min-height: 345px; align-items: center; overflow: hidden; border: 1px solid var(--line); border-radius: 19px; background: var(--stage); }
 .hero-copy { padding: clamp(25px, 5vw, 59px); }
@@ -91,8 +107,8 @@ a.brand { text-decoration: none; }
 .stack-pass .destination-mark svg { width: 17px; height: 17px; }
 
 .chooser-section { margin-top: 36px; scroll-margin-top: 24px; }
-.section-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 3px 10px; margin-bottom: 11px; }
-.section-heading h2 { font-family: var(--heading); font-size: clamp(19px, 2.3vw, 26px); font-weight: 640; letter-spacing: -.035em; line-height: 1.1; }
+.section-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 3px 8px; margin-bottom: 11px; }
+.section-heading h2 { font-family: var(--heading); font-size: clamp(17px, 2.15vw, 24px); font-weight: 640; letter-spacing: -.035em; line-height: 1.1; }
 #universal-title span { color: var(--action); }
 #individual-title span { color: var(--accent-teal); }
 .section-heading p { color: var(--muted); font-size: 12px; }
@@ -216,6 +232,9 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .stack-amex { font-size: 8px; }
   .stack-hsbc svg { width: 16px; height: 8px; margin-top: 2px; }
   .chooser-section { margin-top: 25px; }
+  .section-heading { column-gap: 6px; }
+  .section-heading h2 { font-size: clamp(14px, 4.2vw, 21px); }
+  .section-heading p { font-size: clamp(10px, 2.9vw, 12px); }
   .universal-choice { gap: 10px; padding: 13px; }
   .universal-choice > .destination-mark { width: 35px; height: 35px; }
   .universal-choice strong { font-size: 16px; }
@@ -231,6 +250,7 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .manage-actions { grid-column: 2; flex-wrap: wrap; }
 }
 @media (max-width: 370px) {
+  .preview-actions .button { padding-inline: 10px; }
   .destination-card { gap: 5px; padding-inline: 7px 21px; }
   .destination-card strong { font-size: 14px; }
   .tile-top .destination-mark { width: 24px; height: 24px; }
@@ -240,6 +260,12 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .field-row { grid-template-columns: minmax(0, 1fr) 42px; }
   .field-row select { grid-column: 1 / -1; width: fit-content; max-width: 100%; }
   .studio-nav button { padding-inline: 10px; }
+}
+@media (max-width: 355px) {
+  .project-meta { column-gap: 8px; font-size: 11px; }
+  .project-by { gap: 4px; }
+  .project-credit .project-signature { font-size: 17.5px; }
+  .project-meta nav { gap: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -277,7 +303,6 @@ input::placeholder { color: var(--muted); opacity: 1; }
 }
 
 .account { display: flex; align-items: center; gap: 5px; }
-.project-credit nav { display: flex; justify-content: center; gap: 13px; margin-bottom: 7px; }
 .utility-page { width: min(100% - 34px, 900px); margin-inline: auto; padding-block: 35px 65px; }
 .utility-page h1 { margin: 12px 0; font: 640 clamp(34px, 6vw, 53px)/1.07 var(--heading); }
 .utility-page h2 { margin-top: 24px; font: 640 24px/1.2 var(--heading); }

@@ -101,16 +101,10 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
   background: var(--surface);
 }
 .scan-example-flow h3 {
-  margin: 11px 4px 4px;
+  margin: 11px 4px 0;
   font-size: 15px;
   font-weight: 680;
   line-height: 1.2;
-}
-.scan-example-flow p {
-  margin: 0 4px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.4;
 }
 .scan-example-options { max-width: 64ch; margin-bottom: 14px; color: var(--muted); font-size: 14px; line-height: 1.45; }
 .scan-example-screen {
@@ -268,9 +262,7 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
   .landing-copy { padding: 24px 19px 0; }
   .landing-copy h1 { max-width: 14ch; font-size: clamp(36px, 11.2vw, 58px); }
   .landing-intro { margin-top: 10px; font-size: 14px; }
-  .landing-actions { margin-top: 15px; }
-  .landing-platforms { width: 180px; }
-  .landing-cta { display: none; }
+  .landing-actions { display: none; }
   .mobile-create-action {
     display: flex;
     width: max-content;
