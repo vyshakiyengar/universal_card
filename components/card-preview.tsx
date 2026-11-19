@@ -89,7 +89,7 @@ export function CardPreview({ draft, preview, walletUrl, created }: { draft: Car
               <div className="pass-name" data-long={name.length > 28}>{name}</div>
               {detail && <div className="pass-detail" title={detail}>{detail}</div>}
             </div>
-            <span className="pass-links" aria-hidden="true" />
+            {draft.type === "universal" && draft.photo ? <img className="pass-photo" src={draft.photo} alt="Card photo" /> : <span className="pass-links" aria-hidden="true" />}
           </div>
         </div>
         <div className="pass-paper" data-density={preview.code.density}>
@@ -101,7 +101,7 @@ export function CardPreview({ draft, preview, walletUrl, created }: { draft: Car
           </div>
         </div>
       </div>
-      {preview.code.density === "dense" && <p className="density-note" role="status">This QR is dense. Test it on another phone before sharing.</p>}
+      {preview.code.density === "dense" && <p className="density-note" role="status">This QR is enlarged to make your details easier to scan.</p>}
       <div className="preview-actions">
         <button className="button primary" type="button" disabled={sharing} onClick={shareQr}><Share2 size={16} aria-hidden="true" /> Share QR</button>
         <button className="button secondary" type="button" onClick={downloadQr}><Download size={16} /> QR image</button>

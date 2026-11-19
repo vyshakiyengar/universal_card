@@ -7,7 +7,7 @@ import {
 export const destinations = {
   linkedin: { label: cardKindLabels.linkedin, field: "LinkedIn profile URL", hint: "https://www.linkedin.com/in/your-name", inputType: "text" },
   whatsapp: { label: cardKindLabels.whatsapp, field: "WhatsApp number or link", hint: "+44 7700 900123", inputType: "text" },
-  email: { label: cardKindLabels.email, field: "Email address", hint: "alex@example.com", inputType: "email" },
+  email: { label: cardKindLabels.email, field: "Email address", hint: "alan@example.com", inputType: "email" },
   phone: { label: cardKindLabels.phone, field: "Phone number", hint: "+44 7700 900123", inputType: "tel" },
   instagram: { label: cardKindLabels.instagram, field: "Instagram username or URL", hint: "@yourname", inputType: "text" },
   snapchat: { label: cardKindLabels.snapchat, field: "Snapchat username or profile link", hint: "@yourname", inputType: "text" },

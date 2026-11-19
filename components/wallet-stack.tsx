@@ -32,7 +32,7 @@ export function WalletStack() {
             <div className="stack-pass stack-whatsapp">
               <div className="stack-pass-label"><DestinationMark kind="whatsapp" /> WhatsApp</div>
               <div className="stack-details">
-                <strong>Alex Morgan</strong>
+                <strong>Alan Turing</strong>
                 <div className="stack-qr"><QrGraphic code={exampleQr} label="Sample WhatsApp QR" maxWidth={90} /></div>
               </div>
             </div>

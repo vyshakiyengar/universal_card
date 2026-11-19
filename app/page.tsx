@@ -59,9 +59,9 @@ export default async function Home() {
                 <div className="scan-editor-crop">
                   <Image
                     src="/images/whatsapp-card-editor.jpg"
-                    alt="Heya Cards’ WhatsApp form with a sample number and the Generate your Apple Wallet card button"
+                    alt="Heya Cards’ WhatsApp form with a sample number for Alan Turing and the Generate your Apple Wallet card button"
                     width={744}
-                    height={958}
+                    height={532}
                     unoptimized
                   />
                 </div>
@@ -89,7 +89,7 @@ export default async function Home() {
                 <div className="scan-chat-display">
                   <div className="scan-chat-header">
                     <DestinationMark kind="whatsapp" />
-                    <span><strong>Alex Morgan</strong><small>WhatsApp chat</small></span>
+                    <span><strong>Alan Turing</strong><small>WhatsApp chat</small></span>
                   </div>
                   <div className="scan-chat-compose"><span>Message</span><Send size={14} /></div>
                 </div>

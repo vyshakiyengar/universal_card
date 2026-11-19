@@ -1,7 +1,9 @@
+import { validCardPhoto } from "./card-photo";
+
 export const emailLabels = ["work", "home", "other"] as const;
 export const phoneLabels = ["mobile", "work", "home", "other"] as const;
-export const linkKinds = ["linkedin", "instagram", "whatsapp", "snapchat", "url"] as const;
-export const destinationKinds = [...linkKinds, "email", "phone", "website"] as const;
+export const linkKinds = ["linkedin", "instagram", "whatsapp", "snapchat", "url", "website"] as const;
+export const destinationKinds = [...linkKinds, "email", "phone"] as const;
 
 export type EmailLabel = (typeof emailLabels)[number];
 export type PhoneLabel = (typeof phoneLabels)[number];
@@ -24,6 +26,7 @@ export type UniversalCard = {
   type: "universal";
   title: string;
   name: string;
+  photo?: string;
   jobTitle: string;
   company: string;
   emails: { label: EmailLabel; value: string }[];
@@ -192,7 +195,8 @@ function destinationValue(kind: DestinationKind, value: string): string {
     }
     case "website":
     case "url": {
-      const url = readWebUrl(value, "Enter a website URL starting with https:// or http://.");
+      const bareDomain = /^(?:[\p{L}\p{N}-]+\.)+[\p{L}\p{N}-]+(?::\d+)?(?:[/?#]|$)/u.test(value);
+      const url = readWebUrl(bareDomain ? `https://${value}` : value, "Enter a web address, such as vyshak.me.");
       const path = `${url.pathname}${url.search}${url.hash}`;
       // WHATWG URLs can leave some characters unescaped that RFC 3986 excludes from URI values.
       return url.origin + path.replace(/[\[\]^|]/g, (character) => encodeURIComponent(character));
@@ -225,7 +229,9 @@ function readUniversalCard(input: Record<string, unknown>, title: string): Unive
   if (!name && !jobTitle && !company && !emails.length && !phones.length && !links.length) {
     throw new CardValidationError("Add at least one contact detail to make a QR code.");
   }
-  return { type: "universal", title, name, jobTitle, company, emails, phones, links };
+  const photo = input.photo;
+  if (photo !== undefined && !validCardPhoto(photo)) throw new CardValidationError("Choose a valid card photo.");
+  return { type: "universal", ...(photo ? { photo } : {}), title, name, jobTitle, company, emails, phones, links };
 }
 
 function escapeVCardText(value: string) {
@@ -264,7 +270,7 @@ function serializeVCard(card: UniversalCard) {
   }
   for (const { value } of card.links) lines.push(`URL:${value}`);
   lines.push("END:VCARD");
-  return `${lines.map(foldVCardLine).join("\r\n")}\r\n`;
+  return `${Array.from(new Set(lines), foldVCardLine).join("\r\n")}\r\n`;
 }
 
 export function makeCardPayload(input: unknown): { card: CardInput; payload: string } {

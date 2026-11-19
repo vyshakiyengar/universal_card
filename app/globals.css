@@ -373,7 +373,7 @@ input::placeholder { color: var(--muted); opacity: 1; }
 @media (prefers-reduced-motion: no-preference) {
   .focused-page:not(.result-page), .view-manage .manage-heading { animation: settle-in .24s ease-out both; }
   .wallet-preview[data-created="true"] { animation: pass-arrive .68s cubic-bezier(.18,.82,.26,1) both; }
-  .wallet-preview[data-created="true"] .pass-face::after {
+  .wallet-preview .pass-face::after, .device-pass::after {
     content: "";
     position: absolute;
     inset: -45% -20%;
@@ -425,3 +425,18 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .account .button { padding-inline: 7px; }
   .account .admin-link { display: none; }
 }
+
+.heya-wordmark { position: relative; padding-inline-start: .78em; }
+.heya-wordmark::before, .pass-platform::before {
+  content: "";
+  width: .74em;
+  aspect-ratio: 1;
+  background: currentColor;
+  mask: url("/heya-mark.svg") center / contain no-repeat;
+}
+.heya-wordmark::before { position: absolute; left: 0; top: .08em; }
+.device-pass-brand::before, .stack-whatsapp .stack-pass-label::before { content: ""; width: .8em; aspect-ratio: 1; background: currentColor; mask: url("/heya-mark.svg") center / contain no-repeat; }
+.pass-platform::before { width: 14px; opacity: .8; margin-right: 1px; }
+.pass-photo { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 1px solid #ffffff80; }
+.photo-field > div { display: flex; align-items: center; gap: 10px; }
+.photo-field img { border-radius: 50%; }

@@ -9,7 +9,7 @@ export default function Privacy() {
       <h1>Privacy notice</h1>
       <section>
         <h2>What we collect</h2>
-        <p>When you sign in with Google or Apple, we receive an account identifier and the profile details your provider shares, such as your name and email address. We store the contact details and links you choose to add to saved cards. A session cookie keeps you signed in.</p>
+        <p>When you sign in with Google or Apple, we receive an account identifier and the profile details your provider shares, such as your name and email address. We store the contact details, links and optional card photo you choose to add to saved cards. A session cookie keeps you signed in.</p>
         <p>We record aggregate counts of sign-ins, card creation and Wallet downloads to understand how the service is used. These counts contain no account identifiers or card contents.</p>
         <p>We use Vercel Web Analytics for visits to the public homepage. It provides aggregate traffic statistics without analytics cookies. We exclude private pages, card contents and URL parameters from this analytics collection.</p>
       </section>

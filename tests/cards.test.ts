@@ -1,3 +1,5 @@
+import QRCode from "qrcode";
+import { addIndividualDetails, savedDetail } from "../lib/saved-details";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import jsQR from "jsqr";
@@ -109,4 +111,28 @@ test("QR density uses byte count, warns at the soft limit and blocks at the hard
   assert.equal(buildCardQr(maximum).version, qrLimits.maximumVersion);
   assert.equal(decode(maximum), maximum);
   assert.throws(() => buildCardQr(maximum + "a"), /too dense/);
+});
+
+test("bare domains keep the intended path and optimized vCards preserve every field", () => {
+  const { payload } = makeCardPayload({ type: "individual", title: "Site", kind: "url", value: "vyshak.me/about?q=1#bio" });
+  assert.equal(payload, "https://vyshak.me/about?q=1#bio");
+  const { payload: vcard } = makeCardPayload(contact);
+  assert.equal(decode(vcard), vcard);
+});
+
+test("a long contact encodes fewer modules without changing its decoded details", () => {
+  const { payload } = makeCardPayload({ ...contact, company: "Turing Laboratory ".repeat(5).trim() });
+  const code = buildCardQr(payload);
+  const original = QRCode.create([{ data: new TextEncoder().encode(payload), mode: "byte" }], { errorCorrectionLevel: "M" });
+  assert.ok(code.size < original.modules.size);
+  assert.equal(decode(payload), payload);
+});
+
+test("saved values work in both directions without replacing details already entered", () => {
+  const personal = makeCardPayload({ type: "individual", title: "Site", kind: "website", value: "vyshak.me" }).card;
+  assert.equal(savedDetail([contact], "linkedin")?.value, contact.links[0].value);
+  const combined = addIndividualDetails(contact, [personal]);
+  assert.deepEqual(combined.links.at(-1), { kind: "website", value: "vyshak.me" });
+  assert.deepEqual(combined.emails, contact.emails);
+  assert.ok(makeCardPayload(combined).payload.includes("URL:https://vyshak.me/"));
 });

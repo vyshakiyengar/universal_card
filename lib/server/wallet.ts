@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PKPass } from "passkit-generator";
 import { cardKindLabels, makeCardPayload } from "../cards";
+import { photoPrefix } from "../card-photo";
 import { buildCardQr } from "../qr";
 import { walletCardDesign } from "../wallet-card-design";
 
@@ -102,9 +103,13 @@ export function createWalletPass(
       "icon.png": readFileSync(join(assets, "icon.png")),
       "icon@2x.png": readFileSync(join(assets, "icon@2x.png")),
       "icon@3x.png": readFileSync(join(assets, "icon@3x.png")),
-      "thumbnail.png": readFileSync(join(assets, "thumbnail.png")),
-      "thumbnail@2x.png": readFileSync(join(assets, "thumbnail@2x.png")),
-      "thumbnail@3x.png": readFileSync(join(assets, "thumbnail@3x.png")),
+      ...(card.type === "universal" && card.photo
+        ? { "thumbnail.png": Buffer.from(card.photo.slice(photoPrefix.length), "base64") }
+        : {
+            "thumbnail.png": readFileSync(join(assets, "thumbnail.png")),
+            "thumbnail@2x.png": readFileSync(join(assets, "thumbnail@2x.png")),
+            "thumbnail@3x.png": readFileSync(join(assets, "thumbnail@3x.png")),
+          }),
       "logo.png": readFileSync(join(assets, `mark-${kind}.png`)),
       "logo@2x.png": readFileSync(join(assets, `mark-${kind}@2x.png`)),
       "logo@3x.png": readFileSync(join(assets, `mark-${kind}@3x.png`)),

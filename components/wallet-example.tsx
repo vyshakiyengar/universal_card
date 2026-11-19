@@ -12,15 +12,15 @@ import { QrGraphic } from "./qr-graphic";
 
 const examples = {
   whatsapp: buildCardQr("https://wa.me/447700900123"),
-  email: buildCardQr("mailto:alex@example.com"),
+  email: buildCardQr("mailto:alan@example.com"),
   linkedin: buildCardQr("https://www.linkedin.com/company/linkedin"),
   instagram: buildCardQr("https://www.instagram.com/instagram/"),
   phone: buildCardQr("tel:+447700900123"),
   website: buildCardQr("https://example.com"),
   url: buildCardQr("https://example.com/hello"),
   universal: buildCardQr(makeCardPayload({
-    type: "universal", title: "Universal card", name: "Alex Morgan",
-    emails: [{ label: "work", value: "alex@example.com" }],
+    type: "universal", title: "Universal card", name: "Alan Turing",
+    emails: [{ label: "work", value: "alan@example.com" }],
     phones: [{ label: "mobile", value: "+447700900123" }],
   }).payload),
   snapchat: buildCardQr("https://www.snapchat.com/"),
@@ -60,7 +60,7 @@ export function WalletExample() {
           <div className="device-wallet-label"><AppleWalletMark /> Apple Wallet</div>
           <div className="device-pass" style={walletSurfaceStyle(kind)} key={kind}>
             <div className="device-pass-brand"><DestinationMark kind={kind} /> {label}</div>
-            <div className="device-pass-name"><strong>Alex Morgan</strong><span className="pass-links" aria-hidden="true" /></div>
+            <div className="device-pass-name"><strong>Alan Turing</strong><span className="pass-links" aria-hidden="true" /></div>
             <div className="device-pass-qr">
               <QrGraphic code={active} label={`Example ${label} QR`} maxWidth={91} />
               <small>{walletCardDesign(kind).action}</small>

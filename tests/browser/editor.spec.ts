@@ -147,7 +147,7 @@ test("the Studio illustration lifts WhatsApp as the page loads", async ({ page }
   await expect(card).toHaveCSS("animation-iteration-count", "1");
   await expect(page.locator("html")).toHaveAttribute("data-wallet-lift", "started");
   await expect(card).toHaveCSS("transform", "none");
-  await expect(card.locator(".stack-details strong")).toHaveText("Alex Morgan");
+  await expect(card.locator(".stack-details strong")).toHaveText("Alan Turing");
   await expect(card.locator(".stack-qr svg")).toBeVisible();
 });
 
@@ -354,7 +354,7 @@ test("validate QR density when saving", async ({ page }) => {
   await expect(page.getByRole("img", { name: "Scannable card QR" })).toHaveCount(0);
   await destination.fill("https://example.com/" + "a".repeat(240));
   await page.getByRole("button", { name: save }).click();
-  await expect(page.getByText(/This QR is dense/)).toBeVisible();
+  await expect(page.getByText(/This QR is enlarged/)).toBeVisible();
   await page.setViewportSize({ width: 320, height: 750 });
   const qr = page.getByRole("img", { name: "Scannable card QR" });
   const pixelsPerModule = await qr.evaluate((element) => {
@@ -386,4 +386,24 @@ test("a Snapchat card saves the username and renders a shareable QR", async ({ p
   await page.getByRole("navigation", { name: "Card studio" }).getByRole("button", { name: "Manage cards" }).click();
   await page.getByRole("button", { name: "Edit Snapchat" }).click();
   await expect(page.getByLabel("Snapchat username or profile link")).toHaveValue("@alex.morgan");
+});
+
+test("a Universal photo stays off the QR and saved details prefill new cards", async ({ page }) => {
+  await page.goto("/studio");
+  await page.getByRole("button", { name: /^Universal card Scanning/ }).click();
+  await page.getByLabel("Name on card").fill("Alan Turing");
+  await page.getByRole("button", { name: "Add link" }).click();
+  await page.getByLabel("Link 1", { exact: true }).fill("https://www.linkedin.com/in/example");
+  await page.locator('input[type=file]').setInputFiles("lib/server/wallet-assets/thumbnail.png");
+  await expect(page.getByRole("img", { name: "Card photo" })).toBeVisible();
+  await page.getByRole("button", { name: save }).click();
+  await expect(page.getByRole("img", { name: "Card photo" })).toBeVisible();
+  const path = await page.getByRole("img", { name: "Scannable card QR" }).locator("path").getAttribute("d");
+  await page.getByRole("button", { name: "Edit details" }).click();
+  await page.getByRole("button", { name: "Remove photo" }).click();
+  await page.getByRole("button", { name: save }).click();
+  await expect(page.getByRole("img", { name: "Scannable card QR" }).locator("path")).toHaveAttribute("d", path!);
+  await page.getByRole("button", { name: "Create cards", exact: true }).click();
+  await page.getByRole("button", { name: /Create Apple Wallet card for your LinkedIn/ }).click();
+  await expect(page.getByLabel("LinkedIn profile URL")).toHaveValue("https://www.linkedin.com/in/example");
 });

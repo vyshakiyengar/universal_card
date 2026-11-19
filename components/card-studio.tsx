@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowDown, ArrowLeft, ArrowRight, Check, LayoutGrid, PenLine, Plus, QrCode, Trash2 } from "lucide-react";
 import { cardKindLabels, cardLimits, makeCardPayload, type CardInput, type DestinationKind } from "@/lib/cards";
+import { prepareCardPhoto } from "@/lib/card-photo";
+import { savedDetail, addIndividualDetails } from "@/lib/saved-details";
 import { buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
 import { DestinationMark, destinations, scanDescriptions, UniversalFields } from "./card-fields";
@@ -154,6 +156,13 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
 
   function create(kind: EntryKind) {
     const draft = newDraft(kind, account?.firstName ?? "");
+    if (draft.type === "individual") {
+      const previous = savedDetail(cards.map(card => card.draft), draft.kind);
+      if (previous) {
+        draft.value = previous.value;
+        draft.name = previous.name || draft.name;
+      }
+    }
     navigate({ view: "edit", draft, original: draft });
   }
 
@@ -299,7 +308,27 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
                     <input value={draft.name ?? ""} maxLength={cardLimits.text} placeholder="First name" autoComplete="name"
                       onChange={(event) => change({ ...draft, name: event.target.value })} />
                   </label>
-                  {draft.type === "universal" && <UniversalFields draft={draft} onChange={change} />}
+                  {draft.type === "universal" && <>
+                    <div className="photo-field">
+                      <label className="field">Card photo (optional)
+                        <input type="file" accept="image/jpeg,image/png,image/webp" onChange={async event => {
+                          const file = event.target.files?.[0];
+                          event.target.value = "";
+                          if (!file) return;
+                          setBusy(true);
+                          try { change({ ...draft, photo: await prepareCardPhoto(file) }); }
+                          catch { setError("Choose a readable JPG, PNG or WebP photo under 12 MB."); }
+                          finally { setBusy(false); }
+                        }} />
+                        <small>Shown on your card. Your QR shares contact details only.</small>
+                      </label>
+                      {draft.photo && <div><img src={draft.photo} alt="Card photo" width={48} height={48} />
+                        <button type="button" className="text-button" onClick={() => change({ ...draft, photo: undefined })}>Remove photo</button></div>}
+                    </div>
+                    {cards.some(card => card.draft.type === "individual") && <button type="button" className="text-button"
+                      onClick={() => change(addIndividualDetails(draft, cards.map(card => card.draft)))}>Use saved individual details</button>}
+                    <UniversalFields draft={draft} onChange={change} />
+                  </>}
                   {editing.id && (
                     <details className="optional-fields">
                       <summary>Rename saved card</summary>
