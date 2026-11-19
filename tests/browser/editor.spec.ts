@@ -79,14 +79,17 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(explore).toHaveAttribute("href", "#universal-cards");
   await expect(explore).toHaveCSS("border-top-style", "none");
   await expect(credit).toHaveAttribute("href", "https://vyshak.me");
+  await expect(credit).toHaveCSS("text-decoration-line", "underline");
   await expect(page.getByRole("heading", { name: "Create Universal Cards", exact: true })).toBeVisible();
   await expect(page.locator("#universal-title span")).toHaveCSS("color", "rgb(36, 74, 115)");
   await expect(page.getByText("(All contact details in one card)", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Create Individual Cards", exact: true })).toBeVisible();
   await expect(page.locator("#individual-title span")).toHaveCSS("color", "rgb(36, 91, 89)");
   await expect(page.getByText("(Separate cards for each)", { exact: true })).toBeVisible();
-  const stack = page.getByRole("img", { name: /Apple Wallet illustration with HSBC, Citi, American Express, WhatsApp and LinkedIn/ });
+  const stack = page.getByRole("img", { name: /Apple Wallet illustration with a partly open WhatsApp card/ });
   await expect(stack).toBeVisible();
+  await expect(stack.locator(".stack-pass-label")).toHaveText(["HSBC", "citi", "LinkedIn", "Universal card", "WhatsApp"]);
+  await expect(stack.locator(".stack-whatsapp")).toHaveCSS("animation-name", "none");
   await expect(page.locator(".stack-whatsapp .destination-mark")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(page.getByText("Open your Wallet card and let someone scan it to get your details in seconds.")).toHaveCount(0);
   await expect(page.getByText("Scanning this QR shares all your contact details in one vCard.")).toBeVisible();
@@ -124,6 +127,23 @@ test("the public landing explains the steps and links to the studio", async ({ p
     await expect(credit).toHaveCSS("color", "rgb(36, 91, 89)");
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
+});
+
+test("the Studio illustration lifts WhatsApp as the page loads", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.addInitScript(() => {
+    document.addEventListener("animationstart", (event) => {
+      if (event.animationName === "wallet-card-lift") document.documentElement.dataset.walletLift = "started";
+    });
+  });
+  await page.goto("/studio");
+  const card = page.locator(".stack-whatsapp");
+  await expect(card).toHaveCSS("animation-delay", "0s");
+  await expect(card).toHaveCSS("animation-iteration-count", "1");
+  await expect(page.locator("html")).toHaveAttribute("data-wallet-lift", "started");
+  await expect(card).toHaveCSS("transform", "none");
+  await expect(card.locator(".stack-details strong")).toHaveText("Alex Morgan");
+  await expect(card.locator(".stack-qr svg")).toBeVisible();
 });
 
 test("landing rotates every 1.5 seconds with reduced motion and can pause", async ({ page }) => {
