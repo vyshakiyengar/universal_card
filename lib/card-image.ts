@@ -1,7 +1,6 @@
 import { qrQuietZone, type buildCardQr } from "./qr";
 import { walletCardDesign } from "./wallet-card-design";
 import type { DestinationKind } from "./cards";
-import links from "./server/wallet-assets/thumbnail@3x.png";
 
 async function loadImage(src: string) {
   const image = new Image();
@@ -44,7 +43,7 @@ export async function makeCardImage(options: {
   svg.setAttribute("height", "60");
   const [platform, wallet, portrait] = await Promise.all([
     loadImage("data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(svg))),
-    loadImage("/apple-wallet-icon.jpg"), loadImage(photo || links.src),
+    loadImage("/apple-wallet-icon.jpg"), photo ? loadImage(photo) : undefined,
     document.fonts.load('32px Baskervville'), document.fonts.load('16px "Instrument Sans Variable"'),
   ]);
   const scale = 3;
@@ -55,9 +54,10 @@ export async function makeCardImage(options: {
   const nameSize = name.length > 28 ? 29 : 38;
   const nameFont = `500 ${nameSize}px Baskervville, Georgia, serif`;
   ctx.font = nameFont;
-  const names = wrap(ctx, name, 249);
+  const textWidth = portrait ? 249 : width - 46;
+  const names = wrap(ctx, name, textWidth);
   ctx.font = '13px "Instrument Sans Variable", sans-serif';
-  const details = wrap(ctx, detail, 249);
+  const details = wrap(ctx, detail, textWidth);
   const nameHeight = names.length * (nameSize + 2);
   const top = Math.max(196, 96 + nameHeight + details.length * 17);
   const height = top + 232;
@@ -80,8 +80,8 @@ export async function makeCardImage(options: {
   ctx.fillRect(0, 0, width, top);
   ctx.save();
   ctx.beginPath(); ctx.rect(0, 0, width, top); ctx.clip();
-  ctx.strokeStyle = "rgba(255,255,255,.06)";
-  for (let r = 60; r < 560; r += 19) {
+  ctx.strokeStyle = "rgba(255,255,255,.045)";
+  for (let r = 60; r < 560; r += 29) {
     ctx.beginPath(); ctx.ellipse(525, top+170, r, r*.72, -.3, 0, 2*Math.PI); ctx.stroke();
   }
   ctx.restore();
@@ -98,11 +98,15 @@ export async function makeCardImage(options: {
   ctx.font = '13px "Instrument Sans Variable", sans-serif';
   y -= nameSize-16;
   for (const line of details) { ctx.fillText(line, 24, y); y += 17; }
-  ctx.save();
-  const artY = (top - 94)/2 + 17;
-  if (photo) { ctx.beginPath(); ctx.arc(343, artY+47, 47, 0, 2*Math.PI); ctx.clip(); }
-  ctx.drawImage(portrait, 296, artY, 94, 94);
-  ctx.restore();
+  if (portrait) {
+    const artY = (top - 94) / 2 + 17;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(343, artY + 47, 47, 0, 2 * Math.PI);
+    ctx.clip();
+    ctx.drawImage(portrait, 296, artY, 94, 94);
+    ctx.restore();
+  }
   ctx.fillStyle = "#f7f4ec";
   ctx.fillRect(0, top, width, height-top);
   ctx.fillStyle = "white";

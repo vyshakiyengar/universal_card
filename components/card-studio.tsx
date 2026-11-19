@@ -364,7 +364,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
               {screen.arrival !== "opened" && <span className="saved-tick"><Check size={12} aria-hidden="true" /><span className="visually-hidden" role="status">Card saved.</span></span>}
               <h1 tabIndex={-1}>Your {cardKindLabels[getKind(screen.card.draft)]} Heya Card</h1>
             </div>
-            <CardPreview onEdit={() => edit(screen.card)} created={screen.arrival === "created"} draft={screen.card.draft} preview={screen.preview} walletUrl={online && walletConfigured ? `/api/cards/${screen.card.id}/wallet` : undefined} />
+            <CardPreview onEdit={() => edit(screen.card)} arrival={screen.arrival} draft={screen.card.draft} preview={screen.preview} walletUrl={online && walletConfigured ? `/api/cards/${screen.card.id}/wallet` : undefined} />
           </div>
         )}
       </main>

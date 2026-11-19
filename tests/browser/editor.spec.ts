@@ -322,20 +322,24 @@ test("create, open, update and delete an Individual card in Manage cards", async
   await expect(page.getByText("Your saved cards will appear here.")).toBeVisible();
 });
 
-test("the card reveal plays once on creation and respects Reduce Motion", async ({ page }) => {
+test("created and reopened cards reveal the name while the QR stays still", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/studio");
   await page.getByRole("button", { name: /Create Apple Wallet card for your Email/ }).click();
   await page.getByLabel("Email address").fill("alex@example.com");
   await page.getByRole("button", { name: save }).click();
   const card = page.locator(".wallet-preview");
-  await expect(card).toHaveCSS("animation-name", "pass-arrive");
+  const holder = card.locator(".pass-holder");
+  await expect(holder).toHaveCSS("animation-name", "holder-reveal");
+  await expect(holder).toHaveCSS("animation-duration", "0.56s");
+  await expect(card).toHaveCSS("animation-name", "none");
   const sweep = () => card.locator(".pass-face").evaluate((face) => getComputedStyle(face, "::after").animationName);
   expect(await sweep()).toBe("pass-light");
   await expect(card.getByText("Scan to email")).toBeVisible();
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(card).toHaveCSS("animation-name", "none");
   expect(await sweep()).toBe("none");
+  await expect(holder).toHaveCSS("animation-name", "none");
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.getByRole("button", { name: "Edit details" }).click();
   await page.getByLabel("Name on card").fill("Alex Morgan");
@@ -343,6 +347,9 @@ test("the card reveal plays once on creation and respects Reduce Motion", async 
   await expect(card).toHaveCSS("animation-name", "none");
   await page.getByRole("navigation").getByRole("button", { name: "Manage cards" }).click();
   await page.getByRole("button", { name: "Open Email" }).click();
+  await expect(holder).toHaveCSS("animation-duration", "0.24s");
+  await expect(holder).toHaveCSS("animation-name", "holder-reveal");
+  expect(await sweep()).toBe("none");
   await expect(card).toHaveCSS("animation-name", "none");
 });
 
@@ -396,7 +403,7 @@ test("a Universal photo stays off the QR and saved details prefill new cards", a
   await page.getByLabel("Name on card").fill("Alan Turing");
   await page.getByRole("button", { name: "Add link" }).click();
   await page.getByLabel("Link 1", { exact: true }).fill("https://www.linkedin.com/in/example");
-  await page.locator('input[type=file]').setInputFiles("lib/server/wallet-assets/thumbnail.png");
+  await page.locator('input[type=file]').setInputFiles("public/apple-wallet-icon.jpg");
   await expect(page.getByRole("img", { name: "Card photo" })).toBeVisible();
   await page.getByRole("button", { name: save }).click();
   await expect(page.getByRole("img", { name: "Card photo" })).toBeVisible();

@@ -105,11 +105,7 @@ export function createWalletPass(
       "icon@3x.png": readFileSync(join(assets, "icon@3x.png")),
       ...(card.type === "universal" && card.photo
         ? { "thumbnail.png": Buffer.from(card.photo.slice(photoPrefix.length), "base64") }
-        : {
-            "thumbnail.png": readFileSync(join(assets, "thumbnail.png")),
-            "thumbnail@2x.png": readFileSync(join(assets, "thumbnail@2x.png")),
-            "thumbnail@3x.png": readFileSync(join(assets, "thumbnail@3x.png")),
-          }),
+        : {}),
       "logo.png": readFileSync(join(assets, `mark-${kind}.png`)),
       "logo@2x.png": readFileSync(join(assets, `mark-${kind}@2x.png`)),
       "logo@3x.png": readFileSync(join(assets, `mark-${kind}@3x.png`)),

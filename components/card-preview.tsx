@@ -22,7 +22,7 @@ function download(url: string, filename: string) {
   window.setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
-export function CardPreview({ draft, preview, walletUrl, created, onEdit }: { draft: CardInput; preview: Preview; walletUrl?: string; created: boolean; onEdit: () => void }) {
+export function CardPreview({ draft, preview, walletUrl, arrival, onEdit }: { draft: CardInput; preview: Preview; walletUrl?: string; arrival: "created" | "updated" | "opened"; onEdit: () => void }) {
   const [sharing, setSharing] = useState(false);
   const [shareStatus, setShareStatus] = useState("");
   const isUniversal = draft.type === "universal";
@@ -68,7 +68,7 @@ export function CardPreview({ draft, preview, walletUrl, created, onEdit }: { dr
 
   return (
     <section className="saved-preview" aria-label="Saved card">
-      <div ref={cardRef} className="wallet-preview" data-created={created} style={walletSurfaceStyle(kind)}>
+      <div ref={cardRef} className="wallet-preview" data-arrival={arrival} style={walletSurfaceStyle(kind)}>
         <div className="pass-face">
           <div className="pass-brand-row">
             <span className="pass-platform"><DestinationMark kind={kind} /> {label}</span>
@@ -79,7 +79,7 @@ export function CardPreview({ draft, preview, walletUrl, created, onEdit }: { dr
               <div className="pass-name" data-long={name.length > 28}>{name}</div>
               {detail && <div className="pass-detail" title={detail}>{detail}</div>}
             </div>
-            {draft.type === "universal" && draft.photo ? <img className="pass-photo" src={draft.photo} alt="Card photo" /> : <span className="pass-links" aria-hidden="true" />}
+            {photo && <img className="pass-photo" src={photo} alt="Card photo" />}
           </div>
         </div>
         <div className="pass-paper" data-density={preview.code.density}>

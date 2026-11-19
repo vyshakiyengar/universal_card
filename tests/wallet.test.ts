@@ -89,13 +89,7 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
   const hashes = JSON.parse(manifest.toString()) as Record<string, string>;
   const imageNames = ["icon.png", "icon@2x.png", "icon@3x.png"];
   const logoNames = ["logo.png", "logo@2x.png", "logo@3x.png"];
-  const thumbnails = ["thumbnail.png", "thumbnail@2x.png", "thumbnail@3x.png"];
-  assert.deepEqual(Object.keys(hashes).sort(), [...imageNames, ...logoNames, ...thumbnails, "pass.json"].sort());
-  for (const [index, file] of thumbnails.entries()) {
-    const image = readPassFile(file);
-    assert.equal(image.readUInt32BE(16), 90 * (index + 1));
-    assert.equal(image.readUInt32BE(20), 90 * (index + 1));
-  }
+  assert.deepEqual(Object.keys(hashes).sort(), [...imageNames, ...logoNames, "pass.json"].sort());
   for (const [file, hash] of Object.entries(hashes)) {
     assert.equal(createHash("sha1").update(readPassFile(file)).digest("hex"), hash);
   }
