@@ -32,7 +32,7 @@ button { cursor: pointer; }
 button:disabled { cursor: default; }
 a { color: inherit; }
 h1, h2, h3, p, ul { margin: 0; }
-h1, h2, .pass-name { font-family: "Instrument Sans Variable", sans-serif; }
+h1, h2 { font-family: "Instrument Sans Variable", sans-serif; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
 h1[tabindex="-1"]:focus { outline: none; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; white-space: nowrap; clip-path: inset(50%); }
@@ -43,7 +43,6 @@ h1[tabindex="-1"]:focus { outline: none; }
 .heya-wordmark { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; color: inherit; font: 630 30px/.85 "Helvetica Neue", Arial, sans-serif; letter-spacing: -.052em; }
 .heya-wordmark small { font-size: 10px; font-weight: 380; line-height: 1; letter-spacing: .19em; padding-inline-start: .19em; }
 .heya-stamp { font-size: 14px; line-height: 1; }
-.wallet-preview .heya-stamp { align-self: flex-end; margin-top: 6px; opacity: .9; }
 a.brand { text-decoration: none; }
 .studio-nav { display: flex; gap: 3px; padding: 3px; border: 1px solid var(--line); border-radius: 9px; background: var(--inset); }
 .studio-nav button { display: inline-flex; align-items: center; gap: 7px; border: 1px solid transparent; background: transparent; border-radius: 6px; min-height: 37px; padding: 6px 15px; color: var(--muted); font-size: 13px; font-weight: 620; white-space: nowrap; }
@@ -216,18 +215,90 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .result-heading { display: flex; align-items: center; justify-content: center; gap: 7px; text-align: center; margin-bottom: 15px; }
 .result-heading h1 { font-size: 18px; line-height: 1.25; font-weight: 650; letter-spacing: -.02em; }
 .saved-tick { display: inline-grid; flex: 0 0 auto; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--inset); color: var(--action); }
-.wallet-preview { display: flex; flex-direction: column; align-items: flex-start; color: #f8fbff; padding: 20px; border-radius: 24px; background: radial-gradient(ellipse at 100% 0,var(--pass-highlight),transparent 64%), linear-gradient(135deg,var(--pass-background),var(--pass-end)); box-shadow: 0 14px 27px -15px #1f459070, inset 0 1px #ffffff2c; }
-.pass-brand-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; }
-.pass-platform { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 710; line-height: 1.15; }
-.pass-platform .destination-mark { width: 20px; height: 20px; background: transparent; color: inherit; }
-.pass-platform .destination-mark svg { width: 19px; height: 19px; }
-.pass-wallet { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 5px; color: #eef5ff; font-size: 10px; font-weight: 650; white-space: nowrap; }
+.wallet-preview {
+  container-type: inline-size;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 21px;
+  background: #faf8f2;
+  box-shadow: 0 1px 2px #19251d26, 0 14px 34px -20px #14292260;
+}
+.pass-face, .device-pass {
+  background-color: var(--pass-background);
+  background-image: radial-gradient(ellipse at 106% -18%, var(--pass-light), transparent 66%),
+    linear-gradient(135deg, transparent 22%, #0610113d);
+}
+.pass-face {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(16px, 5.5cqi, 25px);
+  color: #fffcf4;
+}
+.pass-face::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: repeating-radial-gradient(ellipse at 106% 155%, transparent 0 7px, #fff8dc15 7.4px 8px, transparent 8.5px 14px);
+  mask-image: linear-gradient(100deg, transparent 23%, #0009);
+}
+.pass-brand-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.pass-platform { display: inline-flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 660; line-height: 1.15; }
+.pass-platform .destination-mark { width: 21px; height: 21px; background: transparent; color: inherit; }
+.pass-platform .destination-mark svg { width: 20px; height: 20px; }
+.pass-wallet { display: inline-flex; align-items: center; gap: 5px; color: #f2f3ed; font-size: 10px; font-weight: 550; white-space: nowrap; }
 .pass-wallet .apple-wallet-mark { width: 14px; height: 14px; }
-.pass-name { font-size: clamp(30px, 7vw, 45px); font-weight: 690; line-height: 1; letter-spacing: -.052em; margin-top: 16px; overflow-wrap: anywhere; max-width: 100%; }
-.pass-detail { color: #dbeaff; margin-top: 5px; max-width: 100%; overflow-wrap: anywhere; }
-.pass-barcode { align-self: stretch; display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 13px; padding: 5px 5px 12px; border-radius: 13px; background: white; color: #173053; }
+.pass-identity {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 28%;
+  align-items: center;
+  gap: 8px;
+  min-height: clamp(106px, 31cqi, 141px);
+  margin-top: clamp(14px, 4.5cqi, 23px);
+}
+.pass-holder { min-width: 0; }
+.pass-name { font: 485 clamp(28px, 10.1cqi, 47px)/1.03 var(--heading); letter-spacing: -.047em; text-wrap: balance; overflow-wrap: anywhere; }
+.pass-name[data-long="true"] { font-size: clamp(23px, 7cqi, 31px); }
+.pass-detail { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 8px; color: #eef1e7; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
+.pass-links {
+  display: block;
+  aspect-ratio: 1;
+  width: 100%;
+  background: url("../lib/server/wallet-assets/thumbnail@3x.png") center / contain no-repeat;
+  filter: drop-shadow(1px 6px 4px #06101159);
+}
+.pass-paper {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: clamp(15px, 6cqi, 30px);
+  padding: clamp(16px, 5.5cqi, 25px);
+  border-top: 1px solid #fff;
+  background: linear-gradient(120deg, #fdfcf8, #f1ede4);
+  color: #263029;
+}
+.pass-barcode {
+  align-self: center;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border: 1px solid #dcdad3;
+  border-radius: 7px;
+  padding: 2px;
+}
+@container (max-width: 380px) {
+  .pass-paper[data-density="dense"] { grid-template-columns: 1fr; justify-items: center; gap: 12px; }
+  .pass-paper[data-density="dense"] .pass-barcode { justify-self: center; }
+  .pass-paper[data-density="dense"] .pass-invitation { width: 100%; flex-direction: row; align-items: baseline; padding: 0; }
+  .pass-paper[data-density="dense"] .pass-action { max-width: none; }
+  .pass-paper[data-density="dense"] .pass-action::before { display: none; }
+}
 .qr-code { display: block; max-width: 100%; height: auto; }
-.scan-label { font-size: 12px; text-align: center; font-weight: 680; }
+.pass-invitation { display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 6px 0 2px; }
+.pass-action { max-width: 10ch; font: 480 clamp(19px, 6.25cqi, 28px)/1.1 var(--heading); letter-spacing: -.035em; overflow-wrap: anywhere; }
+.pass-action::before { display: block; content: ""; width: 25px; height: 1px; background: #a49a80; margin-bottom: 12px; }
+.pass-invitation .heya-stamp { align-self: flex-end; color: #55584f; font-size: 16px; }
 .density-note { margin-top: 10px; font-size: 13px; color: #794419; }
 .preview-actions { display: flex; gap: 7px; justify-content: center; flex-wrap: wrap; margin-block: 13px 9px; }
 .wallet-button { width: 100%; display: flex; color: white; }
@@ -300,9 +371,27 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .wallet-action-card .wallet-button:hover:not(:disabled) { background: var(--action-hover); }
 .wallet-action-card .wallet-button:disabled { background: var(--inset); color: var(--muted); }
 @media (prefers-reduced-motion: no-preference) {
-  .focused-page, .view-manage .manage-heading, .wallet-preview { animation: settle-in .24s ease-out both; }
+  .focused-page:not(.result-page), .view-manage .manage-heading { animation: settle-in .24s ease-out both; }
+  .wallet-preview[data-created="true"] { animation: pass-arrive .68s cubic-bezier(.18,.82,.26,1) both; }
+  .wallet-preview[data-created="true"] .pass-face::after {
+    content: "";
+    position: absolute;
+    inset: -45% -20%;
+    pointer-events: none;
+    background: linear-gradient(106deg, transparent 38%, #fff8d815 48%, #fff8d829 50%, transparent 62%);
+    animation: pass-light .95s .07s ease-in-out both;
+  }
   .button:not(:disabled) { transition: background-color .16s ease, border-color .16s ease; }
   .stack-whatsapp { animation: wallet-card-lift 1.7s cubic-bezier(.22,.8,.29,1); }
+}
+@keyframes pass-arrive {
+  from { transform: perspective(900px) translateY(16px) rotateX(6deg) scale(.976); }
+  to { transform: none; }
+}
+@keyframes pass-light {
+  from { transform: translateX(-95%); opacity: 0; }
+  25%, 65% { opacity: 1; }
+  to { transform: translateX(95%); opacity: 0; }
 }
 @keyframes wallet-card-lift {
   from { transform: translateY(17cqi); }

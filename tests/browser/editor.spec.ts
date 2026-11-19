@@ -320,6 +320,30 @@ test("create, open, update and delete an Individual card in Manage cards", async
   await expect(page.getByText("Your saved cards will appear here.")).toBeVisible();
 });
 
+test("the card reveal plays once on creation and respects Reduce Motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/studio");
+  await page.getByRole("button", { name: /Create Apple Wallet card for your Email/ }).click();
+  await page.getByLabel("Email address").fill("alex@example.com");
+  await page.getByRole("button", { name: save }).click();
+  const card = page.locator(".wallet-preview");
+  await expect(card).toHaveCSS("animation-name", "pass-arrive");
+  const sweep = () => card.locator(".pass-face").evaluate((face) => getComputedStyle(face, "::after").animationName);
+  expect(await sweep()).toBe("pass-light");
+  await expect(card.getByText("Scan to email")).toBeVisible();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(card).toHaveCSS("animation-name", "none");
+  expect(await sweep()).toBe("none");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.getByRole("button", { name: "Edit details" }).click();
+  await page.getByLabel("Name on card").fill("Alex Morgan");
+  await page.getByRole("button", { name: save }).click();
+  await expect(card).toHaveCSS("animation-name", "none");
+  await page.getByRole("navigation").getByRole("button", { name: "Manage cards" }).click();
+  await page.getByRole("button", { name: "Open Email" }).click();
+  await expect(card).toHaveCSS("animation-name", "none");
+});
+
 test("validate QR density when saving", async ({ page }) => {
   await page.goto("/studio");
   await page.getByRole("button", { name: /Create Apple Wallet card for your custom link/ }).click();
@@ -331,6 +355,14 @@ test("validate QR density when saving", async ({ page }) => {
   await destination.fill("https://example.com/" + "a".repeat(240));
   await page.getByRole("button", { name: save }).click();
   await expect(page.getByText(/This QR is dense/)).toBeVisible();
+  await page.setViewportSize({ width: 320, height: 750 });
+  const qr = page.getByRole("img", { name: "Scannable card QR" });
+  const pixelsPerModule = await qr.evaluate((element) => {
+    const svg = element as SVGSVGElement;
+    return svg.clientWidth / svg.viewBox.baseVal.width;
+  });
+  expect(Number.isInteger(pixelsPerModule)).toBe(true);
+  expect(pixelsPerModule).toBeGreaterThanOrEqual(2);
 });
 
 test("a separate Website card opens the saved web destination", async ({ page }) => {

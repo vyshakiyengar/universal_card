@@ -17,7 +17,7 @@ type EntryKind = DestinationKind | "universal";
 type Screen =
   | { view: "create" | "manage" }
   | { view: "edit"; draft: CardInput; original: CardInput; id?: string }
-  | { view: "saved"; card: SavedCard; preview: Preview; justSaved: boolean };
+  | { view: "saved"; card: SavedCard; preview: Preview; arrival: "created" | "updated" | "opened" };
 
 type StudioProps = {
   account?: { email: string | null; firstName: string };
@@ -163,7 +163,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
 
   function open(card: SavedCard) {
     try {
-      navigate({ view: "saved", card, preview: getSavedPreview(card), justSaved: false });
+      navigate({ view: "saved", card, preview: getSavedPreview(card), arrival: "opened" });
     } catch {
       setError("This card’s QR could not be generated. Open Edit to check its details.");
     }
@@ -190,7 +190,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
         localStorage.setItem(storageKey, JSON.stringify([saved, ...current.filter(({ id }) => id !== saved.id)]));
       }
       setCards((current) => [saved, ...current.filter(({ id }) => id !== saved.id)]);
-      setScreen({ view: "saved", card: saved, preview, justSaved: true });
+      setScreen({ view: "saved", card: saved, preview, arrival: screen.id ? "updated" : "created" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Your card could not be saved.");
     } finally {
@@ -324,10 +324,10 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
           <div className="focused-page result-page">
             <button className="back-button" type="button" onClick={() => navigate({ view: "manage" })}><ArrowLeft size={18} /> Manage cards</button>
             <div className="result-heading">
-              {screen.justSaved && <span className="saved-tick"><Check size={12} aria-hidden="true" /><span className="visually-hidden" role="status">Card saved.</span></span>}
+              {screen.arrival !== "opened" && <span className="saved-tick"><Check size={12} aria-hidden="true" /><span className="visually-hidden" role="status">Card saved.</span></span>}
               <h1 tabIndex={-1}>Your {cardKindLabels[getKind(screen.card.draft)]} Heya Card</h1>
             </div>
-            <CardPreview draft={screen.card.draft} preview={screen.preview} walletUrl={online && walletConfigured ? `/api/cards/${screen.card.id}/wallet` : undefined} />
+            <CardPreview created={screen.arrival === "created"} draft={screen.card.draft} preview={screen.preview} walletUrl={online && walletConfigured ? `/api/cards/${screen.card.id}/wallet` : undefined} />
             <button className="button secondary result-edit" type="button" onClick={() => edit(screen.card)}><PenLine size={16} /> Edit details</button>
           </div>
         )}

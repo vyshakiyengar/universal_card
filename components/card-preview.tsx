@@ -1,9 +1,9 @@
 import { Download, Share2 } from "lucide-react";
-import { useState, type CSSProperties } from "react";
+import { useState } from "react";
 import { cardKindLabels, type CardInput } from "@/lib/cards";
 import { qrQuietZone as quietZone, type buildCardQr } from "@/lib/qr";
 import { tryNativeShare } from "@/lib/share";
-import { walletCardColors } from "@/lib/wallet-card-design";
+import { walletCardDesign, walletSurfaceStyle } from "@/lib/wallet-card-design";
 import { AppleWalletMark } from "./apple-wallet-mark";
 import { DestinationMark, scanDescriptions } from "./card-fields";
 import { HeyaWordmark } from "./heya-wordmark";
@@ -39,19 +39,13 @@ function makeQrImage({ size, modules }: Preview["code"], filename: string) {
   return new File([bytes], `${filename}.png`, { type: "image/png" });
 }
 
-export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; preview: Preview; walletUrl?: string }) {
+export function CardPreview({ draft, preview, walletUrl, created }: { draft: CardInput; preview: Preview; walletUrl?: string; created: boolean }) {
   const [sharing, setSharing] = useState(false);
   const [shareStatus, setShareStatus] = useState("");
   const isUniversal = draft.type === "universal";
   const kind = isUniversal ? "universal" : draft.kind;
   const label = isUniversal ? "Universal card" : cardKindLabels[kind];
   const name = draft.name?.trim() || (isUniversal ? "Contact" : label);
-  const colors = walletCardColors(kind);
-  const surface = {
-    "--pass-background": colors.background,
-    "--pass-end": colors.end,
-    "--pass-highlight": colors.highlight,
-  } as CSSProperties;
   const detail = isUniversal
     ? [draft.jobTitle.trim(), draft.company.trim()].filter(Boolean).join(" · ")
     : draft.kind === "linkedin" ? "" : draft.value.trim().replace(/^https?:\/\/(?:www\.)?/, "").replace(/\/$/, "");
@@ -84,18 +78,28 @@ export function CardPreview({ draft, preview, walletUrl }: { draft: CardInput; p
 
   return (
     <section className="saved-preview" aria-label="Saved card">
-      <div className="wallet-preview" style={surface}>
-        <div className="pass-brand-row">
-          <span className="pass-platform"><DestinationMark kind={kind} /> {label}</span>
-          <span className="pass-wallet"><AppleWalletMark /> Apple Wallet</span>
+      <div className="wallet-preview" data-created={created} style={walletSurfaceStyle(kind)}>
+        <div className="pass-face">
+          <div className="pass-brand-row">
+            <span className="pass-platform"><DestinationMark kind={kind} /> {label}</span>
+            <span className="pass-wallet"><AppleWalletMark /> Apple Wallet</span>
+          </div>
+          <div className="pass-identity">
+            <div className="pass-holder">
+              <div className="pass-name" data-long={name.length > 28}>{name}</div>
+              {detail && <div className="pass-detail" title={detail}>{detail}</div>}
+            </div>
+            <span className="pass-links" aria-hidden="true" />
+          </div>
         </div>
-        <div className="pass-name">{name}</div>
-        {detail && <div className="pass-detail">{detail}</div>}
-        <div className="pass-barcode">
-          <QrGraphic code={preview.code} label="Scannable card QR" />
-          <span className="scan-label">{scanDescriptions[kind]}</span>
+        <div className="pass-paper" data-density={preview.code.density}>
+          <div className="pass-barcode"><QrGraphic code={preview.code} label="Scannable card QR" maxWidth={preview.code.density === "dense" ? 250 : 184} /></div>
+          <div className="pass-invitation">
+            <span className="pass-action" title={scanDescriptions[kind]}>{walletCardDesign(kind).action}</span>
+            <span className="scan-label visually-hidden">{scanDescriptions[kind]}</span>
+            <HeyaWordmark compact />
+          </div>
         </div>
-        <HeyaWordmark compact />
       </div>
       {preview.code.density === "dense" && <p className="density-note" role="status">This QR is dense. Test it on another phone before sharing.</p>}
       <div className="preview-actions">

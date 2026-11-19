@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { PKPass } from "passkit-generator";
 import { cardKindLabels, makeCardPayload } from "../cards";
 import { buildCardQr } from "../qr";
-import { walletCardColors } from "../wallet-card-design";
+import { walletCardDesign } from "../wallet-card-design";
 
 const passTypePattern = /^pass\.[a-z\d-]+(?:\.[a-z\d-]+)+$/i;
 const teamPattern = /^[A-Z0-9]{10}$/;
@@ -94,7 +94,7 @@ export function createWalletPass(
   buildCardQr(payload);
   const kind = card.type === "universal" ? "universal" : card.kind;
   const label = kind === "universal" ? "Universal card" : cardKindLabels[kind];
-  const { background } = walletCardColors(kind);
+  const { background, action } = walletCardDesign(kind);
   const assets = join(process.cwd(), "lib/server/wallet-assets");
 
   const pass = new PKPass(
@@ -102,6 +102,9 @@ export function createWalletPass(
       "icon.png": readFileSync(join(assets, "icon.png")),
       "icon@2x.png": readFileSync(join(assets, "icon@2x.png")),
       "icon@3x.png": readFileSync(join(assets, "icon@3x.png")),
+      "thumbnail.png": readFileSync(join(assets, "thumbnail.png")),
+      "thumbnail@2x.png": readFileSync(join(assets, "thumbnail@2x.png")),
+      "thumbnail@3x.png": readFileSync(join(assets, "thumbnail@3x.png")),
       "logo.png": readFileSync(join(assets, `mark-${kind}.png`)),
       "logo@2x.png": readFileSync(join(assets, `mark-${kind}@2x.png`)),
       "logo@3x.png": readFileSync(join(assets, `mark-${kind}@3x.png`)),
@@ -136,7 +139,7 @@ export function createWalletPass(
     format: "PKBarcodeFormatQR",
     message: payload,
     messageEncoding: "utf-8",
-    altText: card.type === "universal" ? "Scan to save contact" : "Scan to open destination",
+    altText: action,
   });
 
   return pass.getAsBuffer();
