@@ -5,7 +5,6 @@ import { makeCardImage } from "@/lib/card-image";
 import { tryNativeShare } from "@/lib/share";
 import { track } from "@/lib/track";
 import { CardFace, cardText, type CardArrival, type CardCode } from "./card-face";
-import { WalletPassView } from "./wallet-pass-view";
 
 export type Preview = { code: CardCode; payload: string };
 export type WalletAction =
@@ -45,7 +44,6 @@ export function CardPreview({ draft, preview, wallet, arrival, onEdit }: {
 }) {
   const [sharing, setSharing] = useState(false);
   const [shareStatus, setShareStatus] = useState("");
-  const [view, setView] = useState<"wallet" | "image">("wallet");
   const [appleMobile, setAppleMobile] = useState(false);
   const isUniversal = draft.type === "universal";
   const { kind, label, name, detail } = cardText(draft);
@@ -98,26 +96,15 @@ export function CardPreview({ draft, preview, wallet, arrival, onEdit }: {
   );
   const imageActions = (
     <div className="preview-actions">
-      <button className="button secondary" type="button" disabled={!image || sharing} onClick={shareCard}><Share2 size={16} /> Share image</button>
-      <button className="button secondary" type="button" disabled={!image} onClick={downloadCard}><Download size={16} /> Download image</button>
+      <button className="button secondary" type="button" disabled={!image || sharing} onClick={shareCard}><Share2 size={16} /> Share card</button>
+      <button className="button secondary" type="button" disabled={!image} onClick={downloadCard}><Download size={16} /> Download card</button>
     </div>
   );
 
   return (
     <section className="saved-preview" aria-label="Saved card">
-      <div className="result-views-toggle" role="tablist" aria-label="Card view">
-        <button role="tab" type="button" aria-selected={view === "wallet"} onClick={() => setView("wallet")}>In Apple Wallet</button>
-        <button role="tab" type="button" aria-selected={view === "image"} onClick={() => setView("image")}>Card image</button>
-      </div>
-      <div className="result-views" data-view={view}>
-        <figure className="result-view result-view-wallet">
-          <figcaption><span className="result-view-tag">In Apple Wallet</span><span>What you’ll see on your iPhone</span></figcaption>
-          <WalletPassView draft={draft} code={preview.code} />
-        </figure>
-        <figure className="result-view result-view-image" ref={faceRef}>
-          <figcaption><span className="result-view-tag">Card image</span><span>The picture you share or download</span></figcaption>
-          <CardFace draft={draft} code={preview.code} arrival={arrival} />
-        </figure>
+      <div className="result-card" ref={faceRef}>
+        <CardFace draft={draft} code={preview.code} arrival={arrival} />
       </div>
       {preview.code.density === "dense" && <p className="density-note" role="status">This QR holds a lot of detail, so it’s shown larger to scan easily.</p>}
       <div className="result-actions" data-apple={appleMobile || undefined}>
