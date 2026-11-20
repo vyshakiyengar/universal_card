@@ -100,7 +100,7 @@ function CreateCards({ ready, create, firstName }: { ready: boolean; create: (ty
     <>
       <section className="studio-intro" data-clip={hasHowItWorksClip || undefined} aria-labelledby="page-title">
         <div className="studio-intro-copy">
-          <h1 id="page-title" tabIndex={-1}>{firstName ? `Hi ${firstName}, which card do you want to make?` : "Which card do you want to make?"}</h1>
+          <h1 id="page-title" tabIndex={-1}>{firstName ? `Hi ${firstName}, let’s make your card` : "Let’s make your card"}</h1>
         </div>
         {hasHowItWorksClip && <HowItWorksClip className="studio-clip" />}
       </section>

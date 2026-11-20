@@ -3,7 +3,7 @@ import { LandingFaq } from "@/components/faq";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowDown, ArrowRight, LockKeyhole, QrCode, Scan, Send, Smartphone, Tag } from "lucide-react";
+import { ArrowDown, ArrowRight, LockKeyhole, QrCode, Scan, Send, Tag } from "lucide-react";
 import { AppleWalletMark } from "@/components/apple-wallet-mark";
 import { DestinationMark } from "@/components/card-fields";
 import { HeyaWordmark } from "@/components/heya-wordmark";
@@ -50,7 +50,6 @@ export default function Home() {
 
         <ul className="why-band" aria-label="Why Heya">
           <li><LockKeyhole size={19} strokeWidth={1.7} aria-hidden="true" /> Your details live in the QR, not on our servers</li>
-          <li><Smartphone size={19} strokeWidth={1.7} aria-hidden="true" /> They don’t need an app</li>
           <li><Tag size={19} strokeWidth={1.7} aria-hidden="true" /> Free</li>
         </ul>
 
