@@ -418,9 +418,9 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
 /* ---------- Studio: create screen ---------- */
 .studio-intro { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: clamp(18px, 3vw, 26px) clamp(18px, 3vw, 30px); border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
 .studio-intro:not([data-clip]) { padding: 6px 0 0; border: 0; background: none; }
-.studio-intro h1 { max-width: 30ch; font: 560 clamp(28px, 3.4vw, 42px)/1.06 var(--heading); letter-spacing: -.04em; text-wrap: balance; }
+.studio-intro h1 { max-width: 22ch; font: 560 clamp(24px, 2.4vw, 32px)/1.1 var(--heading); letter-spacing: -.04em; text-wrap: balance; }
 .studio-intro p { margin-top: 8px; color: var(--muted); }
-.studio-intro .how-clip { width: clamp(240px, 30vw, 340px); flex: 0 0 auto; }
+.studio-intro .how-clip { width: clamp(340px, 50vw, 620px); flex: 0 0 auto; }
 .studio-clip-mobile { display: none; }
 .chooser-heading { margin-bottom: 11px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
 .chooser-section { margin-top: 30px; }
