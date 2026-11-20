@@ -1,0 +1,75 @@
+.page {
+  width: min(100% - 2.5rem, 28rem);
+  margin-inline: auto;
+  padding-block: clamp(1.75rem, 7vw, 5rem);
+  color: var(--ink, #18232a);
+}
+
+.back {
+  font-weight: 650;
+  text-underline-offset: 0.2em;
+}
+
+.panel {
+  margin-top: 1.5rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  background: var(--surface, #fff);
+  border: 1px solid var(--line, #d9dfe3);
+  border-radius: 0.9375rem;
+  box-shadow: 0 0.625rem 2rem #25241c0d;
+}
+
+.panel h1 {
+  margin: 0;
+  font-family: var(--heading);
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1.03;
+}
+
+.instructions {
+  color: var(--muted, #4e5e68);
+  margin: 0.65rem 0 0.85rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.providers {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.panel button {
+  min-height: 2.75rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--field-line);
+  border-radius: 0.4375rem;
+  font: inherit;
+}
+
+.providers button {
+  background: var(--surface, #fff);
+  color: inherit;
+}
+
+.panel button {
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.panel button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.providers button:hover:not(:disabled) {
+  background: var(--inset);
+}
+
+.error {
+  color: #9b2e2c;
+  margin: 0.35rem 0;
+}
+
+.legal { display: flex; gap: 14px; margin-top: 16px; font-size: 13px; }

@@ -1,0 +1,12 @@
+import Link from "next/link";
+
+export function ProjectCredit() {
+  return (
+    <footer className="project-credit">
+      <div className="project-meta">
+        <p className="project-by">Project by <a className="project-link" href="https://vyshak.me">Vyshak K Iyengar</a></p>
+        <nav aria-label="Site information"><Link href="/faq">FAQ</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></nav>
+      </div>
+    </footer>
+  );
+}
