@@ -106,18 +106,19 @@ function CreateCards({ ready, create, firstName }: { ready: boolean; create: (ty
         </div>
         {hasHowItWorksClip && <HowItWorksClip className="studio-clip" />}
         {howItWorksClip && (
-          <details className="studio-clip-mobile">
-            <summary>
-              <img src={howItWorksClip.poster} alt="" width={44} height={78} />
-              <span><strong>See how it works</strong><small>16-second clip</small></span>
-            </summary>
-            <HowItWorksClip />
-          </details>
+          <div className="studio-clip-mobile">
+            <video src={howItWorksClip.fastSrc} poster={howItWorksClip.poster} autoPlay muted loop playsInline preload="auto"
+              aria-label="Animation: a Heya card in Apple Wallet is scanned and the contact saves. Then a WhatsApp card is scanned and the chat opens." />
+            <div><strong>How it works</strong><span>Share all your details on one card, or just one, like your WhatsApp. They scan it with their camera.</span></div>
+          </div>
         )}
       </section>
 
-      <section id="universal-cards" className="chooser-section" aria-labelledby="universal-title">
-        <h2 id="universal-title" className="chooser-heading">All your details on one card</h2>
+      <section id="universal-cards" className="chooser-section universal-section" aria-labelledby="universal-title">
+        <div className="section-heading">
+          <h2 id="universal-title">Create <span>Universal</span> Cards</h2>
+          <p>(All contact details in one card)</p>
+        </div>
         <button className="universal-choice" type="button" disabled={!ready} onClick={() => create("universal")}>
           <DestinationMark kind="universal" />
           <span><strong>Universal card</strong><small>Scanning saves your name, numbers, emails and links to their Contacts.</small></span>
@@ -126,7 +127,10 @@ function CreateCards({ ready, create, firstName }: { ready: boolean; create: (ty
       </section>
 
       <section id="individual-cards" className="chooser-section" aria-labelledby="individual-title">
-        <h2 id="individual-title" className="chooser-heading">One card, one action</h2>
+        <div className="section-heading">
+          <h2 id="individual-title">Create <span>Individual</span> Cards</h2>
+          <p>(Separate cards for each)</p>
+        </div>
         <div className="destination-grid">
           {types.map((kind) => (
             <button key={kind} className="destination-card" type="button" disabled={!ready} onClick={() => create(kind)}>
