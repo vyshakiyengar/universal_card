@@ -37,13 +37,14 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
-// First-time visitors may try the studio without an account. A visit lasts while
-// they keep coming back within the visit window. A later visit needs sign-in.
+// First-time visitors may make one card without an account. The visit lasts while
+// they keep coming back within the visit window. Once the card is made, or on a
+// later visit, the studio needs sign-in.
 function startOrContinueTrial(request: NextRequest, current: NextResponse) {
   const secure = request.nextUrl.protocol === "https:";
   const started = request.cookies.has(trialCookies.started);
   const visiting = request.cookies.has(trialCookies.visit);
-  if (started && !visiting) return current;
+  if (request.cookies.has(trialCookies.used) || (started && !visiting)) return current;
 
   request.cookies.set(trialCookies.visit, "1");
   const headers = new Headers(request.headers);

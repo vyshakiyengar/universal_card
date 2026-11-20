@@ -17,7 +17,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ e
   const walletConfigured = isWalletConfigured();
   if (!account) {
     // The proxy lets a first-time visitor try the studio for one visit.
-    if (!(await cookies()).has(trialCookies.visit)) redirect("/auth/sign-in?from=studio");
+    const jar = await cookies();
+    if (jar.has(trialCookies.used) || !jar.has(trialCookies.visit)) redirect("/auth/sign-in?from=studio");
     if ((await headers()).get(trialStartHeader) === "1") after(() => recordActivity("trial_started"));
     return <CardStudio trial walletConfigured={walletConfigured} />;
   }

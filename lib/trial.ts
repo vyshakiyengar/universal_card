@@ -2,6 +2,8 @@
 export const trialCookies = {
   started: "heya_trial",
   visit: "heya_trial_visit",
+  // Set once the free card is made. After that the studio needs sign-in.
+  used: "heya_trial_used",
   // A visit ends after two hours without opening the studio.
   visitSeconds: 2 * 60 * 60,
 } as const;

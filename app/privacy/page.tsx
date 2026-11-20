@@ -11,7 +11,7 @@ export default function Privacy() {
       <section>
         <h2>What we collect</h2>
         <p>When you sign in with Google or Apple, we receive an account identifier and the profile details your provider shares, such as your name and email address. We store the contact details, links and optional card photo you choose to add to saved cards. A session cookie keeps you signed in.</p>
-        <p>If you try the studio before signing in, the cards you make stay in your browser’s local storage, not on our servers. Two cookies note that you have started a trial and whether this visit is still open. When you sign in, cards in that browser are copied to your account.</p>
+        <p>If you make your first card before signing in, it stays in your browser’s local storage, not on our servers. If you add it to Apple Wallet, its details are sent to us once to build the pass and are not stored. Three cookies note that you have started, whether this visit is still open and whether you have made your free card. When you sign in, cards in that browser are copied to your account.</p>
         <p>We record aggregate daily counts, such as sign-ins, cards created, Wallet downloads, shares and button clicks, to understand how the service is used. These counts contain no account identifiers or card contents.</p>
         <p>We use Vercel Web Analytics for visits to the public homepage. It provides aggregate traffic statistics without analytics cookies. We exclude private pages, card contents and URL parameters from this analytics collection.</p>
       </section>
@@ -35,7 +35,7 @@ export default function Privacy() {
       <section>
         <h2>How long we keep it</h2>
         <p>We keep your account and saved cards while your account is active. When you delete your account, your account and saved cards are deleted straight away. Hosting and authentication providers may keep limited security and operational logs for a short period under their own retention schedules. Aggregate counts contain no personal data and are kept to see how the service changes over time.</p>
-        <p>Cards in your browser’s local storage stay until you sign in, delete them or clear your browser data. The trial cookies expire after one year and two hours.</p>
+        <p>Cards in your browser’s local storage stay until you sign in, delete them or clear your browser data. The first-card cookies expire after one year, apart from the visit cookie, which expires after two hours.</p>
       </section>
       <section>
         <h2>Your rights</h2>

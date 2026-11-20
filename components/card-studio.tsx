@@ -6,7 +6,7 @@ import { ArrowLeft, ArrowRight, PenLine, Plus, Trash2 } from "lucide-react";
 import { cardLimits, makeCardPayload, type CardInput, type DestinationKind, type UniversalCard } from "@/lib/cards";
 import { savedDetail, addIndividualDetails } from "@/lib/saved-details";
 import { buildCardQr } from "@/lib/qr";
-import { localCardsKey, pendingWalletKey } from "@/lib/trial";
+import { localCardsKey, pendingWalletKey, trialCookies } from "@/lib/trial";
 import { track } from "@/lib/track";
 import { DestinationMark, destinations, scanActions, scanDescriptions, UniversalFields } from "./card-fields";
 import { CardPreview, type Preview, type WalletAction } from "./card-preview";
@@ -151,6 +151,12 @@ function CreateCards({ ready, create, firstName }: { ready: boolean; create: (ty
   );
 }
 
+// Once the free card exists, the studio asks for sign-in on the next load.
+function markTrialUsed() {
+  const secure = window.location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `${trialCookies.used}=1; Max-Age=31536000; Path=/; SameSite=Lax${secure}`;
+}
+
 export function CardStudio({ account, trial = false, walletConfigured = false, signOutFailed = false }: StudioProps = {}) {
   const online = Boolean(account);
   const [cards, setCards] = useState<SavedCard[]>([]);
@@ -177,7 +183,9 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
     async function readCards() {
       try {
         if (!online) {
-          setCards(readLocalCards());
+          const local = readLocalCards();
+          if (trial && local.length) markTrialUsed();
+          setCards(local);
           setReady(true);
           return;
         }
@@ -201,7 +209,7 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
     }
     void readCards();
     return () => controller.abort();
-  }, [online]);
+  }, [online, trial]);
 
   function navigate(next: Screen) {
     if (busy) return;
@@ -265,7 +273,10 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
         const old = current.find(({ id }) => id === screen.id);
         saved = { id: old?.id ?? crypto.randomUUID(), draft: card, createdAt: old?.createdAt ?? time, updatedAt: time };
         localStorage.setItem(localCardsKey, JSON.stringify([saved, ...current.filter(({ id }) => id !== saved.id)]));
-        if (trial && !old) track("trial_card_created", getKind(card));
+        if (trial && !old) {
+          markTrialUsed();
+          track("trial_card_created", getKind(card));
+        }
       }
       setCards((current) => [saved, ...current.filter(({ id }) => id !== saved.id)]);
       setEditorTab("details");
@@ -295,13 +306,8 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
   function walletAction(card: SavedCard): WalletAction {
     if (!walletConfigured) return { type: "unavailable" };
     if (online) return { type: "download", href: `/api/cards/${card.id}/wallet` };
-    if (trial) return {
-      type: "sign-in",
-      onSignIn: () => {
-        localStorage.setItem(pendingWalletKey, card.id);
-        window.location.assign("/auth/sign-in?from=wallet");
-      },
-    };
+    // The free card goes straight to Wallet, no account needed.
+    if (trial) return { type: "form", action: "/api/trial/wallet", fields: { id: card.id, card: JSON.stringify(card.draft) } };
     return { type: "unavailable" };
   }
 
@@ -436,7 +442,7 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
               wallet={walletAction(screen.card)} />
             {trial && (
               <div className="trial-banner trial-save">
-                <div><strong>Keep this card</strong><span>Sign in to save it to your account{walletConfigured ? ", add it to Apple Wallet" : ""} and make more cards.</span></div>
+                <div><strong>Keep this card</strong><span>Sign in to save it to your account and make more cards.</span></div>
                 <a className="button primary" href="/auth/sign-in?from=save" onClick={() => track("cta_click", "trial_save")}>Sign in to save</a>
               </div>
             )}
