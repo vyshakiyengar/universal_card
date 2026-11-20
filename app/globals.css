@@ -430,15 +430,10 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
   .studio-intro { border: 0; background: none; padding: 4px 0 0; flex-direction: column; align-items: stretch; gap: 14px; }
   .studio-intro h1 { font-size: clamp(27px, 8vw, 34px); }
   .studio-intro > .studio-clip { display: none; }
-  .studio-clip-mobile { display: block; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
-  .studio-clip-mobile summary { display: flex; align-items: center; gap: 12px; padding: 8px; cursor: pointer; list-style: none; }
-  .studio-clip-mobile summary::-webkit-details-marker { display: none; }
-  .studio-clip-mobile summary img { width: 44px; height: 78px; object-fit: cover; border-radius: 8px; }
-  .studio-clip-mobile summary span { display: grid; }
-  .studio-clip-mobile summary strong { font-size: 15px; }
-  .studio-clip-mobile summary small { color: var(--muted); font-size: 12px; }
-  .studio-clip-mobile[open] summary img { display: none; }
-  .studio-clip-mobile .how-clip { width: min(240px, 70%); margin: 0 auto 14px; }
+  .studio-clip-mobile { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 16px; padding: 10px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+  .studio-clip-mobile video { display: block; height: 30svh; min-height: 190px; max-height: 280px; aspect-ratio: 9 / 16; width: auto; border-radius: 11px; background: #ece7dd; object-fit: cover; }
+  .studio-clip-mobile strong { display: block; font: 560 22px/1.1 var(--heading); letter-spacing: -.03em; }
+  .studio-clip-mobile span { display: block; margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.4; }
   .chooser-section { margin-top: 22px; }
   .chooser-heading { font-size: 15px; }
   .destination-card { align-items: center; padding-block: 10px; min-height: 64px; }
