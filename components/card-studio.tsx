@@ -213,7 +213,15 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
     setScreen(next);
   }
 
+  // A first-time visitor gets one free card. Anything more asks them to sign in.
+  const trialUsed = trial && cards.length >= 1;
+  function signInForMore() {
+    track("cta_click", "trial_more");
+    window.location.assign("/auth/sign-in?from=more");
+  }
+
   function create(kind: EntryKind) {
+    if (trialUsed) return signInForMore();
     let draft = newDraft(kind, account);
     if (draft.type === "individual") {
       const previous = savedDetail(cards.map(card => card.draft), draft.kind);
@@ -308,12 +316,18 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
         {signOutFailed && <p className="form-error" role="alert">You’re still signed in. Try signing out again.</p>}
         {loadError && <p className="form-error" role="alert">{loadError}</p>}
         {notice && <p className="form-notice" role="status">{notice}</p>}
+        {screen.view === "create" && trialUsed && (
+          <div className="trial-banner" role="status">
+            <div><strong>You’ve made your free card</strong><span>Sign in to make more cards. Your first card comes with you.</span></div>
+            <a className="button primary" href="/auth/sign-in?from=more">Sign in</a>
+          </div>
+        )}
         {screen.view === "create" && <CreateCards ready={ready} create={create} firstName={account?.firstName} />}
         {screen.view === "manage" && (
           <>
             <div className="manage-heading">
-              <div><h1 tabIndex={-1}>Your cards</h1>{!online && <p>Cards saved in this browser.{trial && " Sign in to keep them."}</p>}</div>
-              <button type="button" className="button primary" disabled={!ready || busy} onClick={() => navigate({ view: "create" })}><Plus size={18} /> Create a card</button>
+              <div><h1 tabIndex={-1}>Your cards</h1>{!online && <p>Cards saved in this browser.{trial && " Sign in to keep them and make more."}</p>}</div>
+              <button type="button" className="button primary" disabled={!ready || busy} onClick={() => trialUsed ? signInForMore() : navigate({ view: "create" })}><Plus size={18} /> Create a card</button>
             </div>
             {error && <p className="form-error" role="alert">{error}</p>}
             <ul className="manage-list" aria-label="Your cards">
@@ -420,6 +434,12 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
             </div>
             <CardPreview onEdit={() => edit(screen.card)} arrival={screen.arrival} draft={screen.card.draft} preview={screen.preview}
               wallet={walletAction(screen.card)} />
+            {trial && (
+              <div className="trial-banner trial-save">
+                <div><strong>Keep this card</strong><span>Sign in to save it to your account{walletConfigured ? ", add it to Apple Wallet" : ""} and make more cards.</span></div>
+                <a className="button primary" href="/auth/sign-in?from=save" onClick={() => track("cta_click", "trial_save")}>Sign in to save</a>
+              </div>
+            )}
           </div>
         )}
       </main>

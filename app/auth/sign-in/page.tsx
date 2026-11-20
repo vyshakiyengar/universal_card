@@ -37,6 +37,8 @@ async function readSocialProviders() {
 const intros: Record<string, { title: string; body: string }> = {
   wallet: { title: "Sign in to add it to Wallet", body: "Your cards from this browser come with you." },
   studio: { title: "Welcome back", body: "Sign in to keep making cards. Any cards you made before come with you." },
+  more: { title: "Sign in to make more cards", body: "Your free card comes with you." },
+  save: { title: "Sign in to save your card", body: "Your card comes with you, and you can make as many as you like." },
 };
 
 export default async function SignInPage({ searchParams }: { searchParams: Promise<{ error?: string; from?: string }> }) {
