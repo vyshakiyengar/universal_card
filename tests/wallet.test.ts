@@ -120,7 +120,7 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
   assert.equal(pass.passTypeIdentifier, identity);
   assert.equal(pass.teamIdentifier, team);
   assert.equal(pass.formatVersion, 1);
-  assert.equal(pass.logoText, "Universal card");
+  assert.equal(pass.logoText, "Heya");
   assert.equal(pass.generic.primaryFields[0].value, draft.name);
   assert.equal(JSON.stringify(pass).includes(draft.title), false);
   assert.deepEqual(pass.barcodes, [{

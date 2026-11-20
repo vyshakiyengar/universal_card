@@ -1,6 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+import { recordActivity } from "../../../lib/server/activity";
 import { createAccountsClient, getAccountsConfig } from "../../../lib/server/supabase";
 
 export async function startSocialSignIn(formData: FormData) {
@@ -15,5 +17,6 @@ export async function startSocialSignIn(formData: FormData) {
     options: { redirectTo: new URL("/auth/callback", config.origin).href },
   });
   if (error || !data.url) redirect("/auth/sign-in?error=provider");
+  after(() => recordActivity("sign_in_started", provider));
   redirect(data.url);
 }

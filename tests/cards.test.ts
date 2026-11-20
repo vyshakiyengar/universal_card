@@ -34,7 +34,7 @@ function decode(payload: string) {
 test("Universal vCard round-trips with Unicode and repeated labeled fields", () => {
   const { card, payload } = makeCardPayload(contact);
   assert.equal(payload, [
-    "BEGIN:VCARD", "VERSION:4.0", "FN:Zoë\\, Tan", "TITLE:Engineer", "ORG:Studio\\; North",
+    "BEGIN:VCARD", "VERSION:3.0", "N:Tan;Zoë\\,;;;", "FN:Zoë\\, Tan", "TITLE:Engineer", "ORG:Studio\\; North",
     "EMAIL;TYPE=work:zoe@example.com", "EMAIL;TYPE=home:zt@example.com",
     "TEL;TYPE=cell:+442079460958", "TEL;TYPE=work:+12025550112",
     "URL:https://www.linkedin.com/in/zoe-tan", "END:VCARD", "",
@@ -51,7 +51,9 @@ test("Universal vCard folds by UTF-8 octets and escapes newlines", () => {
   assert.ok(payload.replace(/\r\n /g, "").includes(`FN:${name}\r\nTITLE:Lead\\nTEL:+12345678\r\n`));
   assert.equal(decode(payload), payload);
   const fallback = makeCardPayload({ type: "universal", title: "Private", company: "Studio North" });
-  assert.match(fallback.payload, /\r\nFN:Contact\r\n/);
+  assert.match(fallback.payload, /\r\nN:;;;;\r\nFN:Contact\r\n/);
+  assert.match(makeCardPayload({ ...contact, name: "Alan Mathison Turing" }).payload, /\r\nN:Turing;Alan Mathison;;;\r\nFN:Alan Mathison Turing\r\n/);
+  assert.match(makeCardPayload({ ...contact, name: "Madonna" }).payload, /\r\nN:;Madonna;;;\r\n/);
   assert.throws(() => makeCardPayload({ type: "universal", title: "Private" }), CardValidationError);
 });
 

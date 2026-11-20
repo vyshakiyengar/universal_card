@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { destinations } from "@/components/card-fields";
@@ -6,8 +7,23 @@ import { createAccountsClient, getAccount } from "@/lib/server/supabase";
 import { RefreshMetrics } from "./refresh";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = { title: "Activity | Heya Cards", robots: { index: false, follow: false } };
 
-type Activity = { day: string; event: "sign_in" | "card_created" | "wallet_download"; kind: string; total: number };
+type Activity = { day: string; event: string; kind: string; total: number };
+
+const funnel = [
+  ["cta_click", "Landing CTA clicks"],
+  ["trial_started", "Studio trials started"],
+  ["trial_card_created", "Cards made before sign-in"],
+  ["sign_in_started", "Sign-ins started"],
+  ["sign_in", "Successful sign-ins"],
+  ["trial_cards_saved", "Trial cards moved into accounts"],
+  ["card_created", "Cards saved to accounts"],
+  ["wallet_tap", "Add to Apple Wallet taps"],
+  ["wallet_download", "Wallet passes issued"],
+  ["share", "Card images shared"],
+  ["download_image", "Card images downloaded"],
+] as const;
 
 export default async function Admin() {
   const account = await getAccount();
@@ -21,7 +37,7 @@ export default async function Admin() {
   const dates = Array.from({ length: 30 }, (_, offset) =>
     new Date(Date.now() - offset * 86_400_000).toISOString().slice(0, 10));
   const recent = records.filter((row) => row.day >= dates[dates.length - 1]);
-  const sum = (event: Activity["event"], kind?: string, day?: string) =>
+  const sum = (event: string, kind?: string, day?: string) =>
     recent.filter((row) => row.event === event && (!kind || row.kind === kind) && (!day || row.day === day))
       .reduce((total, row) => total + Number(row.total), 0);
   return (
@@ -37,6 +53,11 @@ export default async function Admin() {
           <div><dt>Wallet downloads</dt><dd>{sum("wallet_download").toLocaleString()}</dd></div>
         </dl>
         <p>Wallet downloads count passes the site issued. Apple Wallet installations are currently unmeasured.</p>
+        <h2>Launch funnel</h2>
+        <div className="data-table"><table><thead><tr><th scope="col">Step</th><th scope="col">Last 30 days</th><th scope="col">Today</th></tr></thead><tbody>
+          {funnel.map(([event, label]) => <tr key={event}><th scope="row">{label}</th><td>{sum(event)}</td><td>{sum(event, undefined, dates[0])}</td></tr>)}
+        </tbody></table></div>
+        <p>CTA clicks by position: header {sum("cta_click", "landing_header")}, hero {sum("cta_click", "landing_hero")}, bottom {sum("cta_click", "landing_footer")}.</p>
         <h2>By card type</h2>
         <div className="data-table"><table><thead><tr><th scope="col">Card type</th><th scope="col">Created</th><th scope="col">Wallet downloads</th></tr></thead><tbody>
           {(["universal", ...destinationKinds] as const).map((kind) => (

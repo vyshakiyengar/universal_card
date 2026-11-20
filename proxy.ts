@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { trialCookies, trialStartHeader } from "./lib/trial";
 import { getAccountsConfig } from "./lib/server/supabase";
 
 export async function proxy(request: NextRequest) {
@@ -12,7 +13,6 @@ export async function proxy(request: NextRequest) {
   if (
     process.env.VERCEL_ENV === "production" &&
     (request.method === "GET" || request.method === "HEAD") &&
-    request.nextUrl.pathname !== "/" &&
     request.nextUrl.host !== canonical.host
   ) {
     canonical.pathname = request.nextUrl.pathname;
@@ -32,8 +32,30 @@ export async function proxy(request: NextRequest) {
       },
     },
   });
-  await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+  if (request.nextUrl.pathname === "/studio" && !data?.claims?.sub) return startOrContinueTrial(request, response);
   return response;
 }
 
-export const config = { matcher: ["/", "/studio", "/auth/sign-in", "/account", "/admin"] };
+// First-time visitors may try the studio without an account. A visit lasts while
+// they keep coming back within the visit window. A later visit needs sign-in.
+function startOrContinueTrial(request: NextRequest, current: NextResponse) {
+  const secure = request.nextUrl.protocol === "https:";
+  const started = request.cookies.has(trialCookies.started);
+  const visiting = request.cookies.has(trialCookies.visit);
+  if (started && !visiting) return current;
+
+  request.cookies.set(trialCookies.visit, "1");
+  const headers = new Headers(request.headers);
+  headers.set("cookie", request.cookies.toString());
+  if (!started) headers.set(trialStartHeader, "1");
+  else headers.delete(trialStartHeader);
+  const response = NextResponse.next({ request: { headers } });
+  for (const cookie of current.cookies.getAll()) response.cookies.set(cookie);
+  const options = { httpOnly: true, sameSite: "lax" as const, secure, path: "/" };
+  response.cookies.set(trialCookies.visit, "1", { ...options, maxAge: trialCookies.visitSeconds });
+  if (!started) response.cookies.set(trialCookies.started, "1", { ...options, maxAge: 60 * 60 * 24 * 365 });
+  return response;
+}
+
+export const config = { matcher: ["/studio", "/auth/sign-in", "/account", "/admin"] };

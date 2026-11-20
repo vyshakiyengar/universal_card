@@ -1,16 +1,17 @@
 import { Download, Share2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { cardKindLabels, type CardInput } from "@/lib/cards";
+import type { CardInput } from "@/lib/cards";
 import { makeCardImage } from "@/lib/card-image";
-import { type buildCardQr } from "@/lib/qr";
 import { tryNativeShare } from "@/lib/share";
-import { walletCardDesign, walletSurfaceStyle } from "@/lib/wallet-card-design";
-import { AppleWalletMark } from "./apple-wallet-mark";
-import { DestinationMark, scanDescriptions } from "./card-fields";
-import { HeyaWordmark } from "./heya-wordmark";
-import { QrGraphic } from "./qr-graphic";
+import { track } from "@/lib/track";
+import { CardFace, cardText, type CardArrival, type CardCode } from "./card-face";
+import { WalletPassView } from "./wallet-pass-view";
 
-export type Preview = { code: ReturnType<typeof buildCardQr>; payload: string };
+export type Preview = { code: CardCode; payload: string };
+export type WalletAction =
+  | { type: "download"; href: string }
+  | { type: "sign-in"; onSignIn: () => void }
+  | { type: "unavailable" };
 
 function download(url: string, filename: string) {
   const link = document.createElement("a");
@@ -22,25 +23,42 @@ function download(url: string, filename: string) {
   window.setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
-export function CardPreview({ draft, preview, walletUrl, arrival, onEdit }: { draft: CardInput; preview: Preview; walletUrl?: string; arrival: "created" | "updated" | "opened"; onEdit: () => void }) {
+function isAppleMobile() {
+  return /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+// Apple's official badge artwork, unmodified (public/add-to-apple-wallet.svg).
+const badge = <img src="/add-to-apple-wallet.svg" alt="Add to Apple Wallet" width={158} height={50} />;
+
+function WalletButton({ action, kind }: { action: WalletAction; kind: string }) {
+  if (action.type === "download") {
+    return <a className="wallet-badge" href={action.href} onClick={() => track("wallet_tap", kind)}>{badge}</a>;
+  }
+  if (action.type === "sign-in") {
+    return <button className="wallet-badge" type="button" onClick={() => { track("wallet_tap", kind); action.onSignIn(); }}>{badge}</button>;
+  }
+  return null;
+}
+
+export function CardPreview({ draft, preview, wallet, arrival, onEdit }: {
+  draft: CardInput; preview: Preview; wallet: WalletAction; arrival: Exclude<CardArrival, "live">; onEdit: () => void;
+}) {
   const [sharing, setSharing] = useState(false);
   const [shareStatus, setShareStatus] = useState("");
+  const [view, setView] = useState<"wallet" | "image">("wallet");
+  const [appleMobile, setAppleMobile] = useState(false);
   const isUniversal = draft.type === "universal";
-  const kind = isUniversal ? "universal" : draft.kind;
-  const label = isUniversal ? "Universal card" : cardKindLabels[kind];
-  const name = draft.name?.trim() || (isUniversal ? "Contact" : label);
-  const detail = isUniversal
-    ? [draft.jobTitle.trim(), draft.company.trim()].filter(Boolean).join(" · ")
-    : draft.kind === "linkedin" ? "" : draft.value.trim().replace(/^https?:\/\/(?:www\.)?/, "").replace(/\/$/, "");
-  const filename = draft.title.trim().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "universal-card";
+  const { kind, label, name, detail } = cardText(draft);
+  const filename = draft.title.trim().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "heya-card";
 
-  const cardRef = useRef<HTMLDivElement>(null);
+  const faceRef = useRef<HTMLDivElement>(null);
   const [image, setImage] = useState<File>();
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
   const photo = draft.type === "universal" ? draft.photo : undefined;
+  useEffect(() => setAppleMobile(isAppleMobile()), []);
   useEffect(() => {
-    const mark = cardRef.current?.querySelector<SVGSVGElement>(".pass-platform svg");
+    const mark = faceRef.current?.querySelector<SVGSVGElement>(".pass-platform svg");
     if (!mark) return;
     let active = true;
     setImage(undefined);
@@ -54,6 +72,7 @@ export function CardPreview({ draft, preview, walletUrl, arrival, onEdit }: { dr
   function downloadCard() {
     if (!image) return;
     download(URL.createObjectURL(image), image.name);
+    track("download_image", kind);
     setShareStatus("Card image downloaded.");
   }
 
@@ -62,55 +81,56 @@ export function CardPreview({ draft, preview, walletUrl, arrival, onEdit }: { dr
     setSharing(true);
     setShareStatus("");
     try {
-      if (!await tryNativeShare({ files: [image] })) downloadCard();
+      track("share", kind);
+      if (!await tryNativeShare({ files: [image], text: "Made with heya.cards" })) downloadCard();
     } finally { setSharing(false); }
   }
 
+  const walletNote = wallet.type === "sign-in"
+    ? "Sign in to add it to Apple Wallet. Your cards come with you."
+    : wallet.type === "unavailable" ? "Apple Wallet is coming soon. You can share or download your card now." : "";
+  const walletBlock = (
+    <div className="wallet-action-card" data-prominent={appleMobile || undefined}>
+      <WalletButton action={wallet} kind={kind} />
+      {walletNote && <small>{walletNote}</small>}
+      {arrival === "updated" && wallet.type !== "unavailable" && <small className="wallet-update-note">Add it to Wallet again to update it.</small>}
+    </div>
+  );
+  const imageActions = (
+    <div className="preview-actions">
+      <button className="button secondary" type="button" disabled={!image || sharing} onClick={shareCard}><Share2 size={16} /> Share image</button>
+      <button className="button secondary" type="button" disabled={!image} onClick={downloadCard}><Download size={16} /> Download image</button>
+    </div>
+  );
+
   return (
     <section className="saved-preview" aria-label="Saved card">
-      <div ref={cardRef} className="wallet-preview" data-arrival={arrival} style={walletSurfaceStyle(kind)}>
-        <div className="pass-face">
-          <div className="pass-brand-row">
-            <span className="pass-platform"><DestinationMark kind={kind} /> {label}</span>
-            <span className="pass-wallet"><AppleWalletMark /> Apple Wallet</span>
-          </div>
-          <div className="pass-identity">
-            <div className="pass-holder">
-              <div className="pass-name" data-long={name.length > 28}>{name}</div>
-              {detail && <div className="pass-detail" title={detail}>{detail}</div>}
-            </div>
-            {photo && <img className="pass-photo" src={photo} alt="Card photo" />}
-          </div>
-        </div>
-        <div className="pass-paper" data-density={preview.code.density}>
-          <div className="pass-barcode"><QrGraphic code={preview.code} label="Scannable card QR" maxWidth={preview.code.density === "dense" ? 250 : 184} /></div>
-          <div className="pass-invitation">
-            <span className="pass-action" title={scanDescriptions[kind]}>{walletCardDesign(kind).action}</span>
-            <span className="scan-label visually-hidden">{scanDescriptions[kind]}</span>
-            <HeyaWordmark compact />
-          </div>
-        </div>
+      <div className="result-views-toggle" role="tablist" aria-label="Card view">
+        <button role="tab" type="button" aria-selected={view === "wallet"} onClick={() => setView("wallet")}>In Apple Wallet</button>
+        <button role="tab" type="button" aria-selected={view === "image"} onClick={() => setView("image")}>Card image</button>
       </div>
-      {preview.code.density === "dense" && <p className="density-note" role="status">This QR is enlarged to make your details easier to scan.</p>}
-      <div className="preview-actions">
-        <button className="button primary" type="button" disabled={!image || sharing} onClick={shareCard}><Share2 size={16} /> Share card</button>
-        <button className="button secondary" type="button" disabled={!image} onClick={downloadCard}><Download size={16} /> Download card</button>
+      <div className="result-views" data-view={view}>
+        <figure className="result-view result-view-wallet">
+          <figcaption><span className="result-view-tag">In Apple Wallet</span><span>What you’ll see on your iPhone</span></figcaption>
+          <WalletPassView draft={draft} code={preview.code} />
+        </figure>
+        <figure className="result-view result-view-image" ref={faceRef}>
+          <figcaption><span className="result-view-tag">Card image</span><span>The picture you share or download</span></figcaption>
+          <CardFace draft={draft} code={preview.code} arrival={arrival} />
+        </figure>
+      </div>
+      {preview.code.density === "dense" && <p className="density-note" role="status">This QR holds a lot of detail, so it’s shown larger to scan easily.</p>}
+      <div className="result-actions" data-apple={appleMobile || undefined}>
+        {walletBlock}
+        {imageActions}
       </div>
       {failed && <p role="alert">Couldn’t prepare the card image. <button className="text-button" onClick={() => setAttempt(n => n + 1)}>Try again</button></p>}
       <p className="share-status" role="status">{shareStatus}</p>
-      <div className="wallet-action-card">
-        {walletUrl ? (
-          <a className="button wallet-button" href={walletUrl}><AppleWalletMark /> Add to Apple Wallet</a>
-        ) : (
-          <><button className="button wallet-button" type="button" disabled aria-describedby="wallet-preview-note"><AppleWalletMark /> Add to Apple Wallet</button>
-          <small id="wallet-preview-note">Wallet installation coming soon.</small></>
-        )}
-      </div>
       <div className="result-tools">
         <button className="text-button" type="button" onClick={onEdit}>Edit details</button>
         {isUniversal && <button className="text-button" type="button" onClick={() => download(
           URL.createObjectURL(new Blob([preview.payload], { type: "text/vcard;charset=utf-8" })), `${filename}.vcf`,
-        )}>vCard</button>}
+        )}>Download contact file (.vcf)</button>}
       </div>
     </section>
   );

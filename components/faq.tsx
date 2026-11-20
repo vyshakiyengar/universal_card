@@ -9,7 +9,7 @@ export function GettingStartedQuestions() {
   return <>
     <Question title="What is Heya?"><p>Heya is a free web app for making contact cards for Apple Wallet. Keep your card handy for meetings. Once it’s in Wallet, open it on your iPhone and show the QR code. One scan lets them save your details or go straight to the place you choose, like a WhatsApp chat.</p></Question>
     <Question title="Is Heya free?"><p>Yes, completely. Creating cards, saving them, sharing the images and scanning them are all free. The person scanning doesn’t need a Heya account.</p></Question>
-    <Question title="How do I create a Heya card?"><p>Sign in to Heya and choose a Universal or Individual card. Enter the details you want to share, then tap <strong>Generate your Apple Wallet card</strong>. Your card is saved in <strong>Manage cards</strong>, ready to show or download. When the Wallet button is available, tap <strong>Add to Apple Wallet</strong> and confirm on your iPhone.</p></Question>
+    <Question title="How do I create a Heya card?"><p>Open the studio and choose a Universal or Individual card. Enter the details you want to share, then tap <strong>Create my card</strong>. Your card is saved in <strong>Your cards</strong>, ready to show or download. Tap <strong>Add to Apple Wallet</strong> and confirm on your iPhone. You can try Heya once before signing in; you’ll sign in to add a card to Wallet.</p></Question>
     <Question title="How does someone scan my card?"><p>Open your card so the QR code is visible. Ask the other person to open their phone’s camera, point it at the whole square and tap the prompt that appears. A Universal card offers a contact to save. An Individual card opens the app, link or contact action you chose.</p></Question>
   </>;
 }
@@ -44,16 +44,16 @@ export function CardQuestions() {
 
 export function WalletQuestions() {
   return <>
-    <Question title="How do I add my Heya card to Apple Wallet?"><p>Open the saved card on your iPhone. When <strong>Add to Apple Wallet</strong> is available, tap it and confirm with <strong>Add</strong> in Apple’s preview. Your card will then be in the Wallet app.</p><p>If Heya shows “Wallet installation coming soon,” you can already show the QR from Manage cards or download the card image to keep on your phone.</p></Question>
+    <Question title="How do I add my Heya card to Apple Wallet?"><p>Open the saved card on your iPhone. When <strong>Add to Apple Wallet</strong> is available, tap it and confirm with <strong>Add</strong> in Apple’s preview. Your card will then be in the Wallet app.</p><p>If Heya says Apple Wallet is coming soon, you can already show the QR from Your cards or download the card image to keep on your phone.</p></Question>
     <Question title="How do I bring up my card quickly at a meeting?"><p>Once you’ve added the pass, open Wallet and tap your Heya card. On an iPhone with Face ID and the Wallet shortcut enabled, double-click the side button and select the card. If your payment card appears first, tap the stack to see your other passes. Show the QR to the other person’s camera.</p><p><a href="https://support.apple.com/en-us/111112">Apple’s guide to opening Wallet passes</a></p></Question>
-    <Question title="Can I send my card to someone who isn’t with me?"><p>Yes. Open it in Manage cards and choose <strong>Share card</strong> to send the full image using your phone’s share menu. <strong>Download card</strong> saves a PNG with the QR code. For a Universal card, you can send the vCard file instead so someone on the same phone can open it directly.</p></Question>
-    <Question title="What if their camera doesn’t recognize the QR?"><p>Show the full code, including its white border, turn up your screen brightness and ask them to move their phone back a little. If their camera reads links but doesn’t offer to save a contact, send the Universal card’s vCard file. For a crowded QR, try sharing fewer fields or using a shorter link.</p></Question>
+    <Question title="Can I send my card to someone who isn’t with me?"><p>Yes. Open it in Your cards and choose <strong>Share image</strong> to send the full image using your phone’s share menu. <strong>Download image</strong> saves a PNG with the QR code. For a Universal card, you can send the contact file (.vcf) instead so someone on the same phone can open it directly.</p></Question>
+    <Question title="What if their camera doesn’t recognize the QR?"><p>Show the full code, including its white border, turn up your screen brightness and ask them to move their phone back a little. If their camera reads links but doesn’t offer to save a contact, send the Universal card’s contact file (.vcf). For a crowded QR, try sharing fewer fields or using a shorter link.</p></Question>
   </>;
 }
 
 export function ManageQuestions() {
   return <>
     <Question title="Who can see the details on my card?"><p>Your saved cards are private to your Heya account. The QR itself contains the details or destination you chose. Anyone who can scan or photograph it can read and share that information. Choose the fields you’re comfortable giving to everyone who sees that card.</p><p><Link href="/privacy">Read the privacy notice</Link></p></Question>
-    <Question title="Can I edit or delete a card after sharing it?"><p>Yes. In Manage cards, choose the edit or delete control beside the card. After editing, share the updated image. An image you sent earlier still contains the old QR, and a contact someone already saved stays on their phone.</p></Question>
+    <Question title="Can I edit or delete a card after sharing it?"><p>Yes. In Your cards, choose the edit or delete control beside the card. After editing, add it to Apple Wallet again to update it, and share the updated image. An image you sent earlier still contains the old QR, and a contact someone already saved stays on their phone.</p></Question>
   </>;
 }

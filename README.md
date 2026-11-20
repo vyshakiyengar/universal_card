@@ -24,11 +24,19 @@ Keep the Wallet private key and passphrase in the hosting service’s server-onl
 
 ## QR and contact behavior
 
-Universal cards use UTF-8 vCard 4.0 with CRLF line endings, escaped field values, and 75-octet folding. Users can include a name, role, company, multiple labeled phone numbers and email addresses, and selected links. If the name is blank the vCard uses `Contact` as its display name. The private card name does not go into the QR. Phones use international format with a country code.
+Universal cards use UTF-8 vCard 3.0 with a structured `N` name, CRLF line endings, escaped field values, and 75-octet folding. Users can include a name, role, company, multiple labeled phone numbers and email addresses, and selected links. If the name is blank the vCard uses `Contact` as its display name. The private card name does not go into the QR. Phones use international format with a country code.
 
 Anyone with a copy or photo of a QR can read and reshare what's encoded. Saved cards are private to their account. A vCard-aware scanner can import the embedded contact without visiting a website. The card owner can also download its `.vcf` from the editor.
 
 The editor counts UTF-8 bytes with medium error correction. It warns above 213 bytes and rejects more than 412 bytes. The browser QR has a four-module quiet zone. Wallet renders its own QR from the saved payload, so verify a real pass alongside the web preview before launch.
+
+## Launch features
+
+- **Try before sign-in:** a first-time visitor can use the studio for one visit (two-hour window) without an account. Cards stay in that browser. Signing in, or tapping Add to Apple Wallet, moves them into the account. Later visits need sign-in.
+- **Card limit:** each account can keep up to 50 cards, enforced in the database (`supabase/migrations/20261120000100_card_limit_and_events.sql`).
+- **Launch funnel:** `/api/events` counts anonymous, aggregate events (CTA clicks, trials, shares, Wallet taps). See `/admin`.
+- **Health and uptime:** `/api/health` returns 503 when sign-in or Wallet signing needs attention, including a Wallet certificate within 30 days of expiry. `.github/workflows/uptime.yml` checks it every 15 minutes; a failed run emails the repository owner.
+- **How it works clip:** set `howItWorksClip` in `lib/site.ts` once the recording is in `public/media/`.
 
 ## Tests
 

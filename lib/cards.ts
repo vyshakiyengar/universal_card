@@ -255,8 +255,19 @@ function foldVCardLine(line: string) {
   return folded;
 }
 
+// N is required in vCard 3.0, and phone importers use it to fill the first
+// and last name fields. Treat the final word as the family name.
+function structuredName(name: string) {
+  const words = name.split(/\s+/u).filter(Boolean);
+  if (!words.length) return ";;;;";
+  if (words.length === 1) return `;${escapeVCardText(words[0])};;;`;
+  const family = words.pop() as string;
+  return `${escapeVCardText(family)};${escapeVCardText(words.join(" "))};;;`;
+}
+
 function serializeVCard(card: UniversalCard) {
-  const lines = ["BEGIN:VCARD", "VERSION:4.0", `FN:${escapeVCardText(card.name || "Contact")}`];
+  // vCard 3.0 is the version phone camera importers handle most consistently.
+  const lines = ["BEGIN:VCARD", "VERSION:3.0", `N:${structuredName(card.name)}`, `FN:${escapeVCardText(card.name || "Contact")}`];
   if (card.jobTitle) lines.push(`TITLE:${escapeVCardText(card.jobTitle)}`);
   if (card.company) lines.push(`ORG:${escapeVCardText(card.company)}`);
   for (const { label, value } of card.emails) {

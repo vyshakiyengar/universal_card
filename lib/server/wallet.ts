@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PKPass } from "passkit-generator";
 import { cardKindLabels, makeCardPayload } from "../cards";
+import { cardText } from "../card-text";
 import { photoPrefix } from "../card-photo";
 import { buildCardQr } from "../qr";
 import { walletCardDesign } from "../wallet-card-design";
@@ -78,12 +79,31 @@ export function readWalletConfiguration(env: Readonly<Record<string, string | un
   }
 }
 
+let reportedUnavailable = false;
+
 export function isWalletConfigured(): boolean {
   try {
     readWalletConfiguration();
     return true;
   } catch {
+    // Show up in production logs and alerts, once per server instance.
+    if (process.env.VERCEL_ENV === "production" && !reportedUnavailable) {
+      reportedUnavailable = true;
+      console.error("[heya] Apple Wallet signing is unavailable in production. Check the APPLE_WALLET_* settings and certificate dates.");
+    }
     return false;
+  }
+}
+
+// For the health check: whether passes can be signed, and when the signing certificate expires.
+export function walletHealth(): { status: "ok" | "expiring" | "unavailable"; expiresAt?: string } {
+  try {
+    const { signer, intermediate } = readWalletConfiguration();
+    const expires = Math.min(Date.parse(signer.validTo), Date.parse(intermediate.validTo));
+    const expiresAt = new Date(expires).toISOString().slice(0, 10);
+    return { status: expires - Date.now() < 30 * 86_400_000 ? "expiring" : "ok", expiresAt };
+  } catch {
+    return { status: "unavailable" };
   }
 }
 
@@ -122,7 +142,7 @@ export function createWalletPass(
       organizationName: configuration.organizationName,
       serialNumber: savedCard.id,
       description: "Heya Cards business card",
-      logoText: label,
+      logoText: kind === "universal" ? "Heya" : label,
       backgroundColor: background,
       foregroundColor: foreground,
       labelColor: foreground,
@@ -130,8 +150,12 @@ export function createWalletPass(
   );
 
   pass.type = "generic";
-  pass.primaryFields.push({ key: "name", label: "Name", value: card.name || (kind === "universal" ? "Contact" : label) });
+  pass.primaryFields.push({ key: "name", label: "Name", value: cardText(card).name });
   pass.backFields.push({
+    key: "heya",
+    label: "Heya Cards",
+    value: "Make your own free card at heya.cards",
+  }, {
     key: "privacy",
     label: "QR privacy",
     value: "Anyone who scans or photographs this code can read and share the information it contains.",
