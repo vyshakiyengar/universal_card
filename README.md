@@ -35,7 +35,8 @@ The editor counts UTF-8 bytes with medium error correction. It warns above 213 b
 - **Try before sign-in:** a first-time visitor can use the studio for one visit (two-hour window) without an account. Cards stay in that browser. Signing in, or tapping Add to Apple Wallet, moves them into the account. Later visits need sign-in.
 - **Card limit:** each account can keep up to 50 cards, enforced in the database (`supabase/migrations/20261120000100_card_limit_and_events.sql`).
 - **Launch funnel:** `/api/events` counts anonymous, aggregate events (CTA clicks, trials, shares, Wallet taps). See `/admin`.
-- **Health and uptime:** `/api/health` returns 503 when sign-in or Wallet signing needs attention, including a Wallet certificate within 30 days of expiry. `.github/workflows/uptime.yml` checks it every 15 minutes; a failed run emails the repository owner.
+- **Health and uptime:** `/api/health` reports sign-in and Wallet signing status, including a Wallet certificate within 30 days of expiry. `.github/workflows/uptime.yml` checks the site every 15 minutes, and a failed run emails the repository owner. Set the repository variable `WALLET_LIVE=true` once Wallet signing is live to alert on it too.
+- **Region:** functions run in Dublin (`vercel.json`), next to the Supabase database in eu-west-1.
 - **How it works clip:** set `howItWorksClip` in `lib/site.ts` once the recording is in `public/media/`.
 
 ## Tests
