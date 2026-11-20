@@ -1,0 +1,37 @@
+name: Uptime
+
+# Checks the live site every 15 minutes. A failed run emails the repository owner,
+# which is the alert. Once Apple Wallet signing is live, set the repository variable
+# WALLET_LIVE to true so the check also fails when signing breaks or the Wallet
+# certificate is within 30 days of expiry.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      WALLET_LIVE: ${{ vars.WALLET_LIVE }}
+    steps:
+      - name: Check pages
+        run: |
+          set -u
+          failed=0
+          for path in / /auth/sign-in /api/health; do
+            code=$(curl -s -o /tmp/body -w '%{http_code}' --max-time 20 "https://www.heya.cards${path}" || echo 000)
+            echo "${path} -> ${code}"
+            if [ "$code" != "200" ]; then failed=1; head -c 500 /tmp/body; echo; fi
+          done
+          wallet=$(jq -r '.wallet // "unknown"' /tmp/body 2>/dev/null || echo unknown)
+          echo "Wallet signing: ${wallet}"
+          if [ "${WALLET_LIVE:-}" = "true" ] && [ "$wallet" != "ok" ]; then
+            echo "::error::Apple Wallet signing is ${wallet}. Check the APPLE_WALLET_* settings and certificate dates."
+            failed=1
+          fi
+          exit $failed

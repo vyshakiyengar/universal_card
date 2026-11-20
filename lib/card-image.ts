@@ -41,9 +41,9 @@ export async function makeCardImage(options: {
   svg.setAttribute("color", design.surfaceInk);
   svg.setAttribute("width", "60");
   svg.setAttribute("height", "60");
-  const [platform, wallet, portrait] = await Promise.all([
+  const [platform, portrait] = await Promise.all([
     loadImage("data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(svg))),
-    loadImage("/apple-wallet-icon.jpg"), photo ? loadImage(photo) : undefined,
+    photo ? loadImage(photo) : undefined,
     document.fonts.load('32px Baskervville'), document.fonts.load('16px "Instrument Sans Variable"'),
   ]);
   const scale = 3;
@@ -89,9 +89,10 @@ export async function makeCardImage(options: {
   ctx.drawImage(platform, 23, 21, 20, 20);
   ctx.font = '650 16px "Instrument Sans Variable", sans-serif';
   ctx.fillText(label, 51, 37);
-  ctx.drawImage(wallet, 318, 23, 15, 15);
-  ctx.font = '600 11px "Instrument Sans Variable", sans-serif';
-  ctx.fillText("Apple Wallet", 338, 35);
+  ctx.font = '600 12px "Instrument Sans Variable", sans-serif';
+  ctx.textAlign = "right";
+  ctx.fillText("heya.cards", 397, 35);
+  ctx.textAlign = "left";
   ctx.font = nameFont;
   let y = 87 + nameSize*.7;
   for (const line of names) { ctx.fillText(line, 23, y); y += nameSize+2; }

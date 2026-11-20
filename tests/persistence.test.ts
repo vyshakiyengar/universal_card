@@ -24,6 +24,7 @@ test("database isolates cards by owner, protects owner_id, and cascades account 
     const migration = await readFile(new URL("../supabase/migrations/20261117000100_create_cards.sql", import.meta.url), "utf8");
     await db.exec(migration);
     await db.exec(await readFile(new URL("../supabase/migrations/20261118000100_launch_controls.sql", import.meta.url), "utf8"));
+    await db.exec(await readFile(new URL("../supabase/migrations/20261120000100_card_limit_and_events.sql", import.meta.url), "utf8"));
     await db.query("update auth.users set email = $2, email_confirmed_at = now(), last_sign_in_at = now() where id = $1",
       [secondId, "vyshakiyengar@gmail.com"]);
     await db.exec("set role anon");
@@ -64,6 +65,12 @@ test("database isolates cards by owner, protects owner_id, and cascades account 
     assert.deepEqual((await db.query("delete from public.cards where id = $1 returning id", [card.id])).rows, [{ id: card.id }]);
     const { rows: [exported] } = await db.query<{ cards: unknown[] }>("select public.export_universal_card_data() as cards");
     assert.equal(exported.cards.length, 1);
+    for (let index = 1; index < 50; index++) await db.query("insert into public.cards(draft) values ($1)", [draft(`Card ${index}`)]);
+    await assert.rejects(db.query("insert into public.cards(draft) values ($1)", [draft("One too many")]), /card_limit_reached/);
+    await useAccount(secondId);
+    await db.query("insert into public.cards(draft) values ($1)", [draft("Another account")]);
+    await db.query("delete from public.cards");
+    await useAccount(firstId);
     await db.query("select public.delete_universal_card_account()");
     await db.exec("reset role");
     assert.deepEqual((await db.query("select id from auth.users")).rows, [{ id: secondId }]);

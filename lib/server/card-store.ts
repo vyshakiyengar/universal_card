@@ -25,6 +25,7 @@ export class CardStoreError extends Error {
 }
 
 const cardsSelect = "id,draft,created_at,updated_at";
+export const cardLimitPerAccount = 50;
 const uuid = /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
 
 function savedCard(row: CardRow): SavedCard {
@@ -64,6 +65,9 @@ export async function listOwnedCards(): Promise<SavedCard[]> {
 export async function createOwnedCard(input: unknown): Promise<SavedCard> {
   const { cards } = await storageForOwner();
   const { data, error } = await cards.insert({ draft: validateDraft(input) }).select(cardsSelect).single();
+  if (error?.message.includes("card_limit_reached")) {
+    throw new CardStoreError(422, `You can keep up to ${cardLimitPerAccount} cards. Delete one to add another.`);
+  }
   if (error) throw new CardStoreError(500, "Your card could not be saved.");
   return savedCard(data);
 }

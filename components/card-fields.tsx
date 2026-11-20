@@ -15,8 +15,20 @@ export const destinations = {
   url: { label: cardKindLabels.url, field: "Link URL", hint: "example.com", inputType: "url" },
 } as const;
 
+// What scanning each Individual card does, shown on the card type tiles.
+export const scanActions = {
+  linkedin: "Opens your profile",
+  whatsapp: "Starts a chat",
+  instagram: "Opens your profile",
+  email: "Opens a new email",
+  phone: "Calls you",
+  website: "Opens your site",
+  url: "Opens a booking page, portfolio or event",
+  snapchat: "Adds you on Snapchat",
+} satisfies Record<DestinationKind, string>;
+
 export const scanDescriptions = {
-  universal: "On compatible phones, scanning opens a vCard you can save to Contacts.",
+  universal: "When someone scans it, their phone offers to save you as a contact.",
   linkedin: "Scanning opens the linked LinkedIn page.",
   whatsapp: "Scanning opens a chat with the linked number if it is active on WhatsApp.",
   instagram: "Scanning opens the linked Instagram profile.",

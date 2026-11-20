@@ -2,17 +2,19 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, Check, LayoutGrid, PenLine, Plus, Trash2 } from "lucide-react";
-import { cardKindLabels, cardLimits, makeCardPayload, type CardInput, type DestinationKind } from "@/lib/cards";
-import { prepareCardPhoto } from "@/lib/card-photo";
+import { ArrowLeft, ArrowRight, PenLine, Plus, Trash2 } from "lucide-react";
+import { cardLimits, makeCardPayload, type CardInput, type DestinationKind, type UniversalCard } from "@/lib/cards";
 import { savedDetail, addIndividualDetails } from "@/lib/saved-details";
 import { buildCardQr } from "@/lib/qr";
-import { AppleWalletMark } from "./apple-wallet-mark";
-import { DestinationMark, destinations, scanDescriptions, UniversalFields } from "./card-fields";
-import { CardPreview, type Preview } from "./card-preview";
-import { HeyaWordmark } from "./heya-wordmark";
+import { localCardsKey, pendingWalletKey } from "@/lib/trial";
+import { track } from "@/lib/track";
+import { DestinationMark, destinations, scanActions, scanDescriptions, UniversalFields } from "./card-fields";
+import { CardPreview, type Preview, type WalletAction } from "./card-preview";
+import { HowItWorksClip, hasHowItWorksClip } from "./how-it-works-clip";
+import { LivePreview, LiveStrip, liveCode } from "./live-preview";
+import { PhotoPicker } from "./photo-picker";
 import { ProjectCredit } from "./project-credit";
-import { WalletStack } from "./wallet-stack";
+import { StudioHeader } from "./studio-header";
 
 type SavedCard = { id: string; draft: CardInput; createdAt: string; updatedAt: string };
 type EntryKind = DestinationKind | "universal";
@@ -22,26 +24,38 @@ type Screen =
   | { view: "saved"; card: SavedCard; preview: Preview; arrival: "created" | "updated" | "opened" };
 
 type StudioProps = {
-  account?: { email: string | null; firstName: string };
+  account?: { email: string | null; firstName: string; fullName: string; isAdmin?: boolean };
+  trial?: boolean;
   walletConfigured?: boolean;
   signOutFailed?: boolean;
 };
 
-const storageKey = "universal-card-studio-v1";
 const types = ["linkedin", "whatsapp", "instagram", "email", "phone", "url", "website", "snapchat"] as const;
 
-function newDraft(kind: EntryKind, name: string): CardInput {
+function newDraft(kind: EntryKind, account?: StudioProps["account"]): CardInput {
   return kind === "universal"
-    ? { type: "universal", title: "Universal contact", name, jobTitle: "", company: "", emails: [], phones: [], links: [] }
-    : { type: "individual", title: destinations[kind].label, name, kind, value: "" };
+    ? {
+      type: "universal", title: "Universal card", name: account?.fullName || account?.firstName || "", jobTitle: "", company: "",
+      emails: [], phones: [], links: [],
+    }
+    : { type: "individual", title: destinations[kind].label, name: account?.firstName ?? "", kind, value: "" };
+}
+
+// Start a new Universal card with one work email and one mobile row ready to fill.
+function withStarterRows(draft: UniversalCard): UniversalCard {
+  return {
+    ...draft,
+    emails: draft.emails.length ? draft.emails : [{ label: "work", value: "" }],
+    phones: draft.phones.length ? draft.phones : [{ label: "mobile", value: "" }],
+  };
 }
 
 function getKind(draft: CardInput): EntryKind {
   return draft.type === "universal" ? "universal" : draft.kind;
 }
 
-function getLocalCards(): SavedCard[] {
-  const saved: unknown = JSON.parse(localStorage.getItem(storageKey) ?? "[]");
+function readLocalCards(): SavedCard[] {
+  const saved: unknown = JSON.parse(localStorage.getItem(localCardsKey) ?? "[]");
   if (!Array.isArray(saved)) throw new Error("Invalid saved cards.");
   return saved as SavedCard[];
 }
@@ -63,45 +77,51 @@ function getSavedPreview(card: SavedCard): Preview {
   return { payload, code: buildCardQr(payload) };
 }
 
-function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKind) => void }) {
+// Cards made in this browser before signing in move into the account, oldest first.
+async function moveLocalCardsToAccount(): Promise<{ moved: { localId: string; card: SavedCard }[]; failed: number }> {
+  let local: SavedCard[];
+  try { local = readLocalCards(); } catch { return { moved: [], failed: 0 }; }
+  const moved: { localId: string; card: SavedCard }[] = [];
+  const kept: SavedCard[] = [];
+  for (const card of [...local].reverse()) {
+    try {
+      moved.push({ localId: card.id, card: (await cardsRequest<{ card: SavedCard }>("", { method: "POST", body: JSON.stringify(card.draft) })).card });
+    } catch {
+      kept.push(card);
+    }
+  }
+  if (kept.length) localStorage.setItem(localCardsKey, JSON.stringify(kept.reverse()));
+  else localStorage.removeItem(localCardsKey);
+  return { moved, failed: kept.length };
+}
+
+function CreateCards({ ready, create, firstName }: { ready: boolean; create: (type: EntryKind) => void; firstName?: string }) {
   return (
     <>
-      <section className="studio-hero" aria-labelledby="page-title">
-        <div className="hero-copy">
-          <h1 id="page-title" tabIndex={-1}>
-            One <em>Apple Wallet</em> card for all your contact details, or <span className="hero-alternative">one for each</span>.
-          </h1>
-          <div className="hero-actions">
-            <a className="hero-link" href="#universal-cards">Explore Heya cards <ArrowDown size={17} aria-hidden="true" /></a>
-            <p className="hero-note free-accent">It’s free!</p>
-          </div>
+      <section className="studio-intro" data-clip={hasHowItWorksClip || undefined} aria-labelledby="page-title">
+        <div className="studio-intro-copy">
+          <h1 id="page-title" tabIndex={-1}>{firstName ? `Hi ${firstName}, which card do you want to make?` : "Which card do you want to make?"}</h1>
+          <p>{hasHowItWorksClip ? "Pick one below. Watch the clip to see what happens when someone scans it." : "Pick one below. It’s free."}</p>
         </div>
-        <WalletStack />
+        {hasHowItWorksClip && <HowItWorksClip className="studio-clip" />}
       </section>
 
-      <section id="universal-cards" className="chooser-section universal-section" aria-labelledby="universal-title">
-        <div className="section-heading">
-          <h2 id="universal-title">Create <span>Universal</span> Cards</h2>
-          <p>(All contact details in one card)</p>
-        </div>
+      <section id="universal-cards" className="chooser-section" aria-labelledby="universal-title">
+        <h2 id="universal-title" className="chooser-heading">All your details on one card</h2>
         <button className="universal-choice" type="button" disabled={!ready} onClick={() => create("universal")}>
           <DestinationMark kind="universal" />
-          <span><strong className="universal-title"><AppleWalletMark /> Universal card</strong><small>Scanning this QR shares all your contact details in one vCard.</small></span>
+          <span><strong>Universal card</strong><small>Scanning saves your name, numbers, emails and links to their Contacts.</small></span>
           <span className="universal-arrow" aria-hidden="true"><ArrowRight size={18} /></span>
         </button>
       </section>
 
       <section id="individual-cards" className="chooser-section" aria-labelledby="individual-title">
-        <div className="section-heading">
-          <h2 id="individual-title">Create <span>Individual</span> Cards</h2>
-          <p>(Separate cards for each)</p>
-        </div>
+        <h2 id="individual-title" className="chooser-heading">One card, one action</h2>
         <div className="destination-grid">
           {types.map((kind) => (
             <button key={kind} className="destination-card" type="button" disabled={!ready} onClick={() => create(kind)}>
               <span className="tile-top"><DestinationMark kind={kind} /><ArrowRight size={18} className="tile-arrow" aria-hidden="true" /></span>
-              <strong>{destinations[kind].label}</strong>
-              <span className="tile-action"><AppleWalletMark /> Create Apple Wallet card for {kind === "url" ? "your custom link" : kind === "website" ? "your website" : `your ${destinations[kind].label}`}</span>
+              <span className="tile-text"><strong>{destinations[kind].label}</strong><span className="tile-action">{scanActions[kind]}</span></span>
             </button>
           ))}
         </div>
@@ -117,7 +137,7 @@ function CreateCards({ ready, create }: { ready: boolean; create: (type: EntryKi
   );
 }
 
-export function CardStudio({ account, walletConfigured = false, signOutFailed = false }: StudioProps = {}) {
+export function CardStudio({ account, trial = false, walletConfigured = false, signOutFailed = false }: StudioProps = {}) {
   const online = Boolean(account);
   const [cards, setCards] = useState<SavedCard[]>([]);
   const [screen, setScreen] = useState<Screen>({ view: "create" });
@@ -125,6 +145,8 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   const [loadError, setLoadError] = useState<string>();
+  const [notice, setNotice] = useState<string>();
+  const [editorTab, setEditorTab] = useState<"details" | "preview">("details");
   const main = useRef<HTMLElement>(null);
   const previousView = useRef(screen.view);
 
@@ -140,11 +162,25 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
     const controller = new AbortController();
     async function readCards() {
       try {
-        const saved = online ? (await cardsRequest<{ cards: SavedCard[] }>("", { signal: controller.signal })).cards : getLocalCards();
-        if (!controller.signal.aborted) {
-          setCards(saved);
+        if (!online) {
+          setCards(readLocalCards());
           setReady(true);
+          return;
         }
+        const { moved, failed } = await moveLocalCardsToAccount();
+        const saved = (await cardsRequest<{ cards: SavedCard[] }>("", { signal: controller.signal })).cards;
+        if (controller.signal.aborted) return;
+        setCards(saved);
+        setReady(true);
+        if (moved.length) {
+          track("trial_cards_saved");
+          setNotice(`${moved.length === 1 ? "Your card is" : `Your ${moved.length} cards are`} now saved to your account.`);
+        }
+        if (failed) setLoadError(`${failed === 1 ? "One card" : `${failed} cards`} from this browser couldn’t be saved. They’re still here, and we’ll try again next time.`);
+        const pending = localStorage.getItem(pendingWalletKey);
+        localStorage.removeItem(pendingWalletKey);
+        const target = moved.find(({ localId }) => localId === pending)?.card;
+        if (target) setScreen({ view: "saved", card: target, preview: getSavedPreview(target), arrival: "opened" });
       } catch {
         if (!controller.signal.aborted) setLoadError("Your cards could not be loaded. Reload the page to try again.");
       }
@@ -158,11 +194,13 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
     if (screen.view === "edit" && JSON.stringify(screen.draft) !== JSON.stringify(screen.original)
       && !window.confirm("Discard unsaved changes?")) return;
     setError(undefined);
+    setNotice(undefined);
+    setEditorTab("details");
     setScreen(next);
   }
 
   function create(kind: EntryKind) {
-    let draft = newDraft(kind, account?.firstName ?? "");
+    let draft = newDraft(kind, account);
     if (draft.type === "individual") {
       const previous = savedDetail(cards.map(card => card.draft), draft.kind);
       if (previous) {
@@ -170,7 +208,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
         draft.name = previous.name || draft.name;
       }
     }
-    if (draft.type === "universal") draft = addIndividualDetails(draft, cards.map(card => card.draft));
+    if (draft.type === "universal") draft = withStarterRows(addIndividualDetails(draft, cards.map(card => card.draft)));
     navigate({ view: "edit", draft, original: draft });
   }
 
@@ -201,12 +239,14 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
           method: screen.id ? "PATCH" : "POST", body: JSON.stringify(card),
         })).card;
       } else {
-        const current = getLocalCards();
+        const current = readLocalCards();
         const old = current.find(({ id }) => id === screen.id);
         saved = { id: old?.id ?? crypto.randomUUID(), draft: card, createdAt: old?.createdAt ?? time, updatedAt: time };
-        localStorage.setItem(storageKey, JSON.stringify([saved, ...current.filter(({ id }) => id !== saved.id)]));
+        localStorage.setItem(localCardsKey, JSON.stringify([saved, ...current.filter(({ id }) => id !== saved.id)]));
+        if (trial && !old) track("trial_card_created", getKind(card));
       }
       setCards((current) => [saved, ...current.filter(({ id }) => id !== saved.id)]);
+      setEditorTab("details");
       setScreen({ view: "saved", card: saved, preview, arrival: screen.id ? "updated" : "created" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Your card could not be saved.");
@@ -221,7 +261,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
     setError(undefined);
     try {
       if (online) await cardsRequest<void>(`/${card.id}`, { method: "DELETE" });
-      else localStorage.setItem(storageKey, JSON.stringify(getLocalCards().filter(({ id }) => id !== card.id)));
+      else localStorage.setItem(localCardsKey, JSON.stringify(readLocalCards().filter(({ id }) => id !== card.id)));
       setCards((current) => current.filter(({ id }) => id !== card.id));
     } catch {
       setError("Your card could not be deleted. Try again.");
@@ -230,37 +270,35 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
     }
   }
 
+  function walletAction(card: SavedCard): WalletAction {
+    if (!walletConfigured) return { type: "unavailable" };
+    if (online) return { type: "download", href: `/api/cards/${card.id}/wallet` };
+    if (trial) return {
+      type: "sign-in",
+      onSignIn: () => {
+        localStorage.setItem(pendingWalletKey, card.id);
+        window.location.assign("/auth/sign-in?from=wallet");
+      },
+    };
+    return { type: "unavailable" };
+  }
+
   const manage = screen.view === "manage" || screen.view === "saved" || (screen.view === "edit" && Boolean(screen.id));
 
   return (
     <>
-      <header className="topbar">
-        <div className="header-inner">
-          <button className="brand" type="button" aria-label="Heya Cards" disabled={busy} onClick={() => navigate({ view: "create" })}>
-            <HeyaWordmark />
-          </button>
-          <nav className="studio-nav" aria-label="Card studio">
-            <button type="button" disabled={busy} aria-current={!manage ? "page" : undefined} onClick={() => navigate({ view: "create" })}><Plus size={17} /> Create cards</button>
-            <button type="button" disabled={busy} aria-current={manage ? "page" : undefined} onClick={() => navigate({ view: "manage" })}><LayoutGrid size={16} /> Manage cards</button>
-          </nav>
-          {account
-            ? <div className="account">
-              {account.email?.toLowerCase() === "vyshakiyengar@gmail.com" && <Link className="button secondary admin-link" href="/admin">Dashboard</Link>}
-              <Link className="button secondary" href="/account">Account</Link>
-              <form action="/auth/sign-out" method="post"><button className="button secondary" type="submit" disabled={busy}>Sign out</button></form>
-            </div>
-            : <span className="local-indicator">Device preview</span>}
-        </div>
-      </header>
+      <StudioHeader account={account} trial={trial} busy={busy} manage={manage}
+        onNavigate={(view) => navigate({ view })} />
 
       <main ref={main} className={`studio view-${screen.view}`}>
         {signOutFailed && <p className="form-error" role="alert">You’re still signed in. Try signing out again.</p>}
         {loadError && <p className="form-error" role="alert">{loadError}</p>}
-        {screen.view === "create" && <CreateCards ready={ready} create={create} />}
+        {notice && <p className="form-notice" role="status">{notice}</p>}
+        {screen.view === "create" && <CreateCards ready={ready} create={create} firstName={account?.firstName} />}
         {screen.view === "manage" && (
           <>
             <div className="manage-heading">
-              <div><h1 tabIndex={-1}>Manage cards.</h1>{!online && <p>Cards saved in this browser.</p>}</div>
+              <div><h1 tabIndex={-1}>Your cards</h1>{!online && <p>Cards saved in this browser.{trial && " Sign in to keep them."}</p>}</div>
               <button type="button" className="button primary" disabled={!ready || busy} onClick={() => navigate({ view: "create" })}><Plus size={18} /> Create a card</button>
             </div>
             {error && <p className="form-error" role="alert">{error}</p>}
@@ -272,7 +310,7 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
                   <li className="manage-card" key={card.id}>
                     <button className="managed-open" type="button" disabled={busy} aria-label={`Open ${title}`} onClick={() => open(card)}>
                       <DestinationMark kind={kind} />
-                      <span className="managed-name"><strong>{title}</strong><small>{card.draft.type === "individual" ? card.draft.value : card.draft.name || "Universal contact"}</small></span>
+                      <span className="managed-name"><strong>{title}</strong><small>{card.draft.type === "individual" ? card.draft.value : card.draft.name || "Universal card"}</small></span>
                       <ArrowRight size={16} />
                     </button>
                     <div className="manage-actions">
@@ -291,80 +329,83 @@ export function CardStudio({ account, walletConfigured = false, signOutFailed = 
           const { draft } = editing;
           const kind = getKind(draft);
           const label = kind === "universal" ? "Universal" : destinations[kind].label;
+          const code = liveCode(draft);
           function change(next: CardInput) {
             setScreen({ ...editing, draft: next });
             if (error) setError(undefined);
           }
           return (
-            <div className="focused-page">
-              <button className="back-button" type="button" disabled={busy} onClick={() => navigate({ view: screen.id ? "manage" : "create" })}><ArrowLeft size={18} /> {screen.id ? "Manage cards" : "All card types"}</button>
-              <div className="focused-heading">
-                <div className="editor-kind"><DestinationMark kind={kind} /><span><AppleWalletMark /> Apple Wallet</span></div>
-                <h1 tabIndex={-1}>{screen.id ? `Edit your ${label} card` : kind === "universal" ? "Create a universal card" : `Create your ${label} card`}</h1>
-                <p>{scanDescriptions[kind]}</p>
+            <div className="editor-page" data-tab={editorTab}>
+              <button className="back-button" type="button" disabled={busy} onClick={() => navigate({ view: screen.id ? "manage" : "create" })}><ArrowLeft size={18} /> {screen.id ? "Your cards" : "All card types"}</button>
+              <div className="editor-layout">
+                <div className="editor-main">
+                  <div className="focused-heading">
+                    <h1 tabIndex={-1}>{screen.id ? `Edit your ${label} card` : kind === "universal" ? "Create a Universal card" : `Create your ${label} card`}</h1>
+                    <p>{scanDescriptions[kind]}</p>
+                  </div>
+                  <div className="editor-tabs" role="tablist" aria-label="Editor view">
+                    <button role="tab" type="button" aria-selected={editorTab === "details"} onClick={() => setEditorTab("details")}>Details</button>
+                    <button role="tab" type="button" aria-selected={editorTab === "preview"} onClick={() => setEditorTab("preview")}>Preview</button>
+                  </div>
+                  <div className="editor-tab-details">
+                    <LiveStrip draft={draft} code={code} />
+                    <form className="editor" onSubmit={save} noValidate>
+                      <fieldset disabled={busy}>
+                        <legend className="visually-hidden">Card details</legend>
+                        {draft.type === "universal" && (
+                          <PhotoPicker photo={draft.photo} disabled={busy} onBusy={setBusy} onError={setError}
+                            onChange={(photo) => change({ ...draft, photo })} />
+                        )}
+                        {draft.type === "individual" && (
+                          <label className="field">{destinations[draft.kind].field}
+                            <input value={draft.value} placeholder={destinations[draft.kind].hint} type={destinations[draft.kind].inputType}
+                              autoCapitalize="none" spellCheck={false}
+                              maxLength={draft.kind === "email" ? cardLimits.email : draft.kind === "phone" ? cardLimits.phone : cardLimits.link}
+                              onChange={(event) => change({ ...draft, value: event.target.value })} />
+                          </label>
+                        )}
+                        <label className="field">{draft.type === "universal" ? "Full name" : "Name on card"}
+                          <input value={draft.name ?? ""} maxLength={cardLimits.text} placeholder={draft.type === "universal" ? "Alan Turing" : "Your name"} autoComplete="name"
+                            onChange={(event) => change({ ...draft, name: event.target.value })} />
+                        </label>
+                        {draft.type === "universal" && <UniversalFields draft={draft} onChange={change} />}
+                        {editing.id && (
+                          <details className="optional-fields">
+                            <summary>Rename saved card</summary>
+                            <label className="field">Name in Your cards
+                              <input value={draft.title} maxLength={cardLimits.title}
+                                onChange={(event) => change({ ...draft, title: event.target.value })} />
+                              <span className="input-help">Only used to find this card in your list.</span>
+                            </label>
+                          </details>
+                        )}
+                        {draft.type === "universal" && <p className="privacy">Anyone who scans or photographs your QR can read and share the contact details you include.</p>}
+                        {error && <p className="form-error" role="alert">{error}</p>}
+                        <button className="button primary save-button" type="submit" disabled={!ready}>
+                          {busy ? "Saving…" : screen.id ? "Save changes" : "Create my card"} <ArrowRight size={18} />
+                        </button>
+                      </fieldset>
+                    </form>
+                  </div>
+                  <div className="editor-tab-preview">
+                    <LivePreview draft={draft} code={code} />
+                    <p className="input-help">This is how your card looks. Tap Details to keep editing.</p>
+                  </div>
+                </div>
+                <div className="editor-side"><LivePreview draft={draft} code={code} /></div>
               </div>
-              <form className="editor" onSubmit={save} noValidate>
-                <fieldset disabled={busy}>
-                  <legend className="visually-hidden">Card details</legend>
-                  {draft.type === "individual" && (
-                    <label className="field">{destinations[draft.kind].field}
-                      <input value={draft.value} placeholder={destinations[draft.kind].hint} type={destinations[draft.kind].inputType}
-                        autoCapitalize="none" spellCheck={false}
-                        maxLength={draft.kind === "email" ? cardLimits.email : draft.kind === "phone" ? cardLimits.phone : cardLimits.link}
-                        onChange={(event) => change({ ...draft, value: event.target.value })} />
-                    </label>
-                  )}
-                  <label className="field">Name on card
-                    <input value={draft.name ?? ""} maxLength={cardLimits.text} placeholder="First name" autoComplete="name"
-                      onChange={(event) => change({ ...draft, name: event.target.value })} />
-                  </label>
-                  {draft.type === "universal" && <>
-                    <div className="photo-field">
-                      <label className="field">Card photo (optional)
-                        <input type="file" accept="image/jpeg,image/png,image/webp" onChange={async event => {
-                          const file = event.target.files?.[0];
-                          event.target.value = "";
-                          if (!file) return;
-                          setBusy(true);
-                          try { change({ ...draft, photo: await prepareCardPhoto(file) }); }
-                          catch { setError("Choose a readable JPG, PNG or WebP photo under 12 MB."); }
-                          finally { setBusy(false); }
-                        }} />
-                        <small>Shown on your card. Your QR shares contact details only.</small>
-                      </label>
-                      {draft.photo && <div><img src={draft.photo} alt="Card photo" width={48} height={48} />
-                        <button type="button" className="text-button" onClick={() => change({ ...draft, photo: undefined })}>Remove photo</button></div>}
-                    </div>
-                    <UniversalFields draft={draft} onChange={change} />
-                  </>}
-                  {editing.id && (
-                    <details className="optional-fields">
-                      <summary>Rename saved card</summary>
-                      <label className="field">Name in Manage cards
-                        <input value={draft.title} maxLength={cardLimits.title}
-                          onChange={(event) => change({ ...draft, title: event.target.value })} />
-                        <span className="input-help">Only used to find this card in your list.</span>
-                      </label>
-                    </details>
-                  )}
-                  {draft.type === "universal" && <p className="privacy">Anyone who scans or photographs your QR can read and share the contact details you include.</p>}
-                  {error && <p className="form-error" role="alert">{error}</p>}
-                  <button className="button primary save-button" type="submit" disabled={!ready}>
-                    {busy ? "Generating…" : "Generate your Apple Wallet card"} <ArrowRight size={18} />
-                  </button>
-                </fieldset>
-              </form>
             </div>
           );
         })()}
         {screen.view === "saved" && (
           <div className="focused-page result-page">
-            <button className="back-button" type="button" onClick={() => navigate({ view: "manage" })}><ArrowLeft size={18} /> Manage cards</button>
+            <button className="back-button" type="button" onClick={() => navigate({ view: "manage" })}><ArrowLeft size={18} /> Your cards</button>
             <div className="result-heading">
-              {screen.arrival !== "opened" && <span className="saved-tick"><Check size={12} aria-hidden="true" /><span className="visually-hidden" role="status">Card saved.</span></span>}
-              <h1 tabIndex={-1}>Your {cardKindLabels[getKind(screen.card.draft)]} Heya Card</h1>
+              <h1 tabIndex={-1}>{screen.arrival === "opened" ? screen.card.draft.title : screen.arrival === "updated" ? "Your card is updated" : "Your card is ready"}</h1>
+              {screen.arrival !== "opened" && <span className="visually-hidden" role="status">Card saved.</span>}
             </div>
-            <CardPreview onEdit={() => edit(screen.card)} arrival={screen.arrival} draft={screen.card.draft} preview={screen.preview} walletUrl={online && walletConfigured ? `/api/cards/${screen.card.id}/wallet` : undefined} />
+            <CardPreview onEdit={() => edit(screen.card)} arrival={screen.arrival} draft={screen.card.draft} preview={screen.preview}
+              wallet={walletAction(screen.card)} />
           </div>
         )}
       </main>

@@ -49,7 +49,7 @@ export async function createAccountsClient() {
   });
 }
 
-export async function getAccount(): Promise<{ id: string; email: string | null; firstName: string } | null> {
+export async function getAccount(): Promise<{ id: string; email: string | null; firstName: string; fullName: string } | null> {
   const supabase = await createAccountsClient();
   if (!supabase) return null;
 
@@ -57,8 +57,18 @@ export async function getAccount(): Promise<{ id: string; email: string | null; 
   if (error || !data.user) return null;
 
   const metadata = data.user.user_metadata;
-  const name = [metadata.given_name, metadata.full_name, metadata.name]
+  const clean = (value: string) => value.replace(/[\p{Cc}\p{Cs}]/gu, "").trim().replace(/\s+/gu, " ");
+  const pick = (...values: unknown[]) => values
     .find((value): value is string => typeof value === "string" && Boolean(value.trim()));
-  const firstName = name?.replace(/[\p{Cc}\p{Cs}]/gu, "").trim().split(/\s+/u)[0] ?? "";
-  return { id: data.user.id, email: data.user.email ?? null, firstName: Array.from(firstName).slice(0, 50).join("") };
+  const name = pick(metadata.given_name, metadata.full_name, metadata.name);
+  const firstName = name ? clean(name).split(" ")[0] : "";
+  const full = pick(metadata.full_name, metadata.name);
+  const joined = [metadata.given_name, metadata.family_name].filter((part) => typeof part === "string").join(" ");
+  const fullName = clean(full ?? joined);
+  return {
+    id: data.user.id,
+    email: data.user.email ?? null,
+    firstName: Array.from(firstName).slice(0, 50).join(""),
+    fullName: Array.from(fullName).slice(0, 120).join(""),
+  };
 }
