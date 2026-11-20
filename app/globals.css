@@ -421,7 +421,6 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
 .studio-intro h1 { max-width: 22ch; font: 560 clamp(24px, 2.4vw, 32px)/1.1 var(--heading); letter-spacing: -.04em; text-wrap: balance; }
 .studio-intro p { margin-top: 8px; color: var(--muted); }
 .studio-intro .how-clip { width: clamp(340px, 50vw, 620px); flex: 0 0 auto; }
-.studio-clip-mobile { display: none; }
 .chooser-heading { margin-bottom: 11px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
 .chooser-section { margin-top: 30px; }
 .tile-text { display: grid; gap: 3px; min-width: 0; }
@@ -429,11 +428,7 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
 @media (max-width: 680px) {
   .studio-intro { border: 0; background: none; padding: 4px 0 0; flex-direction: column; align-items: stretch; gap: 14px; }
   .studio-intro h1 { font-size: clamp(27px, 8vw, 34px); }
-  .studio-intro > .studio-clip { display: none; }
-  .studio-clip-mobile { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 16px; padding: 10px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
-  .studio-clip-mobile video { display: block; height: 30svh; min-height: 190px; max-height: 280px; aspect-ratio: 4 / 5; width: auto; border-radius: 11px; background: #ece7dd; object-fit: cover; }
-  .studio-clip-mobile strong { display: block; font: 560 22px/1.1 var(--heading); letter-spacing: -.03em; }
-  .studio-clip-mobile span { display: block; margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.4; }
+  .studio-intro .how-clip { width: 100%; border-radius: 18px; }
   .chooser-section { margin-top: 22px; }
   .chooser-heading { font-size: 15px; }
   .destination-card { align-items: center; padding-block: 10px; min-height: 64px; }

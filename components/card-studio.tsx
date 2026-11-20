@@ -11,7 +11,6 @@ import { track } from "@/lib/track";
 import { DestinationMark, destinations, scanActions, scanDescriptions, UniversalFields } from "./card-fields";
 import { CardPreview, type Preview, type WalletAction } from "./card-preview";
 import { HowItWorksClip, hasHowItWorksClip } from "./how-it-works-clip";
-import { howItWorksClip } from "@/lib/site";
 import { LivePreview, LiveStrip, liveCode } from "./live-preview";
 import { PhotoPicker } from "./photo-picker";
 import { ProjectCredit } from "./project-credit";
@@ -104,13 +103,6 @@ function CreateCards({ ready, create, firstName }: { ready: boolean; create: (ty
           <h1 id="page-title" tabIndex={-1}>{firstName ? `Hi ${firstName}, which card do you want to make?` : "Which card do you want to make?"}</h1>
         </div>
         {hasHowItWorksClip && <HowItWorksClip className="studio-clip" />}
-        {howItWorksClip && (
-          <div className="studio-clip-mobile">
-            <video src={howItWorksClip.fastSrc} poster={howItWorksClip.phone.poster} autoPlay muted loop playsInline preload="auto"
-              aria-label="Animation: a Heya card in Apple Wallet is scanned and the contact saves. Then a WhatsApp card is scanned and the chat opens." />
-            <div><strong>How it works</strong><span>Share all your details on one card, or just one, like your WhatsApp. They scan it with their camera.</span></div>
-          </div>
-        )}
       </section>
 
       <section id="universal-cards" className="chooser-section universal-section" aria-labelledby="universal-title">
