@@ -6,7 +6,7 @@ export function HowItWorksClip({ className = "" }: { className?: string }) {
   return (
     <figure className={`how-clip ${className}`}>
       <video src={howItWorksClip.src} poster={howItWorksClip.poster} autoPlay muted loop playsInline preload="metadata"
-        aria-label="An iPhone shows a Heya card in Apple Wallet. A second phone scans it and saves the contact." />
+        aria-label="Animation: a phone shows a Heya card in Apple Wallet and a second phone scans it, saving the contact. Then a WhatsApp card is scanned and the chat opens." />
     </figure>
   );
 }

@@ -2,6 +2,9 @@
 export const siteOrigin = "https://www.heya.cards";
 export const siteHost = "heya.cards";
 
-// The short "how it works" clip. Set this once the recording is in /public/media.
-// Until then the landing page shows the illustrated steps and the studio shows no clip.
-export const howItWorksClip: { src: string; poster: string } | null = null;
+// The short "how it works" clip, a 16-second animation: a Universal card scan, then a WhatsApp card scan. Set to null to
+// fall back to the illustrated steps on the landing page and no clip in the studio.
+export const howItWorksClip: { src: string; poster: string } | null = {
+  src: "/media/how-it-works.mp4",
+  poster: "/media/how-it-works-poster.jpg",
+};
