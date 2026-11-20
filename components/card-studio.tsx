@@ -11,6 +11,7 @@ import { track } from "@/lib/track";
 import { DestinationMark, destinations, scanActions, scanDescriptions, UniversalFields } from "./card-fields";
 import { CardPreview, type Preview, type WalletAction } from "./card-preview";
 import { HowItWorksClip, hasHowItWorksClip } from "./how-it-works-clip";
+import { howItWorksClip } from "@/lib/site";
 import { LivePreview, LiveStrip, liveCode } from "./live-preview";
 import { PhotoPicker } from "./photo-picker";
 import { ProjectCredit } from "./project-credit";
@@ -104,6 +105,15 @@ function CreateCards({ ready, create, firstName }: { ready: boolean; create: (ty
           <p>{hasHowItWorksClip ? "Pick one below. Watch the clip to see what happens when someone scans it." : "Pick one below. It’s free."}</p>
         </div>
         {hasHowItWorksClip && <HowItWorksClip className="studio-clip" />}
+        {howItWorksClip && (
+          <details className="studio-clip-mobile">
+            <summary>
+              <img src={howItWorksClip.poster} alt="" width={44} height={78} />
+              <span><strong>See how it works</strong><small>16-second clip</small></span>
+            </summary>
+            <HowItWorksClip />
+          </details>
+        )}
       </section>
 
       <section id="universal-cards" className="chooser-section" aria-labelledby="universal-title">
