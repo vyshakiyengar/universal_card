@@ -10,6 +10,7 @@ export type Preview = { code: CardCode; payload: string };
 export type WalletAction =
   | { type: "download"; href: string }
   | { type: "sign-in"; onSignIn: () => void }
+  | { type: "form"; action: string; fields: Record<string, string> }
   | { type: "unavailable" };
 
 function download(url: string, filename: string) {
@@ -32,6 +33,14 @@ const badge = <img src="/add-to-apple-wallet.svg" alt="Add to Apple Wallet" widt
 function WalletButton({ action, kind }: { action: WalletAction; kind: string }) {
   if (action.type === "download") {
     return <a className="wallet-badge" href={action.href} onClick={() => track("wallet_tap", kind)}>{badge}</a>;
+  }
+  if (action.type === "form") {
+    return (
+      <form className="wallet-form" method="post" action={action.action} onSubmit={() => track("wallet_tap", kind)}>
+        {Object.entries(action.fields).map(([name, value]) => <input key={name} type="hidden" name={name} value={value} />)}
+        <button className="wallet-badge" type="submit">{badge}</button>
+      </form>
+    );
   }
   if (action.type === "sign-in") {
     return <button className="wallet-badge" type="button" onClick={() => { track("wallet_tap", kind); action.onSignIn(); }}>{badge}</button>;
