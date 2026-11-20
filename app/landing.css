@@ -280,9 +280,12 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
 .why-band li { display: flex; align-items: center; gap: 10px; font-size: 15px; }
 .why-band li + li { padding-left: 30px; border-left: 1px solid var(--line); }
 .why-band svg { flex: 0 0 auto; color: var(--accent-teal); }
-.how-it-works { display: grid; grid-template-columns: 300px minmax(0, 1fr); align-items: center; gap: clamp(36px, 7vw, 80px); max-width: 920px; margin: clamp(48px, 7vw, 76px) auto 0; }
+.how-it-works { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; max-width: 1040px; margin: clamp(48px, 7vw, 76px) auto 0; }
+.how-it-works > div { display: contents; }
+.how-it-works h2 { order: 1; }
+.how-it-works .landing-clip { order: 2; width: 100%; border-radius: 22px; }
 .how-it-works h2 { font: 560 clamp(30px, 4vw, 44px)/1.1 var(--heading); letter-spacing: -.04em; }
-.how-steps { display: grid; gap: 26px; margin: 26px 0 0; padding: 0; list-style: none; counter-reset: step; }
+.how-steps { order: 3; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; margin: 8px 0 0; padding: 0; list-style: none; counter-reset: step; }
 .how-steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 14px; counter-increment: step; }
 .how-steps li::before { grid-row: span 2; content: counter(step); color: var(--accent-teal); font: 500 30px/1 var(--heading); }
 .how-steps strong { font-size: 18px; font-weight: 620; }
@@ -291,10 +294,8 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
   .why-band { flex-direction: column; align-items: stretch; gap: 0; margin-top: 20px; padding: 4px 0; }
   .why-band li { padding: 12px 0; }
   .why-band li + li { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
-  .how-it-works { grid-template-columns: minmax(0, 1fr); gap: 22px; margin-top: 40px; }
-  .how-it-works .landing-clip { width: 200px; justify-self: center; order: 2; }
-  .how-it-works > div { display: contents; }
-  .how-it-works h2 { order: 1; }
-  .how-steps { order: 3; margin-top: 0; gap: 20px; }
+  .how-it-works { gap: 20px; margin-top: 40px; }
+  .how-it-works .landing-clip { border-radius: 18px; }
+  .how-steps { grid-template-columns: minmax(0, 1fr); margin-top: 4px; gap: 20px; }
   .how-steps strong { font-size: 17px; }
 }

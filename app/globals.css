@@ -420,7 +420,7 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
 .studio-intro:not([data-clip]) { padding: 6px 0 0; border: 0; background: none; }
 .studio-intro h1 { max-width: 30ch; font: 560 clamp(28px, 3.4vw, 42px)/1.06 var(--heading); letter-spacing: -.04em; text-wrap: balance; }
 .studio-intro p { margin-top: 8px; color: var(--muted); }
-.studio-intro .how-clip { width: 140px; flex: 0 0 auto; }
+.studio-intro .how-clip { width: clamp(240px, 30vw, 340px); flex: 0 0 auto; }
 .studio-clip-mobile { display: none; }
 .chooser-heading { margin-bottom: 11px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
 .chooser-section { margin-top: 30px; }
@@ -431,7 +431,7 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
   .studio-intro h1 { font-size: clamp(27px, 8vw, 34px); }
   .studio-intro > .studio-clip { display: none; }
   .studio-clip-mobile { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 16px; padding: 10px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
-  .studio-clip-mobile video { display: block; height: 30svh; min-height: 190px; max-height: 280px; aspect-ratio: 9 / 16; width: auto; border-radius: 11px; background: #ece7dd; object-fit: cover; }
+  .studio-clip-mobile video { display: block; height: 30svh; min-height: 190px; max-height: 280px; aspect-ratio: 4 / 5; width: auto; border-radius: 11px; background: #ece7dd; object-fit: cover; }
   .studio-clip-mobile strong { display: block; font: 560 22px/1.1 var(--heading); letter-spacing: -.03em; }
   .studio-clip-mobile span { display: block; margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.4; }
   .chooser-section { margin-top: 22px; }
@@ -441,7 +441,10 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
 }
 
 /* ---------- Clip ---------- */
-.how-clip { margin: 0; overflow: hidden; border-radius: 16px; background: #141714; aspect-ratio: 9 / 16; box-shadow: 0 16px 34px -18px #1b23305e; }
+.how-clip { margin: 0; overflow: hidden; border-radius: 16px; background: #ece7dd url("/media/how-it-works-web-poster.jpg") center / cover; aspect-ratio: 16 / 9; box-shadow: 0 16px 34px -18px #1b23305e; }
+@media (max-width: 680px) {
+  .how-clip { aspect-ratio: 4 / 5; background-image: url("/media/how-it-works-phone-poster.jpg"); }
+}
 .how-clip video { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 /* ---------- Editor with live preview ---------- */

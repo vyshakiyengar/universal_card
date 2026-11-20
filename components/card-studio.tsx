@@ -107,7 +107,7 @@ function CreateCards({ ready, create, firstName }: { ready: boolean; create: (ty
         {hasHowItWorksClip && <HowItWorksClip className="studio-clip" />}
         {howItWorksClip && (
           <div className="studio-clip-mobile">
-            <video src={howItWorksClip.fastSrc} poster={howItWorksClip.poster} autoPlay muted loop playsInline preload="auto"
+            <video src={howItWorksClip.fastSrc} poster={howItWorksClip.phone.poster} autoPlay muted loop playsInline preload="auto"
               aria-label="Animation: a Heya card in Apple Wallet is scanned and the contact saves. Then a WhatsApp card is scanned and the chat opens." />
             <div><strong>How it works</strong><span>Share all your details on one card, or just one, like your WhatsApp. They scan it with their camera.</span></div>
           </div>
