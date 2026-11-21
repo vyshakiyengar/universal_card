@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { ArrowLeft, ArrowRight, PenLine, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, PenLine, Plus, Trash2 } from "lucide-react";
 import { cardLimits, makeCardPayload, type CardInput, type DestinationKind, type UniversalCard } from "@/lib/cards";
 import { savedDetail, addIndividualDetails } from "@/lib/saved-details";
 import { buildCardQr } from "@/lib/qr";
@@ -104,7 +104,12 @@ function CreateCards({ ready, create, firstName }: { ready: boolean; create: (ty
           <h1 id="page-title" tabIndex={-1}>{firstName ? `Hi ${firstName}, let’s make your Apple Wallet card` : "Let’s make your Apple Wallet card"}</h1>
           <PlatformMarks className="studio-platforms" />
         </div>
-        {hasHowItWorksClip && <HowItWorksClip className="studio-clip" />}
+        {hasHowItWorksClip && (
+          <div className="studio-clip-wrap">
+            <HowItWorksClip className="studio-clip" />
+            <a className="studio-down" href="#universal-cards" aria-label="Choose your card below"><ArrowDown size={18} aria-hidden="true" /></a>
+          </div>
+        )}
       </section>
 
       <section id="universal-cards" className="chooser-section universal-section" aria-labelledby="universal-title">

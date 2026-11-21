@@ -1,16 +1,25 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Play, RotateCcw } from "lucide-react";
 
 type Cut = { src: string };
 type State = "idle" | "playing" | "paused" | "ended";
 
-// Plays only when asked, so a visitor who scrolls down sees the clip from its first step, not halfway through.
-// While idle the video is hidden and the figure's poster (a CSS background) shows behind the play button.
-export function HowItWorksPlayer({ phone, web, query, label }: { phone: Cut; web: Cut; query: string; label: string }) {
+// By default it plays only when asked, so a visitor who scrolls down sees the clip from its first step.
+// With autoStart it plays on a loop straight away, and if the phone blocks autoplay (Low Power Mode,
+// data saver) it shows the play button instead of a frozen video. While idle the video is hidden and
+// the figure's poster (a CSS background) shows behind the button.
+export function HowItWorksPlayer({ phone, web, query, label, autoStart = false }:
+  { phone: Cut; web: Cut; query: string; label: string; autoStart?: boolean }) {
   const video = useRef<HTMLVideoElement>(null);
-  const [state, setState] = useState<State>("idle");
+  const [state, setState] = useState<State>(autoStart ? "playing" : "idle");
+
+  useEffect(() => {
+    if (!autoStart) return;
+    const element = video.current;
+    element?.play().catch(() => { if (element.paused) setState("idle"); });
+  }, [autoStart]);
 
   function play() {
     const element = video.current;
@@ -22,7 +31,7 @@ export function HowItWorksPlayer({ phone, web, query, label }: { phone: Cut; web
   const action = state === "ended" ? "Watch again" : state === "paused" ? "Resume" : "Watch how it works";
   return (
     <>
-      <video ref={video} muted playsInline preload="metadata" aria-label={label} data-state={state}
+      <video ref={video} muted playsInline loop={autoStart} preload={autoStart ? "auto" : "metadata"} aria-label={label} data-state={state}
         onPlay={() => setState("playing")}
         onPause={(event) => setState(event.currentTarget.ended ? "ended" : "paused")}
         onEnded={() => setState("ended")}

@@ -8,19 +8,13 @@ const clipLabel = "Animation: a phone shows a Heya card in Apple Wallet and a se
 
 // A short, muted animation of a scan. The browser picks the cut by screen width; each cut's poster is a CSS
 // background on the figure, so the right one shows before the video starts. Renders nothing until a clip is set.
-// With `playButton` it waits for a tap (used further down the landing page); otherwise it autoplays on a loop.
+// With `playButton` it waits for a tap (used further down the landing page); otherwise it autoplays on a
+// loop, falling back to a play button when the phone blocks autoplay.
 export function HowItWorksClip({ className = "", playButton = false }: { className?: string; playButton?: boolean }) {
   if (!howItWorksClip) return null;
   return (
     <figure className={`how-clip ${className}`}>
-      {playButton ? (
-        <HowItWorksPlayer phone={howItWorksClip.phone} web={howItWorksClip.web} query={clipPhoneQuery} label={clipLabel} />
-      ) : (
-        <video autoPlay muted loop playsInline preload="metadata" aria-label={clipLabel}>
-          <source media={clipPhoneQuery} src={howItWorksClip.phone.src} type="video/mp4" />
-          <source src={howItWorksClip.web.src} type="video/mp4" />
-        </video>
-      )}
+      <HowItWorksPlayer phone={howItWorksClip.phone} web={howItWorksClip.web} query={clipPhoneQuery} label={clipLabel} autoStart={!playButton} />
     </figure>
   );
 }

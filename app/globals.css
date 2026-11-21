@@ -425,6 +425,11 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
 .platform-marks [data-active] .destination-mark { color: #3a3e39; }
 .studio-platforms { margin-top: 12px; }
 .studio-intro .how-clip { width: clamp(340px, 50vw, 620px); flex: 0 0 auto; }
+.studio-clip-wrap { display: grid; justify-items: center; gap: 8px; flex: 0 0 auto; }
+.studio-down { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; color: var(--muted); text-decoration: none; }
+.studio-down:hover { color: var(--ink); background: var(--inset); }
+@media (prefers-reduced-motion: no-preference) { .studio-down svg { animation: nudge-down 1.8s ease-in-out infinite; } }
+@keyframes nudge-down { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
 .chooser-heading { margin-bottom: 11px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
 .chooser-section { margin-top: 30px; }
 .tile-text { display: grid; gap: 3px; min-width: 0; }
@@ -436,6 +441,7 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
   .studio-platforms .destination-mark { width: 14px; height: 14px; }
   .studio-platforms .destination-mark svg { width: 13px; height: 13px; }
   .studio-intro .how-clip { width: 75%; align-self: center; border-radius: 16px; }
+  .studio-clip-wrap { gap: 2px; }
   .chooser-section { margin-top: 22px; }
   .chooser-heading { font-size: 15px; }
   .destination-card { align-items: center; padding-block: 10px; min-height: 64px; }
