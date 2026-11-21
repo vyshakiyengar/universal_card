@@ -167,8 +167,6 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
   const [editorTab, setEditorTab] = useState<"details" | "preview">("details");
   const main = useRef<HTMLElement>(null);
   const previousView = useRef(screen.view);
-  // The first keystroke in a new card's form counts as "started filling in details" (once per card).
-  const startedTyping = useRef<string | null>(null);
 
   useEffect(() => {
     if (previousView.current !== screen.view) {
@@ -384,11 +382,7 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
                   </div>
                   <div className="editor-tab-details">
                     <LiveStrip draft={draft} code={code} />
-                    <form className="editor" onSubmit={save} noValidate onInput={() => {
-                      if (screen.id || startedTyping.current === kind) return;
-                      startedTyping.current = kind;
-                      track("trial_started", kind);
-                    }}>
+                    <form className="editor" onSubmit={save} noValidate>
                       <fieldset disabled={busy}>
                         <legend className="visually-hidden">Card details</legend>
                         {draft.type === "individual" && (
