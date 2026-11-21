@@ -47,7 +47,7 @@ test("the public landing explains the steps and links to the studio", async ({ p
   await expect(logo).toBeVisible();
   await expect(logo.locator(".heya-wordmark")).toHaveText("heyacards");
   const headerAction = page.getByRole("banner").getByRole("link", { name: "Create my card", exact: true });
-  const createAction = page.getByRole("main").getByRole("link", { name: "Create my free card", exact: true });
+  const createAction = page.getByRole("main").getByRole("link", { name: "Create my card", exact: true });
   const credit = page.getByRole("contentinfo").getByRole("link", { name: "Vyshak K Iyengar", exact: true });
   await expect(headerAction).toHaveAttribute("href", "/studio");
   await expect(createAction).toHaveAttribute("href", "/studio");

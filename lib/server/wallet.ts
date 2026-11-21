@@ -138,10 +138,7 @@ export function createWalletPass(
   const label = kind === "universal" ? "Universal" : cardKindLabels[kind];
   const { base, action } = walletCardDesign(kind);
   const light = kind !== "snapchat";
-  // The pass uses a lighter, frosted version of each brand colour (24% of the site's warm paper
-  // white mixed in), matching the strip artwork, which is drawn with the same mix.
-  const paper = [247, 246, 242];
-  const rgb = (hex: string) => `rgb(${[1, 3, 5].map((i, c) => Math.round(parseInt(hex.slice(i, i + 2), 16) * 0.76 + paper[c] * 0.24)).join(", ")})`;
+  const rgb = (hex: string) => `rgb(${[1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(", ")})`;
   const { name, detail } = cardText(card);
 
   // A store card is the one pass style with a full-width artwork strip, so the pass can carry
@@ -174,7 +171,7 @@ export function createWalletPass(
       logoText: label,
       backgroundColor: rgb(base),
       foregroundColor: light ? "rgb(255, 255, 255)" : "rgb(36, 29, 17)",
-      labelColor: light ? "rgb(238, 228, 202)" : "rgb(92, 70, 20)",
+      labelColor: light ? "rgb(214, 201, 170)" : "rgb(92, 70, 20)",
     },
   );
 

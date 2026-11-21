@@ -15,8 +15,7 @@ import { WalletExample } from "@/components/wallet-example";
 import { VisitBeacon } from "@/components/visit-beacon";
 import "./landing.css";
 
-const createLabel = "Create my free card";
-const headerCreateLabel = "Create my card";
+const createLabel = "Create my card";
 const pageTitle = "Free Business Cards for Apple Wallet · Heya Cards";
 const introduction = "Let people scan to save your details or open a link with a single click.";
 
@@ -37,14 +36,13 @@ export default function Home() {
       <header className="topbar landing-header">
         <div className="header-inner">
           <Link href="/" className="brand" aria-label="Heya Cards"><HeyaWordmark /></Link>
-          <TrackedLink className="create-card-link" href={cta} event="cta_click" kind="landing_header">{headerCreateLabel}</TrackedLink>
+          <TrackedLink className="create-card-link" href={cta} event="cta_click" kind="landing_header">{createLabel} <ArrowRight size={15} aria-hidden="true" /></TrackedLink>
         </div>
       </header>
       <main className="landing">
         <section className="landing-hero" aria-labelledby="landing-title">
           <div className="landing-copy">
             <h1 id="landing-title">Create your free <span>contact cards</span> for <em>Apple Wallet</em></h1>
-            <p className="landing-intro">{introduction}</p>
             <TrackedLink className="create-card-link landing-cta" href={cta} event="cta_click" kind="landing_hero">{createLabel} <ArrowRight size={15} aria-hidden="true" /></TrackedLink>
           </div>
           <WalletExample />
@@ -57,7 +55,7 @@ export default function Home() {
 
         {hasHowItWorksClip ? (
           <section className="how-it-works" aria-labelledby="how-it-works">
-            <HowItWorksClip className="landing-clip" />
+            <HowItWorksClip className="landing-clip" playButton />
             <div>
               <h2 id="how-it-works">How it works</h2>
               <ol className="how-steps">

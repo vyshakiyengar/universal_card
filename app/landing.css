@@ -27,6 +27,9 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
   transition: background-color .18s ease, border-color .18s ease;
 }
 .create-card-link:hover { border-color: var(--action-hover); background: var(--action-hover); }
+/* The header button is see-through so it doesn't compete with the main button on the page. */
+.landing-header .create-card-link { border-color: color-mix(in srgb, var(--action) 45%, transparent); background: color-mix(in srgb, var(--action) 7%, transparent); color: var(--action); }
+.landing-header .create-card-link:hover { border-color: var(--action); background: color-mix(in srgb, var(--action) 13%, transparent); color: var(--action); }
 .landing-cta { margin-top: 25px; }
 .mobile-create-action { display: none; }
 .landing-art { position: relative; isolation: isolate; min-width: 0; margin: 0; display: grid; align-content: center; justify-items: center; padding: 27px 24px; }
@@ -317,16 +320,4 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
   .how-it-works .landing-clip { border-radius: 18px; }
   .how-steps { grid-template-columns: minmax(0, 1fr); margin-top: 4px; gap: 20px; }
   .how-steps strong { font-size: 17px; }
-}
-
-/* Frosted pass: the brand colours let the phone screen show through, like the real pass's lighter tones. */
-.landing .device-pass {
-  --frost: 70%;
-  background-color: color-mix(in srgb, var(--pass-background) var(--frost), transparent);
-  background-image:
-    radial-gradient(circle farthest-side at top right, color-mix(in srgb, var(--pass-glow) var(--frost), transparent), transparent 74%),
-    linear-gradient(to top right, color-mix(in srgb, var(--pass-background) var(--frost), transparent), color-mix(in srgb, var(--pass-middle) var(--frost), transparent) 50%, color-mix(in srgb, var(--pass-light) var(--frost), transparent));
-  border-color: #ffffff55;
-  -webkit-backdrop-filter: blur(10px) saturate(1.35);
-  backdrop-filter: blur(10px) saturate(1.35);
 }
