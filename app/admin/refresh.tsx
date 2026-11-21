@@ -8,7 +8,7 @@ export function RefreshMetrics() {
   useEffect(() => {
     const timer = window.setInterval(() => {
       if (document.visibilityState === "visible") router.refresh();
-    }, 30_000);
+    }, 120_000);
     return () => window.clearInterval(timer);
   }, [router]);
   return null;

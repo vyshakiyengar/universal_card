@@ -12,7 +12,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     verifyCardMutationOrigin(request);
-    return cardResponse({ card: await createOwnedCard(await readCardBody(request)) }, 201);
+    return cardResponse({ card: await createOwnedCard(await readCardBody(request), request.headers.get("Idempotency-Key")) }, 201);
   } catch (error) {
     return cardErrorResponse(error);
   }

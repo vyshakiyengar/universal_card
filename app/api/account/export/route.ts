@@ -15,8 +15,9 @@ export async function GET() {
       providers: user.identities?.map((identity) => identity.provider) ?? [],
     };
     const { data: cards, error } = await supabase.rpc("export_universal_card_data");
-    if (error) return Response.json({ error: "Your data could not be exported." }, { status: 500, headers: { "Cache-Control": "no-store" } });
-    return new Response(JSON.stringify({ exportedAt: new Date().toISOString(), profile, cards }, null, 2), {
+    const activity = await supabase.rpc("export_my_activity");
+    if (error || activity.error) return Response.json({ error: "Your data could not be exported." }, { status: 500, headers: { "Cache-Control": "no-store" } });
+    return new Response(JSON.stringify({ exportedAt: new Date().toISOString(), profile, cards, activity: activity.data }, null, 2), {
       headers: {
         "Cache-Control": "private, no-store",
         "Content-Type": "application/json; charset=utf-8",

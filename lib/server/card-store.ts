@@ -51,7 +51,7 @@ async function storageForOwner() {
     throw new CardStoreError(503, "Sign-in is temporarily unavailable.");
   }
   if (error || !data.user) throw new CardStoreError(401, "Sign in to manage your saved cards.");
-  return { cards: supabase.from("cards"), ownerId: data.user.id };
+  return { supabase, cards: supabase.from("cards"), ownerId: data.user.id };
 }
 
 export async function listOwnedCards(): Promise<SavedCard[]> {
@@ -62,9 +62,13 @@ export async function listOwnedCards(): Promise<SavedCard[]> {
   return data.map(savedCard);
 }
 
-export async function createOwnedCard(input: unknown): Promise<SavedCard> {
-  const { cards } = await storageForOwner();
-  const { data, error } = await cards.insert({ draft: validateDraft(input) }).select(cardsSelect).single();
+export async function createOwnedCard(input: unknown, importId: string | null = null): Promise<SavedCard> {
+  const { cards, supabase } = await storageForOwner();
+  if (importId !== null && !uuid.test(importId)) throw new CardStoreError(400, "Invalid card ID.");
+  const draft = validateDraft(input);
+  const { data, error } = importId
+    ? await supabase.rpc("import_guest_card", { guest_id: importId, guest_draft: draft }).single<CardRow>()
+    : await cards.insert({ draft }).select(cardsSelect).single();
   if (error?.message.includes("card_limit_reached")) {
     throw new CardStoreError(422, `You can keep up to ${cardLimitPerAccount} cards. Delete one to add another.`);
   }

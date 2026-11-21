@@ -1,5 +1,5 @@
 import { after } from "next/server";
-import { activityContext, activityEvents, recordActivity, validVisitorId, visitorCookie, visitorCookieMaxAge, type ActivityEvent } from "@/lib/server/activity";
+import { activityContext, activityEvents, recordActivity, type ActivityEvent } from "@/lib/server/activity";
 import { isSameOriginForm } from "@/lib/server/account-request";
 import { getAccountsConfig } from "@/lib/server/supabase";
 import { destinationKinds } from "@/lib/cards";
@@ -19,14 +19,7 @@ export async function POST(request: Request) {
   const event = activityEvents.find((name) => name === input.event);
   const kind = typeof input.kind === "string" && kinds.has(input.kind) ? input.kind : "all";
   if (!event || !browserEvents.has(event)) return new Response(null, { status: 400, headers });
-  // The first event from a browser gives it its visitor ID.
-  const existing = validVisitorId(request.headers.get("cookie")?.match(new RegExp(`(?:^|;\\s*)${visitorCookie}=([^;]+)`))?.[1]);
-  const visitorId = existing ?? crypto.randomUUID();
-  after(async () => recordActivity(event, kind, { visitorId, userId: (await activityContext()).userId }));
-  const response = new Response(null, { status: 204, headers });
-  if (!existing) {
-    const secure = config.origin.startsWith("https:") ? "; Secure" : "";
-    response.headers.append("Set-Cookie", `${visitorCookie}=${visitorId}; Path=/; Max-Age=${visitorCookieMaxAge}; HttpOnly; SameSite=Lax${secure}`);
-  }
-  return response;
+  const context = await activityContext();
+  if (context.visitorId || event === "trial_card_created") after(() => recordActivity(event, kind, context));
+  return new Response(null, { status: 204, headers });
 }

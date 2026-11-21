@@ -1,9 +1,6 @@
 name: Uptime
 
-# Checks the live site every 15 minutes. A failed run emails the repository owner,
-# which is the alert. Once Apple Wallet signing is live, set the repository variable
-# WALLET_LIVE to true so the check also fails when signing breaks or the Wallet
-# certificate is within 30 days of expiry.
+# Wallet signing is live. Alert on signing failures and certificate expiry.
 on:
   schedule:
     - cron: "*/15 * * * *"
@@ -16,8 +13,6 @@ jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    env:
-      WALLET_LIVE: ${{ vars.WALLET_LIVE }}
     steps:
       - name: Check pages
         run: |
@@ -30,7 +25,7 @@ jobs:
           done
           wallet=$(jq -r '.wallet // "unknown"' /tmp/body 2>/dev/null || echo unknown)
           echo "Wallet signing: ${wallet}"
-          if [ "${WALLET_LIVE:-}" = "true" ] && [ "$wallet" != "ok" ]; then
+          if [ "$wallet" != "ok" ]; then
             echo "::error::Apple Wallet signing is ${wallet}. Check the APPLE_WALLET_* settings and certificate dates."
             failed=1
           fi

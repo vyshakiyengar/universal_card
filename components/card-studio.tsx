@@ -64,7 +64,7 @@ async function cardsRequest<T>(path: string, options?: RequestInit): Promise<T> 
   const response = await fetch(`/api/cards${path}`, {
     ...options,
     cache: "no-store",
-    headers: options?.body ? { "Content-Type": "application/json" } : undefined,
+    headers: { ...(options?.body ? { "Content-Type": "application/json" } : {}), ...options?.headers },
   });
   if (response.status === 204) return undefined as T;
   const data = await response.json();
@@ -85,12 +85,14 @@ async function moveLocalCardsToAccount(): Promise<{ moved: { localId: string; ca
   const kept: SavedCard[] = [];
   for (const card of [...local].reverse()) {
     try {
-      moved.push({ localId: card.id, card: (await cardsRequest<{ card: SavedCard }>("", { method: "POST", body: JSON.stringify(card.draft) })).card });
+      moved.push({ localId: card.id, card: (await cardsRequest<{ card: SavedCard }>("", { method: "POST", headers: { "Idempotency-Key": card.id }, body: JSON.stringify(card.draft) })).card });
     } catch {
       kept.push(card);
     }
   }
-  if (kept.length) localStorage.setItem(localCardsKey, JSON.stringify(kept.reverse()));
+  const imported = new Set(moved.map(({ localId }) => localId));
+  const remaining = readLocalCards().filter(card => !imported.has(card.id));
+  if (remaining.length) localStorage.setItem(localCardsKey, JSON.stringify(remaining));
   else localStorage.removeItem(localCardsKey);
   return { moved, failed: kept.length };
 }
@@ -102,7 +104,7 @@ function CreateCards({ ready, create, firstName }: { ready: boolean; create: (ty
         <div className="studio-intro-copy">
           <h1 id="page-title" tabIndex={-1}>{firstName ? `Hi ${firstName}, let’s make your card` : "Let’s make your card"}</h1>
         </div>
-        {hasHowItWorksClip && <HowItWorksClip className="studio-clip" />}
+        {hasHowItWorksClip && <HowItWorksClip className="studio-clip" playButton />}
       </section>
 
       <section id="universal-cards" className="chooser-section universal-section" aria-labelledby="universal-title">
@@ -191,8 +193,8 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
         }
         if (failed) setLoadError(`${failed === 1 ? "One card" : `${failed} cards`} from this browser couldn’t be saved. They’re still here, and we’ll try again next time.`);
         const pending = localStorage.getItem(pendingWalletKey);
-        localStorage.removeItem(pendingWalletKey);
-        const target = moved.find(({ localId }) => localId === pending)?.card;
+        const target = saved.find(card => card.id === pending);
+        if (target) localStorage.removeItem(pendingWalletKey);
         if (target) setScreen({ view: "saved", card: target, preview: getSavedPreview(target), arrival: "opened" });
       } catch {
         if (!controller.signal.aborted) setLoadError("Your cards could not be loaded. Reload the page to try again.");
