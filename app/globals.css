@@ -418,6 +418,12 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
 .studio-intro:not([data-clip]) { padding: 6px 0 0; border: 0; background: none; }
 .studio-intro h1 { max-width: 22ch; font: 560 clamp(24px, 2.4vw, 32px)/1.1 var(--heading); letter-spacing: -.04em; text-wrap: balance; }
 .studio-intro p { margin-top: 8px; color: var(--muted); }
+/* Every card type in one quiet row: small grey marks, the active one a shade darker. */
+.platform-marks { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; color: #b3b5ae; }
+.platform-marks .destination-mark { width: 17px; height: 17px; border-radius: 4px; color: inherit; background: transparent; transition: color .3s ease; }
+.platform-marks .destination-mark svg { width: 15px; height: 15px; }
+.platform-marks [data-active] .destination-mark { color: #3a3e39; }
+.studio-platforms { margin-top: 12px; }
 .studio-intro .how-clip { width: clamp(340px, 50vw, 620px); flex: 0 0 auto; }
 .chooser-heading { margin-bottom: 11px; font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
 .chooser-section { margin-top: 30px; }
@@ -426,6 +432,9 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
 @media (max-width: 680px) {
   .studio-intro { border: 0; background: none; padding: 4px 0 0; flex-direction: column; align-items: stretch; gap: 14px; }
   .studio-intro h1 { font-size: clamp(22px, 6.2vw, 26px); }
+  .studio-platforms { margin-top: 9px; gap: 7px; }
+  .studio-platforms .destination-mark { width: 14px; height: 14px; }
+  .studio-platforms .destination-mark svg { width: 13px; height: 13px; }
   .studio-intro .how-clip { width: 75%; align-self: center; border-radius: 16px; }
   .chooser-section { margin-top: 22px; }
   .chooser-heading { font-size: 15px; }

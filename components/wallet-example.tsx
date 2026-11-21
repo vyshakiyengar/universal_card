@@ -6,7 +6,8 @@ import { makeCardPayload } from "@/lib/cards";
 import { walletCardDesign, walletSurfaceStyle } from "@/lib/wallet-card-design";
 import { buildCardQr } from "@/lib/qr";
 import { AppleWalletMark } from "./apple-wallet-mark";
-import { DestinationMark, destinations } from "./card-fields";
+import { DestinationMark } from "./card-fields";
+import { PlatformMarks, platformLabel, type PlatformKind } from "./platform-marks";
 import { HeyaWordmark } from "./heya-wordmark";
 import { QrGraphic } from "./qr-graphic";
 
@@ -26,14 +27,13 @@ const examples = {
   snapchat: buildCardQr("https://www.snapchat.com/"),
 } as const;
 
-const exampleKinds = ["whatsapp", "universal", "email", "linkedin", "instagram", "phone", "website", "url", "snapchat"] as const;
+// WhatsApp comes round after every two other cards.
+const exampleKinds: PlatformKind[] = ["whatsapp", "universal", "email", "whatsapp", "linkedin", "instagram", "whatsapp", "phone", "website", "whatsapp", "url", "snapchat"];
 const rotationDelay = 1_500;
+const exampleLabel = platformLabel;
 
-function exampleLabel(kind: (typeof exampleKinds)[number]) {
-  return kind === "universal" ? "Universal card" : destinations[kind].label;
-}
-
-export function WalletExample() {
+// The hero copy with the card types under the button, and the phone that rotates through them.
+export function WalletExample({ children }: { children: React.ReactNode }) {
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(true);
   const kind = exampleKinds[index];
@@ -50,6 +50,14 @@ export function WalletExample() {
   }, [playing]);
 
   return (
+    <>
+    <div className="landing-copy">
+      {children}
+      <button className="hero-platforms" type="button" title={rotationLabel} aria-label={rotationLabel}
+        onClick={() => setPlaying((enabled) => !enabled)}>
+        <PlatformMarks active={kind} />
+      </button>
+    </div>
     <figure className="landing-art" aria-label="Sample Apple Wallet passes">
       <div className="device">
         <div className="device-screen">
@@ -67,14 +75,9 @@ export function WalletExample() {
             </div>
             <HeyaWordmark compact />
           </div>
-          <button className="device-platforms" type="button" title={rotationLabel} aria-label={rotationLabel}
-            onClick={() => setPlaying((enabled) => !enabled)}>
-            {exampleKinds.map((type) => (
-              <span key={type} data-active={type === kind}><DestinationMark kind={type} /></span>
-            ))}
-          </button>
         </div>
       </div>
     </figure>
+    </>
   );
 }

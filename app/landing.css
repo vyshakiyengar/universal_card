@@ -38,7 +38,7 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
 .device-status { position: relative; display: flex; justify-content: space-between; align-items: center; min-height: 20px; margin: 0 7px 11px; font-size: 10px; font-weight: 700; color: var(--ink); }
 .device-status > span:last-child { display: flex; align-items: center; gap: 3px; }
 .device-camera { position: absolute; top: 1px; left: 50%; width: 56px; height: 13px; transform: translateX(-50%); background: #262922; border-radius: 30px; }
-.device-pass { overflow: hidden; position: relative; display: flex; flex-direction: column; height: 266px; padding: 10px; border: 1px solid #ffffff24; border-radius: 12px; color: var(--pass-ink); box-shadow: 0 7px 13px -6px #1218165c, inset 0 1px #fff4; }
+.device-pass { overflow: hidden; position: relative; display: flex; flex-direction: column; height: 306px; padding: 10px; border: 1px solid #ffffff24; border-radius: 12px; color: var(--pass-ink); box-shadow: 0 7px 13px -6px #1218165c, inset 0 1px #fff4; }
 .device-pass-brand { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 670; }
 .device-pass-brand .destination-mark { width: 18px; height: 18px; color: inherit; background: transparent; }
 .device-pass-brand .destination-mark svg { width: 16px; height: 16px; }
@@ -48,11 +48,9 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
 .device-pass-qr .qr-code { display: block; border-radius: 3px; }
 .device-pass-qr small { font-size: 9px; }
 .device-pass > .heya-stamp { position: absolute; inset: auto 8px 9px auto; font-size: 10px; }
-.device-platforms { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); align-items: center; justify-items: center; flex-shrink: 0; padding: 4px; min-height: 44px; margin-top: auto; border: 0; border-radius: 9px; color: #a3a6a1; background: #efefed; }
-.device-platforms .destination-mark { width: 17px; height: 17px; border-radius: 4px; color: inherit; background: transparent; }
-.device-platforms .destination-mark svg { width: 12px; height: 12px; }
-.device-platforms [data-active="true"] .destination-mark { color: #373b38; }
 
+.hero-platforms { display: block; margin-top: 20px; padding: 4px 0; border: 0; background: none; cursor: pointer; }
+.hero-platforms:focus-visible { outline: 2px solid var(--action); outline-offset: 4px; border-radius: 6px; }
 .device-wallet-label { display: inline-flex; align-items: center; min-height: 25px; gap: 7px; margin: -3px 2px 1px; color: var(--ink); font-size: 12px; font-weight: 650; }
 .device-wallet-label .apple-wallet-mark { width: 19px; height: 19px; }
 .scan-example {
@@ -255,6 +253,10 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
   .landing-copy h1 { max-width: none; font-size: clamp(25px, 7.1vw, 34px); line-height: 1.04; }
   .landing-copy h1 span, .landing-copy h1 em { white-space: normal; }
   .landing-intro { margin-top: 9px; font-size: 13px; line-height: 1.4; }
+  .hero-platforms { margin-top: 12px; }
+  .hero-platforms .platform-marks { gap: 5px; }
+  .hero-platforms .destination-mark { width: 13px; height: 13px; }
+  .hero-platforms .destination-mark svg { width: 12px; height: 12px; }
   .landing-cta { margin-top: 14px; min-height: 40px; padding-inline: clamp(10px, 3.3vw, 13px); font-size: clamp(12.5px, 3.5vw, 13.5px); gap: 6px; }
   .mobile-create-action {
     display: flex;
@@ -281,9 +283,6 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
   .device-pass-qr .qr-code { width: 58px; height: 58px; }
   .device-pass-qr small { font-size: 7px; }
   .device-pass > .heya-stamp { display: none; }
-  .device-platforms { min-height: 26px; padding: 3px 2px; border-radius: 7px; }
-  .device-platforms .destination-mark { width: 11px; height: 11px; }
-  .device-platforms .destination-mark svg { width: 9px; height: 9px; }
   .scan-example { margin-top: 2px; }
   .scan-example-flow { grid-template-columns: minmax(0, 1fr); }
   .scan-example-screen { height: 165px; }

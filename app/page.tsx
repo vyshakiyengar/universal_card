@@ -41,11 +41,10 @@ export default function Home() {
       </header>
       <main className="landing">
         <section className="landing-hero" aria-labelledby="landing-title">
-          <div className="landing-copy">
+          <WalletExample>
             <h1 id="landing-title">Create your free <span>contact cards</span> for <em>Apple Wallet</em></h1>
             <TrackedLink className="create-card-link landing-cta" href={cta} event="cta_click" kind="landing_hero">{createLabel} <ArrowRight size={15} aria-hidden="true" /></TrackedLink>
-          </div>
-          <WalletExample />
+          </WalletExample>
         </section>
 
         <ul className="why-band" aria-label="Why Heya">

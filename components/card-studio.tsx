@@ -10,6 +10,7 @@ import { localCardsKey, pendingWalletKey, trialCookies } from "@/lib/trial";
 import { track } from "@/lib/track";
 import { DestinationMark, destinations, scanActions, scanDescriptions, UniversalFields } from "./card-fields";
 import { CardPreview, type Preview, type WalletAction } from "./card-preview";
+import { PlatformMarks } from "./platform-marks";
 import { HowItWorksClip, hasHowItWorksClip } from "./how-it-works-clip";
 import { VisitBeacon } from "./visit-beacon";
 import { LivePreview, LiveStrip, liveCode } from "./live-preview";
@@ -64,7 +65,7 @@ async function cardsRequest<T>(path: string, options?: RequestInit): Promise<T> 
   const response = await fetch(`/api/cards${path}`, {
     ...options,
     cache: "no-store",
-    headers: options?.body ? { "Content-Type": "application/json" } : undefined,
+    headers: { ...(options?.body ? { "Content-Type": "application/json" } : {}), ...(options?.headers as Record<string, string> | undefined) },
   });
   if (response.status === 204) return undefined as T;
   const data = await response.json();
@@ -85,7 +86,7 @@ async function moveLocalCardsToAccount(): Promise<{ moved: { localId: string; ca
   const kept: SavedCard[] = [];
   for (const card of [...local].reverse()) {
     try {
-      moved.push({ localId: card.id, card: (await cardsRequest<{ card: SavedCard }>("", { method: "POST", body: JSON.stringify(card.draft) })).card });
+      moved.push({ localId: card.id, card: (await cardsRequest<{ card: SavedCard }>("", { method: "POST", body: JSON.stringify(card.draft), headers: { "X-Heya-Source": "trial" } })).card });
     } catch {
       kept.push(card);
     }
@@ -100,7 +101,8 @@ function CreateCards({ ready, create, firstName }: { ready: boolean; create: (ty
     <>
       <section className="studio-intro" data-clip={hasHowItWorksClip || undefined} aria-labelledby="page-title">
         <div className="studio-intro-copy">
-          <h1 id="page-title" tabIndex={-1}>{firstName ? `Hi ${firstName}, let’s make your card` : "Let’s make your card"}</h1>
+          <h1 id="page-title" tabIndex={-1}>{firstName ? `Hi ${firstName}, let’s make your Apple Wallet card` : "Let’s make your Apple Wallet card"}</h1>
+          <PlatformMarks className="studio-platforms" />
         </div>
         {hasHowItWorksClip && <HowItWorksClip className="studio-clip" />}
       </section>
