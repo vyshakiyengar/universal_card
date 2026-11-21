@@ -83,7 +83,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const visitors = n(dash.funnel.visitors);
   const funnelSteps: [string, number, string][] = [
     ["Unique visitors", visitors, "Opened the landing page or studio"],
-    ["Clicked a CTA", n(dash.funnel.ctaClickers), "Create my Heya card, header or hero"],
+    ["Clicked a CTA", n(dash.funnel.ctaClickers), "Create my card buttons, header or hero"],
     ["Started the studio", n(dash.funnel.trialStarters), "First-time trial began"],
     ["Made a card before sign-in", n(dash.funnel.trialCardMakers), "Free first card"],
     ["Started sign-in", n(dash.funnel.signInStarters), "Tapped Apple or Google"],

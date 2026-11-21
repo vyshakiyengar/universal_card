@@ -15,7 +15,8 @@ import { WalletExample } from "@/components/wallet-example";
 import { VisitBeacon } from "@/components/visit-beacon";
 import "./landing.css";
 
-const createLabel = "Create my Heya card";
+const createLabel = "Create my free card";
+const headerCreateLabel = "Create my card";
 const pageTitle = "Free Business Cards for Apple Wallet · Heya Cards";
 const introduction = "Let people scan to save your details or open a link with a single click.";
 
@@ -36,7 +37,7 @@ export default function Home() {
       <header className="topbar landing-header">
         <div className="header-inner">
           <Link href="/" className="brand" aria-label="Heya Cards"><HeyaWordmark /></Link>
-          <TrackedLink className="create-card-link" href={cta} event="cta_click" kind="landing_header">{createLabel}</TrackedLink>
+          <TrackedLink className="create-card-link" href={cta} event="cta_click" kind="landing_header">{headerCreateLabel}</TrackedLink>
         </div>
       </header>
       <main className="landing">
