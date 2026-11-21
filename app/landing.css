@@ -301,3 +301,15 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
   .how-steps { grid-template-columns: minmax(0, 1fr); margin-top: 4px; gap: 20px; }
   .how-steps strong { font-size: 17px; }
 }
+
+/* Frosted pass: the brand colours let the phone screen show through, like the real pass's lighter tones. */
+.landing .device-pass {
+  --frost: 70%;
+  background-color: color-mix(in srgb, var(--pass-background) var(--frost), transparent);
+  background-image:
+    radial-gradient(circle farthest-side at top right, color-mix(in srgb, var(--pass-glow) var(--frost), transparent), transparent 74%),
+    linear-gradient(to top right, color-mix(in srgb, var(--pass-background) var(--frost), transparent), color-mix(in srgb, var(--pass-middle) var(--frost), transparent) 50%, color-mix(in srgb, var(--pass-light) var(--frost), transparent));
+  border-color: #ffffff55;
+  -webkit-backdrop-filter: blur(10px) saturate(1.35);
+  backdrop-filter: blur(10px) saturate(1.35);
+}
