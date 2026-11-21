@@ -128,6 +128,7 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
   assert.equal(pass.formatVersion, 1);
   assert.equal(pass.logoText, "Universal");
   assert.equal(pass.storeCard.primaryFields[0].value, draft.name);
+  assert.equal(pass.storeCard.headerFields[0].value, "www.heya.cards");
   assert.equal(JSON.stringify(pass).includes(draft.title), false);
   assert.deepEqual(pass.barcodes, [{
     format: "PKBarcodeFormatQR",

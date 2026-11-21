@@ -176,6 +176,8 @@ export function createWalletPass(
   );
 
   pass.type = "storeCard";
+  // Top right, next to the card's name: where it came from, so people who see it can get one.
+  pass.headerFields.push({ key: "site", value: "www.heya.cards" });
   pass.primaryFields.push({ key: "name", label: "", value: name });
   if (card.type === "universal") {
     if (card.jobTitle.trim()) pass.secondaryFields.push({ key: "role", label: "ROLE", value: card.jobTitle.trim() });
