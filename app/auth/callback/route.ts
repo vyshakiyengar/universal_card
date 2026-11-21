@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
+import { activityContext, recordActivity } from "../../../lib/server/activity";
 import { createAccountsClient, getAccountsConfig } from "../../../lib/server/supabase";
 
 const privateHeaders = { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer" };
@@ -9,8 +10,12 @@ export async function GET(request: Request) {
   const code = new URL(request.url).searchParams.get("code");
   const supabase = await createAccountsClient();
   if (code && supabase) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      const userId = data.user?.id ?? null;
+      const provider = typeof data.user?.app_metadata?.provider === "string" ? data.user.app_metadata.provider : "all";
+      after(async () => recordActivity("signed_in", provider === "apple" || provider === "google" ? provider : "all",
+        { visitorId: (await activityContext()).visitorId, userId }));
       return NextResponse.redirect(new URL("/studio", config.origin), { status: 303, headers: privateHeaders });
     }
   }

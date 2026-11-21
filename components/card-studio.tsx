@@ -11,6 +11,7 @@ import { track } from "@/lib/track";
 import { DestinationMark, destinations, scanActions, scanDescriptions, UniversalFields } from "./card-fields";
 import { CardPreview, type Preview, type WalletAction } from "./card-preview";
 import { HowItWorksClip, hasHowItWorksClip } from "./how-it-works-clip";
+import { VisitBeacon } from "./visit-beacon";
 import { LivePreview, LiveStrip, liveCode } from "./live-preview";
 import { ProjectCredit } from "./project-credit";
 import { StudioHeader } from "./studio-header";
@@ -305,6 +306,7 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
 
   return (
     <>
+      <VisitBeacon page="studio" />
       <StudioHeader account={account} trial={trial} busy={busy} manage={manage}
         onNavigate={(view) => navigate({ view })} />
 

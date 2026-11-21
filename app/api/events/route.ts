@@ -1,12 +1,12 @@
 import { after } from "next/server";
-import { activityEvents, recordActivity, type ActivityEvent } from "@/lib/server/activity";
+import { activityContext, activityEvents, recordActivity, validVisitorId, visitorCookie, visitorCookieMaxAge, type ActivityEvent } from "@/lib/server/activity";
 import { isSameOriginForm } from "@/lib/server/account-request";
 import { getAccountsConfig } from "@/lib/server/supabase";
 import { destinationKinds } from "@/lib/cards";
 
 // Only events the browser can see. Server-side events are recorded where they happen.
-const browserEvents = new Set<ActivityEvent>(["cta_click", "trial_card_created", "trial_cards_saved", "share", "download_image", "wallet_tap"]);
-const kinds = new Set<string>(["all", "universal", "landing_header", "landing_hero", "landing_footer", "trial_more", "trial_save", ...destinationKinds]);
+const browserEvents = new Set<ActivityEvent>(["visit", "cta_click", "trial_card_created", "trial_cards_saved", "share", "download_image", "wallet_tap"]);
+const kinds = new Set<string>(["all", "universal", "landing", "studio", "landing_header", "landing_hero", "landing_footer", "trial_more", "trial_save", ...destinationKinds]);
 const headers = { "Cache-Control": "private, no-store" };
 
 export async function POST(request: Request) {
@@ -19,6 +19,14 @@ export async function POST(request: Request) {
   const event = activityEvents.find((name) => name === input.event);
   const kind = typeof input.kind === "string" && kinds.has(input.kind) ? input.kind : "all";
   if (!event || !browserEvents.has(event)) return new Response(null, { status: 400, headers });
-  after(() => recordActivity(event, kind));
-  return new Response(null, { status: 204, headers });
+  // The first event from a browser gives it its visitor ID.
+  const existing = validVisitorId(request.headers.get("cookie")?.match(new RegExp(`(?:^|;\\s*)${visitorCookie}=([^;]+)`))?.[1]);
+  const visitorId = existing ?? crypto.randomUUID();
+  after(async () => recordActivity(event, kind, { visitorId, userId: (await activityContext()).userId }));
+  const response = new Response(null, { status: 204, headers });
+  if (!existing) {
+    const secure = config.origin.startsWith("https:") ? "; Secure" : "";
+    response.headers.append("Set-Cookie", `${visitorCookie}=${visitorId}; Path=/; Max-Age=${visitorCookieMaxAge}; HttpOnly; SameSite=Lax${secure}`);
+  }
+  return response;
 }

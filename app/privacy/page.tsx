@@ -14,6 +14,7 @@ export default function Privacy() {
         <p>If you make your first card before signing in, it stays in your browser’s local storage, not on our servers. If you add it to Apple Wallet, its details are sent to us once to build the pass and are not stored. Three cookies note that you have started, whether this visit is still open and whether you have made your free card. When you sign in, cards in that browser are copied to your account.</p>
         <p>We record aggregate daily counts, such as sign-ins, cards created, Wallet downloads, shares and button clicks, to understand how the service is used. These counts contain no account identifiers or card contents.</p>
         <p>We use Vercel Web Analytics for visits to the public homepage. It provides aggregate traffic statistics without analytics cookies. We exclude private pages, card contents and URL parameters from this analytics collection.</p>
+        <p>To understand how people use Heya Cards, we also record product events such as a visit, starting the studio, making a card, signing in and adding a card to Apple Wallet. Each event carries the event name, the card type, the time, a random visitor ID stored in a first-party cookie (heya_vid, one year) and, once you sign in, your account. It never includes your card’s contact details. We use these events only to improve the product and never share or sell them.</p>
       </section>
       <section>
         <h2>Why we use it (lawful basis)</h2>

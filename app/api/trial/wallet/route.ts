@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { after } from "next/server";
-import { recordWalletDownload } from "@/lib/server/activity";
+import { activityContext, recordWalletDownload } from "@/lib/server/activity";
 import { isSameOriginForm } from "@/lib/server/account-request";
 import { getAccountsConfig } from "@/lib/server/supabase";
 import { trialCookies } from "@/lib/trial";
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   try {
     const pass = createWalletPass({ id, draft });
     const { card } = makeCardPayload(draft);
-    after(() => recordWalletDownload(card.type === "universal" ? "universal" : card.kind));
+    after(async () => recordWalletDownload(card.type === "universal" ? "universal" : card.kind, await activityContext()));
     return new Response(new Uint8Array(pass), {
       headers: {
         ...headers,

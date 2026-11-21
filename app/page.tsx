@@ -12,6 +12,7 @@ import { LandingAnalytics } from "@/components/landing-analytics";
 import { TrackedLink } from "@/components/tracked-link";
 import { ProjectCredit } from "@/components/project-credit";
 import { WalletExample } from "@/components/wallet-example";
+import { VisitBeacon } from "@/components/visit-beacon";
 import "./landing.css";
 
 const createLabel = "Create my Heya card";
@@ -127,6 +128,7 @@ export default function Home() {
       </main>
       <ProjectCredit />
       {process.env.VERCEL_ENV === "production" && <LandingAnalytics />}
+      <VisitBeacon page="landing" />
     </>
   );
 }
