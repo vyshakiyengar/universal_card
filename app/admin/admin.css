@@ -60,3 +60,25 @@
 .defs div { display: grid; grid-template-columns: minmax(150px, 200px) 1fr; gap: 14px; }
 .defs dt { font-weight: 650; } .defs dd { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
 @media (max-width: 720px) { .defs div { grid-template-columns: 1fr; gap: 2px; } }
+
+.glance-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.glance thead th { white-space: nowrap; }
+.glance tbody tr.count-row th, .glance tbody tr.count-row td { color: var(--muted); }
+.glance tbody tr.count-row td b { font-size: 15px; font-weight: 600; }
+.glance tbody tr.count-row:first-of-type th, .glance tbody tr.count-row:first-of-type td { border-top: 2px solid var(--line); }
+.glance tbody tr:last-child th, .glance tbody tr:last-child td { border-top: 0; }
+.glance tbody tr.count-row + tr.count-row th, .glance tbody tr.count-row + tr.count-row td { border-top: 1px solid var(--line); }
+.glance-foot { margin: 10px 0 0; }
+.info { position: relative; display: inline-grid; place-items: center; width: 16px; height: 16px; margin-left: 4px; border: 1px solid var(--field-line, #c9c6bd); border-radius: 50%; color: var(--muted); font: italic 600 10px/1 Georgia, serif; vertical-align: 1px; cursor: help; }
+.info:focus { outline: 2px solid var(--action); outline-offset: 1px; }
+.info-tip { position: absolute; z-index: 5; left: 50%; top: calc(100% + 8px); width: min(280px, 72vw); padding: 10px 12px; border-radius: 9px; background: #1f2421; color: #f4f2ec; font: 400 13px/1.45 var(--body, system-ui), system-ui, sans-serif; font-style: normal; text-align: left; white-space: normal; box-shadow: 0 10px 24px -10px #0008; transform: translateX(-50%); opacity: 0; visibility: hidden; transition: opacity .15s ease; pointer-events: none; }
+.info:hover .info-tip, .info:focus .info-tip { opacity: 1; visibility: visible; }
+.glance th:first-child .info-tip { left: 0; transform: none; }
+.glance thead th:last-child .info-tip { left: auto; right: 0; transform: none; }
+.data-table.glance { overflow: visible; }
+@media (max-width: 720px) {
+  .glance th, .glance td { white-space: normal; padding: 8px 6px; vertical-align: top; }
+  .glance td b { font-size: 16px; }
+  .glance .rate { display: block; margin: 2px 0 0; }
+  .glance thead th { font-size: 13px; }
+}

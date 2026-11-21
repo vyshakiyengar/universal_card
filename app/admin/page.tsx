@@ -30,16 +30,20 @@ type Period = {
   walletAdders: number; walletPasses: number; newAccounts: number; signedIn: number;
 };
 type PeopleDay = { day: string; visitors: number; cardMakers: number; cards: number; walletAdders: number };
+type Split = { guests: number; accounts: number; total: number };
+type SplitPeriod = { came: Split; made: Split; tapped: Split; added: Split; cards: Split; passes: Split; newAccounts: number };
 type People = {
   generatedAt: string; trackedSince: string | null;
-  periods: { label: string; data: Period }[];
+  split: { key: string; label: string; data: SplitPeriod }[];
   range: Period; cardsByKind: Record<string, number>; daily: PeopleDay[];
 };
 
 // Plain-English meaning of every number on this page, shown in "How we count".
 const definitions: [string, string][] = [
+  ["Not signed in", "People who have never signed in to Heya. Each browser counts as one person."],
+  ["Signed in", "People with a Heya account, including everything they did on the same browser before signing in. Not signed in + Signed in = Total, because nobody is in both."],
   ["Person", "One human, counted once. Before signing in, a person is their browser (a random ID in a cookie). After signing in, they are their account, and their earlier guest visits join that account. One person on two devices before signing in counts as two."],
-  ["Visitors", "People who opened heya.cards or the card maker in that time, with JavaScript on (most bots don't run it)."],
+  ["Came / Visitors", "People who opened heya.cards or the card maker in that time, with JavaScript on (most bots don't run it)."],
   ["Opened the card maker", "Visitors who reached the page where you make a card (/studio)."],
   ["Made a card", "People who saved at least one card, as a guest or signed in. A guest card moved into an account at sign-in is not counted again."],
   ["Cards made", "Every new card saved, guest or account. Edits don't count."],
@@ -51,6 +55,24 @@ const definitions: [string, string][] = [
 ];
 
 const ranges = [7, 30, 90, 365] as const;
+
+// A small (i) that shows its explanation on hover, focus or tap.
+function Info({ text }: { text: string }) {
+  return <span className="info" tabIndex={0} aria-label={text}><span aria-hidden="true">i</span><span className="info-tip" role="tooltip">{text}</span></span>;
+}
+
+const splitColumns: { key: keyof Split; label: string; info: string }[] = [
+  { key: "guests", label: "Not signed in", info: "People who have never signed in. Each browser counts as one person." },
+  { key: "accounts", label: "Signed in", info: "People with a Heya account. Includes what they did on the same browser before they signed in." },
+  { key: "total", label: "Total", info: "Everyone: Not signed in + Signed in. Nobody is counted in both." },
+];
+const splitRows: { key: "came" | "made" | "added" | "cards" | "passes"; label: string; info: string; people: boolean }[] = [
+  { key: "came", label: "Came to Heya", info: "Opened heya.cards or the card maker at least once in this period.", people: true },
+  { key: "made", label: "Made a card", info: "Saved at least one card in this period. The % is out of the people who came, in the same column.", people: true },
+  { key: "added", label: "Added to Apple Wallet", info: "Their phone downloaded a Wallet pass from Heya in this period. That is when iPhone shows the Add screen; Apple doesn't tell us if they then tap Add, so this is the closest true number. The % is out of the people who came.", people: true },
+  { key: "cards", label: "Cards made", info: "Every new card saved. One person making 3 cards counts 3. Edits don't count.", people: false },
+  { key: "passes", label: "Wallet passes downloaded", info: "Every pass download, including the same person downloading again.", people: false },
+];
 const n = (value: unknown) => Number(value ?? 0);
 const fmt = (value: unknown) => n(value).toLocaleString("en-GB");
 const pct = (part: number, whole: number) => (whole > 0 && part === 0 ? "0%" : whole > 0 ? `${((part / whole) * 100).toFixed(part / whole < 0.1 ? 1 : 0)}%` : "–");
@@ -79,7 +101,7 @@ function bucket<T extends { day: string }>(days: T[], pick: (day: T) => number, 
   return points;
 }
 
-export default async function Admin({ searchParams }: { searchParams: Promise<{ range?: string }> }) {
+export default async function Admin({ searchParams }: { searchParams: Promise<{ range?: string; glance?: string }> }) {
   const account = await getAccount();
   if (!account) redirect("/auth/sign-in");
   const supabase = await createAccountsClient();
@@ -87,7 +109,8 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const { data: allowed } = await supabase.rpc("is_universal_card_admin");
   if (!allowed) notFound();
 
-  const requested = Number((await searchParams).range);
+  const params = await searchParams;
+  const requested = Number(params.range);
   const range = (ranges as readonly number[]).includes(requested) ? requested : 365;
   const [{ data, error }, { data: peopleData, error: peopleError }] = await Promise.all([
     supabase.rpc("read_heya_admin_dashboard", { range_days: range }),
@@ -127,6 +150,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const trackedSince = people.trackedSince ? new Date(people.trackedSince).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) : null;
   const events = (dash.eventTotals ?? []).filter((row) => n(row.total) > 0);
   const rate = (part: number, whole: number) => <small className="rate">{pct(part, whole)}</small>;
+  const glance = people.split.find(({ key }) => key === params.glance) ?? people.split.find(({ key }) => key === "all") ?? people.split[0];
 
   return (
     <main className="admin">
@@ -141,33 +165,40 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
       </header>
 
       <section className="panel">
-        <h2>At a glance</h2>
-        <p className="note">Unique people, guests and signed-in users together. % is of visitors in the same row.</p>
+        <div className="glance-head">
+          <h2>People</h2>
+          <nav className="admin-ranges" aria-label="Time period">
+            {people.split.map(({ key, label }) => (
+              <Link key={key} href={`/admin?range=${range}&glance=${key}`} aria-current={key === glance.key ? "page" : undefined}>{label}</Link>
+            ))}
+          </nav>
+        </div>
+        <p className="note">{glance.label}. Unique people, split by whether they have signed in. Tap <b>i</b> for what each number means.</p>
         <div className="data-table glance"><table>
           <thead><tr>
-            <th scope="col"></th><th scope="col">Visitors</th><th scope="col">Made a card</th><th scope="col">Added to Wallet</th>
-            <th scope="col">New accounts</th><th scope="col">Cards made</th><th scope="col">Wallet passes</th>
+            <th scope="col"></th>
+            {splitColumns.map((column) => <th scope="col" key={column.key}>{column.label} <Info text={column.info} /></th>)}
           </tr></thead>
           <tbody>
-            {people.periods.map(({ label, data: p }) => (
-              <tr key={label}>
-                <th scope="row">{label}</th>
-                <td><b>{fmt(p.visitors)}</b></td>
-                <td><b>{fmt(p.cardMakers)}</b>{rate(n(p.cardMakers), n(p.visitors))}</td>
-                <td><b>{fmt(p.walletAdders)}</b>{rate(n(p.walletAdders), n(p.visitors))}</td>
-                <td><b>{fmt(p.newAccounts)}</b>{rate(n(p.newAccounts), n(p.visitors))}</td>
-                <td>{fmt(p.cards)}</td>
-                <td>{fmt(p.walletPasses)}</td>
+            {splitRows.map((row) => (
+              <tr key={row.key} className={row.people ? undefined : "count-row"}>
+                <th scope="row">{row.label} <Info text={row.info} /></th>
+                {splitColumns.map((column) => {
+                  const value = n(glance.data[row.key]?.[column.key]);
+                  const came = n(glance.data.came?.[column.key]);
+                  return <td key={column.key}><b>{fmt(value)}</b>{row.people && row.key !== "came" ? rate(value, came) : null}</td>;
+                })}
               </tr>
             ))}
           </tbody>
         </table></div>
+        <p className="note glance-foot">Rows below the line count things, not people. New accounts created: {fmt(glance.data.newAccounts)}.</p>
       </section>
 
       <div className="range-bar">
         <h2>Detail</h2>
         <nav className="admin-ranges" aria-label="Date range">
-          {ranges.map((value) => <Link key={value} href={`/admin?range=${value}`} aria-current={value === range ? "page" : undefined}>{value === 365 ? "1 year" : `${value} days`}</Link>)}
+          {ranges.map((value) => <Link key={value} href={`/admin?range=${value}&glance=${glance.key}`} aria-current={value === range ? "page" : undefined}>{value === 365 ? "1 year" : `${value} days`}</Link>)}
         </nav>
       </div>
 
