@@ -79,11 +79,33 @@ export function readWalletConfiguration(env: Readonly<Record<string, string | un
   }
 }
 
+// Parsing and checking the certificates is the slow part of signing, so each server
+// instance does it once and reuses the result for an hour (dates are re-checked then).
+type WalletConfiguration = ReturnType<typeof readWalletConfiguration>;
+let cachedConfiguration: { value: WalletConfiguration; at: number } | null = null;
+
+export function walletConfiguration(): WalletConfiguration {
+  if (!cachedConfiguration || Date.now() - cachedConfiguration.at > 3_600_000) {
+    cachedConfiguration = { value: readWalletConfiguration(), at: Date.now() };
+  }
+  return cachedConfiguration.value;
+}
+
+const assetCache = new Map<string, Buffer>();
+function asset(name: string): Buffer {
+  let file = assetCache.get(name);
+  if (!file) {
+    file = readFileSync(join(process.cwd(), "lib/server/wallet-assets", name));
+    assetCache.set(name, file);
+  }
+  return file;
+}
+
 let reportedUnavailable = false;
 
 export function isWalletConfigured(): boolean {
   try {
-    readWalletConfiguration();
+    walletConfiguration();
     return true;
   } catch {
     // Show up in production logs and alerts, once per server instance.
@@ -98,7 +120,7 @@ export function isWalletConfigured(): boolean {
 // For the health check: whether passes can be signed, and when the signing certificate expires.
 export function walletHealth(): { status: "ok" | "expiring" | "unavailable"; expiresAt?: string } {
   try {
-    const { signer, intermediate } = readWalletConfiguration();
+    const { signer, intermediate } = walletConfiguration();
     const expires = Math.min(Date.parse(signer.validTo), Date.parse(intermediate.validTo));
     const expiresAt = new Date(expires).toISOString().slice(0, 10);
     return { status: expires - Date.now() < 30 * 86_400_000 ? "expiring" : "ok", expiresAt };
@@ -109,26 +131,25 @@ export function walletHealth(): { status: "ok" | "expiring" | "unavailable"; exp
 
 export function createWalletPass(
   savedCard: { id: string; draft: unknown },
-  configuration = readWalletConfiguration(),
+  configuration = walletConfiguration(),
 ): Buffer {
   const { card, payload } = makeCardPayload(savedCard.draft);
   buildCardQr(payload);
   const kind = card.type === "universal" ? "universal" : card.kind;
   const label = kind === "universal" ? "Universal card" : cardKindLabels[kind];
   const { background, foreground, action } = walletCardDesign(kind);
-  const assets = join(process.cwd(), "lib/server/wallet-assets");
 
   const pass = new PKPass(
     {
-      "icon.png": readFileSync(join(assets, "icon.png")),
-      "icon@2x.png": readFileSync(join(assets, "icon@2x.png")),
-      "icon@3x.png": readFileSync(join(assets, "icon@3x.png")),
+      "icon.png": asset("icon.png"),
+      "icon@2x.png": asset("icon@2x.png"),
+      "icon@3x.png": asset("icon@3x.png"),
       ...(card.type === "universal" && card.photo
         ? { "thumbnail.png": Buffer.from(card.photo.slice(photoPrefix.length), "base64") }
         : {}),
-      "logo.png": readFileSync(join(assets, `mark-${kind}.png`)),
-      "logo@2x.png": readFileSync(join(assets, `mark-${kind}@2x.png`)),
-      "logo@3x.png": readFileSync(join(assets, `mark-${kind}@3x.png`)),
+      "logo.png": asset(`mark-${kind}.png`),
+      "logo@2x.png": asset(`mark-${kind}@2x.png`),
+      "logo@3x.png": asset(`mark-${kind}@3x.png`),
     },
     {
       wwdr: configuration.intermediate.toString(),
