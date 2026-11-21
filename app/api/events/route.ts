@@ -5,7 +5,8 @@ import { getAccountsConfig } from "@/lib/server/supabase";
 import { destinationKinds } from "@/lib/cards";
 
 // Only events the browser can see. Server-side events are recorded where they happen.
-const browserEvents = new Set<ActivityEvent>(["visit", "cta_click", "trial_card_created", "trial_cards_saved", "share", "download_image", "wallet_tap"]);
+// trial_started = first keystroke in a new card form (kind = card type).
+const browserEvents = new Set<ActivityEvent>(["visit", "cta_click", "trial_started", "trial_card_created", "trial_cards_saved", "share", "download_image", "wallet_tap"]);
 const kinds = new Set<string>(["all", "universal", "landing", "studio", "landing_header", "landing_hero", "landing_footer", "trial_more", "trial_save", ...destinationKinds]);
 const headers = { "Cache-Control": "private, no-store" };
 

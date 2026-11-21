@@ -89,3 +89,17 @@
 .ticker strong { font: 640 clamp(48px, 8vw, 72px)/1 var(--heading); color: var(--action); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
 .ticker small { color: var(--accent-teal, #245b59); font-size: 13px; font-weight: 600; }
 .glance .rate { display: block; margin: 3px 0 0; }
+.log { list-style: none; margin: 8px 0 14px; padding: 0; display: grid; font-size: 14px; }
+.log li { display: grid; grid-template-columns: 112px minmax(110px, 220px) 1fr; gap: 12px; align-items: baseline; padding: 7px 0; border-top: 1px solid var(--line); }
+.log time { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.log .who { justify-self: start; border: 0; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--ink); text-align: left; cursor: pointer; overflow-wrap: anywhere; }
+.log .who.account { color: var(--action); }
+@media (max-width: 720px) { .log li { grid-template-columns: 1fr; gap: 2px; } }
+.admin { overflow-x: clip; }
+.glance thead th:not(:first-child) .info-tip { left: auto; right: -6px; transform: none; }
+@media (max-width: 720px) { .info-tip { width: min(250px, 66vw); } .admin-ranges { flex-wrap: wrap; } .admin-ranges a { padding: 6px 9px; } }
+@media (max-width: 720px) {
+  .glance thead th { white-space: normal; font-size: 12.5px; }
+  .glance th:first-child { width: 42%; }
+  .glance td, .glance thead th:not(:first-child) { text-align: right; }
+}
