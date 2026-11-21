@@ -6,7 +6,7 @@ import { createAccountsClient, getAccountsConfig } from "./supabase";
 
 export const activityEvents = [
   "wallet_download", "cta_click", "sign_in_started", "trial_started", "trial_card_created",
-  "trial_cards_saved", "share", "download_image", "wallet_tap", "visit", "signed_in",
+  "trial_cards_saved", "share", "download_image", "wallet_tap", "visit", "signed_in", "card_saved",
 ] as const;
 export type ActivityEvent = (typeof activityEvents)[number];
 

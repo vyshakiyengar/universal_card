@@ -47,3 +47,16 @@
   .funnel li { grid-template-columns: 1fr; gap: 4px; }
   .funnel-num { text-align: left; }
 }
+
+.admin-help { padding: 8px 14px; border: 1px solid var(--line); border-radius: 9px; color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; background: var(--surface); }
+.glance table { font-variant-numeric: tabular-nums; }
+.glance td { white-space: nowrap; }
+.glance td b { font-size: 18px; font-weight: 650; }
+.glance .rate { margin-left: 6px; color: var(--muted); font-size: 12px; }
+.glance tbody tr:last-child th, .glance tbody tr:last-child td { border-top: 2px solid var(--line); }
+.range-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 26px; }
+.funnel-foot { margin: 14px 0 0; }
+.defs { display: grid; gap: 12px; margin: 10px 0 14px; }
+.defs div { display: grid; grid-template-columns: minmax(150px, 200px) 1fr; gap: 14px; }
+.defs dt { font-weight: 650; } .defs dd { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+@media (max-width: 720px) { .defs div { grid-template-columns: 1fr; gap: 2px; } }
