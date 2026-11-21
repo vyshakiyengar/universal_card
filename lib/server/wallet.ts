@@ -6,7 +6,6 @@ import { join } from "node:path";
 import { PKPass } from "passkit-generator";
 import { cardKindLabels, makeCardPayload } from "../cards";
 import { cardText } from "../card-text";
-import { photoPrefix } from "../card-photo";
 import { buildCardQr } from "../qr";
 import { walletCardDesign } from "../wallet-card-design";
 
@@ -144,9 +143,6 @@ export function createWalletPass(
       "icon.png": asset("icon.png"),
       "icon@2x.png": asset("icon@2x.png"),
       "icon@3x.png": asset("icon@3x.png"),
-      ...(card.type === "universal" && card.photo
-        ? { "thumbnail.png": Buffer.from(card.photo.slice(photoPrefix.length), "base64") }
-        : {}),
       "logo.png": asset(`mark-${kind}.png`),
       "logo@2x.png": asset(`mark-${kind}@2x.png`),
       "logo@3x.png": asset(`mark-${kind}@3x.png`),

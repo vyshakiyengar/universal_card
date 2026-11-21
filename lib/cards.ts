@@ -1,5 +1,3 @@
-import { validCardPhoto } from "./card-photo";
-
 export const emailLabels = ["work", "home", "other"] as const;
 export const phoneLabels = ["mobile", "work", "home", "other"] as const;
 export const linkKinds = ["linkedin", "instagram", "whatsapp", "snapchat", "url", "website"] as const;
@@ -22,11 +20,14 @@ export const cardKindLabels = {
   website: "Website",
 } as const satisfies Record<DestinationKind | "universal", string>;
 
+const linkLabels: Record<LinkKind, string> = {
+  linkedin: "LinkedIn", instagram: "Instagram", whatsapp: "WhatsApp", snapchat: "Snapchat", url: "Link", website: "Website",
+};
+
 export type UniversalCard = {
   type: "universal";
   title: string;
   name: string;
-  photo?: string;
   jobTitle: string;
   company: string;
   emails: { label: EmailLabel; value: string }[];
@@ -229,9 +230,8 @@ function readUniversalCard(input: Record<string, unknown>, title: string): Unive
   if (!name && !jobTitle && !company && !emails.length && !phones.length && !links.length) {
     throw new CardValidationError("Add at least one contact detail to make a QR code.");
   }
-  const photo = input.photo;
-  if (photo !== undefined && !validCardPhoto(photo)) throw new CardValidationError("Choose a valid card photo.");
-  return { type: "universal", ...(photo ? { photo } : {}), title, name, jobTitle, company, emails, phones, links };
+  // Older saved cards may carry a photo; photos are no longer part of a card, so it is ignored.
+  return { type: "universal", title, name, jobTitle, company, emails, phones, links };
 }
 
 function escapeVCardText(value: string) {
@@ -279,7 +279,11 @@ function serializeVCard(card: UniversalCard) {
     // RFC 6350 permits text TEL values for compatibility with vCard 3.0 readers.
     lines.push(`TEL${type}:${value}`);
   }
-  for (const { value } of card.links) lines.push(`URL:${value}`);
+  // Group each link with an X-ABLabel so Contacts (iPhone, Mac, Google) shows "WhatsApp" or
+  // "LinkedIn" instead of a generic "homepage".
+  card.links.forEach(({ kind, value }, index) => {
+    lines.push(`item${index + 1}.URL:${value}`, `item${index + 1}.X-ABLabel:${linkLabels[kind]}`);
+  });
   lines.push("END:VCARD");
   return `${Array.from(new Set(lines), foldVCardLine).join("\r\n")}\r\n`;
 }

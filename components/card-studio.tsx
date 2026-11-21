@@ -12,7 +12,6 @@ import { DestinationMark, destinations, scanActions, scanDescriptions, Universal
 import { CardPreview, type Preview, type WalletAction } from "./card-preview";
 import { HowItWorksClip, hasHowItWorksClip } from "./how-it-works-clip";
 import { LivePreview, LiveStrip, liveCode } from "./live-preview";
-import { PhotoPicker } from "./photo-picker";
 import { ProjectCredit } from "./project-credit";
 import { StudioHeader } from "./studio-header";
 
@@ -377,10 +376,6 @@ export function CardStudio({ account, trial = false, walletConfigured = false, s
                     <form className="editor" onSubmit={save} noValidate>
                       <fieldset disabled={busy}>
                         <legend className="visually-hidden">Card details</legend>
-                        {draft.type === "universal" && (
-                          <PhotoPicker photo={draft.photo} disabled={busy} onBusy={setBusy} onError={setError}
-                            onChange={(photo) => change({ ...draft, photo })} />
-                        )}
                         {draft.type === "individual" && (
                           <label className="field">{destinations[draft.kind].field}
                             <input value={draft.value} placeholder={destinations[draft.kind].hint} type={destinations[draft.kind].inputType}

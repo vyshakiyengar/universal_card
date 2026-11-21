@@ -10,7 +10,7 @@ import { createWalletPass, WalletUnavailableError } from "../../../../lib/server
 export const runtime = "nodejs";
 
 // A first-time visitor's free card lives in their browser, so its details come
-// with the request. Cards are small: the photo is capped at under 10 KB.
+// with the request. Cards are small text records.
 const maxBody = 32 * 1024;
 const uuid = /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
 const headers = { "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" };

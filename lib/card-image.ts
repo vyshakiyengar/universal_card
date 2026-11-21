@@ -32,18 +32,17 @@ function wrap(context: CanvasRenderingContext2D, text: string, width: number) {
 
 export async function makeCardImage(options: {
   kind: DestinationKind | "universal"; label: string; name: string; detail: string;
-  code: ReturnType<typeof buildCardQr>; photo?: string; mark: SVGSVGElement; filename: string;
+  code: ReturnType<typeof buildCardQr>; mark: SVGSVGElement; filename: string;
 }) {
-  const { kind, label, name, detail, code, photo, mark, filename } = options;
+  const { kind, label, name, detail, code, mark, filename } = options;
   const design = walletCardDesign(kind);
   const svg = mark.cloneNode(true) as SVGSVGElement;
   svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   svg.setAttribute("color", design.surfaceInk);
   svg.setAttribute("width", "60");
   svg.setAttribute("height", "60");
-  const [platform, portrait] = await Promise.all([
+  const [platform] = await Promise.all([
     loadImage("data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(svg))),
-    photo ? loadImage(photo) : undefined,
     document.fonts.load('32px Baskervville'), document.fonts.load('16px "Instrument Sans Variable"'),
   ]);
   const scale = 3;
@@ -54,7 +53,7 @@ export async function makeCardImage(options: {
   const nameSize = name.length > 28 ? 29 : 38;
   const nameFont = `500 ${nameSize}px Baskervville, Georgia, serif`;
   ctx.font = nameFont;
-  const textWidth = portrait ? 249 : width - 46;
+  const textWidth = width - 46;
   const names = wrap(ctx, name, textWidth);
   ctx.font = '13px "Instrument Sans Variable", sans-serif';
   const details = wrap(ctx, detail, textWidth);
@@ -99,15 +98,6 @@ export async function makeCardImage(options: {
   ctx.font = '13px "Instrument Sans Variable", sans-serif';
   y -= nameSize-16;
   for (const line of details) { ctx.fillText(line, 24, y); y += 17; }
-  if (portrait) {
-    const artY = (top - 94) / 2 + 17;
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(343, artY + 47, 47, 0, 2 * Math.PI);
-    ctx.clip();
-    ctx.drawImage(portrait, 296, artY, 94, 94);
-    ctx.restore();
-  }
   ctx.fillStyle = "#f7f4ec";
   ctx.fillRect(0, top, width, height-top);
   ctx.fillStyle = "white";

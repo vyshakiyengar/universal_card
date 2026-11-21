@@ -399,21 +399,14 @@ test("a Snapchat card saves the username and renders a shareable QR", async ({ p
   await expect(page.getByLabel("Snapchat username or profile link")).toHaveValue("@alex.morgan");
 });
 
-test("a Universal photo stays off the QR and saved details prefill new cards", async ({ page }) => {
+test("saved Universal details prefill new cards", async ({ page }) => {
   await page.goto("/studio");
   await page.getByRole("button", { name: /^Universal card Scanning/ }).click();
   await page.getByLabel("Name on card").fill("Alan Turing");
   await page.getByRole("button", { name: "Add link" }).click();
   await page.getByLabel("Link 1", { exact: true }).fill("https://www.linkedin.com/in/example");
-  await page.locator('input[type=file]').setInputFiles("public/apple-wallet-icon.jpg");
-  await expect(page.getByRole("img", { name: "Card photo" })).toBeVisible();
+  await expect(page.locator("input[type=file]")).toHaveCount(0);
   await page.getByRole("button", { name: save }).click();
-  await expect(page.getByRole("img", { name: "Card photo" })).toBeVisible();
-  const path = await page.getByRole("img", { name: "Scannable card QR" }).locator("path").getAttribute("d");
-  await page.getByRole("button", { name: "Edit details" }).click();
-  await page.getByRole("button", { name: "Remove photo" }).click();
-  await page.getByRole("button", { name: save }).click();
-  await expect(page.getByRole("img", { name: "Scannable card QR" }).locator("path")).toHaveAttribute("d", path!);
   await page.getByRole("button", { name: "Create cards", exact: true }).click();
   await page.getByRole("button", { name: /Create Apple Wallet card for your LinkedIn/ }).click();
   await expect(page.getByLabel("LinkedIn profile URL")).toHaveValue("https://www.linkedin.com/in/example");

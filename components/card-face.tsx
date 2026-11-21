@@ -13,7 +13,6 @@ export type CardArrival = "created" | "updated" | "opened" | "live";
 // The styled card used for the shareable image and the studio's previews.
 export function CardFace({ draft, code, arrival = "opened" }: { draft: CardInput; code: CardCode | null; arrival?: CardArrival }) {
   const { kind, label, name, detail } = cardText(draft);
-  const photo = draft.type === "universal" ? draft.photo : undefined;
   return (
     <div className="wallet-preview" data-arrival={arrival} style={walletSurfaceStyle(kind)}>
       <div className="pass-face">
@@ -26,7 +25,6 @@ export function CardFace({ draft, code, arrival = "opened" }: { draft: CardInput
             <div className="pass-name" data-long={name.length > 28}>{name}</div>
             {detail && <div className="pass-detail" title={detail}>{detail}</div>}
           </div>
-          {photo && <img className="pass-photo" src={photo} alt="" />}
         </div>
       </div>
       <div className="pass-paper" data-density={code?.density ?? "normal"}>

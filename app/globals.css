@@ -204,7 +204,6 @@ input::placeholder { color: var(--muted); opacity: 1; }
 .pass-name { font: 485 clamp(28px, 10.1cqi, 47px)/1.03 var(--heading); letter-spacing: -.047em; text-wrap: balance; overflow-wrap: anywhere; }
 .pass-name[data-long="true"] { font-size: clamp(23px, 7cqi, 31px); }
 .pass-detail { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 8px; color: inherit; font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
-.pass-identity:has(.pass-photo) { grid-template-columns: minmax(0, 1fr) 28%; }
 .pass-paper {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -364,7 +363,6 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .account .admin-link { display: none; }
 }
 
-.pass-photo { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 1px solid #ffffff80; }
 .photo-field > div { display: flex; align-items: center; gap: 10px; }
 .photo-field img { border-radius: 50%; }
 
@@ -474,14 +472,6 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
 }
 
 /* ---------- Photo picker ---------- */
-.photo-picker { display: flex; align-items: center; gap: 14px; }
-.photo-avatar { display: grid; place-items: center; flex: 0 0 auto; width: 56px; height: 56px; padding: 0; overflow: hidden; border: 1.5px dashed var(--field-line); border-radius: 50%; background: var(--inset); color: var(--muted); }
-.photo-avatar:has(img) { border: 1px solid var(--line); }
-.photo-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.photo-copy { display: grid; gap: 2px; justify-items: start; }
-.photo-copy .text-button { min-height: 30px; padding: 2px 0; }
-.photo-copy small { color: var(--muted); font-size: 12px; }
-.photo-actions { display: flex; gap: 16px; }
 .danger-text { color: var(--danger); }
 
 /* ---------- Card face tweaks ---------- */

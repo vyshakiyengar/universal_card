@@ -37,7 +37,7 @@ test("Universal vCard round-trips with Unicode and repeated labeled fields", () 
     "BEGIN:VCARD", "VERSION:3.0", "N:Tan;Zoë\\,;;;", "FN:Zoë\\, Tan", "TITLE:Engineer", "ORG:Studio\\; North",
     "EMAIL;TYPE=work:zoe@example.com", "EMAIL;TYPE=home:zt@example.com",
     "TEL;TYPE=cell:+442079460958", "TEL;TYPE=work:+12025550112",
-    "URL:https://www.linkedin.com/in/zoe-tan", "END:VCARD", "",
+    "item1.URL:https://www.linkedin.com/in/zoe-tan", "item1.X-ABLabel:LinkedIn", "END:VCARD", "",
   ].join("\r\n"));
   assert.equal(decode(payload), payload);
   assert.equal(makeCardPayload(card).payload, payload);
@@ -101,7 +101,7 @@ test("a Universal card can include Snapchat alongside other contact details", ()
     links: [{ kind: "snapchat", value: "@alex-morgan" }],
   });
   assert.match(payload, /\r\nEMAIL;TYPE=home:alex@example.com\r\n/);
-  assert.match(payload, /\r\nURL:https:\/\/www\.snapchat\.com\/add\/alex-morgan\r\n/);
+  assert.match(payload, /\r\nitem\d+\.URL:https:\/\/www\.snapchat\.com\/add\/alex-morgan\r\nitem\d+\.X-ABLabel:Snapchat\r\n/);
   assert.equal(decode(payload), payload);
 });
 
@@ -136,7 +136,7 @@ test("saved values work in both directions without replacing details already ent
   const combined = addIndividualDetails(contact, [personal]);
   assert.deepEqual(combined.links.at(-1), { kind: "website", value: "vyshak.me" });
   assert.deepEqual(combined.emails, contact.emails);
-  assert.ok(makeCardPayload(combined).payload.includes("URL:https://vyshak.me/"));
+  assert.ok(makeCardPayload(combined).payload.includes(".URL:https://vyshak.me/"));
 });
 
 test("Website, Custom link and Universal website fields accept bare domains", () => {
@@ -144,7 +144,7 @@ test("Website, Custom link and Universal website fields accept bare domains", ()
     const target = new URL(`https://${value}`).href;
     for (const kind of ["url", "website"]) {
       assert.equal(makeCardPayload({ type: "individual", title: "Web", kind, value }).payload, target);
-      assert.ok(makeCardPayload({ type: "universal", title: "Web", links: [{ kind, value }] }).payload.includes("URL:" + target));
+      assert.ok(makeCardPayload({ type: "universal", title: "Web", links: [{ kind, value }] }).payload.includes(".URL:" + target));
     }
   }
 });

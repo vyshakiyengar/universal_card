@@ -62,7 +62,6 @@ export function CardPreview({ draft, preview, wallet, arrival, onEdit }: {
   const [image, setImage] = useState<File>();
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
-  const photo = draft.type === "universal" ? draft.photo : undefined;
   useEffect(() => setAppleMobile(isAppleMobile()), []);
   useEffect(() => {
     const mark = faceRef.current?.querySelector<SVGSVGElement>(".pass-platform svg");
@@ -70,11 +69,11 @@ export function CardPreview({ draft, preview, wallet, arrival, onEdit }: {
     let active = true;
     setImage(undefined);
     setFailed(false);
-    makeCardImage({ kind, label, name, detail, code: preview.code, photo, mark, filename })
+    makeCardImage({ kind, label, name, detail, code: preview.code, mark, filename })
       .then(file => { if (active) setImage(file); })
       .catch(() => { if (active) setFailed(true); });
     return () => { active = false; };
-  }, [kind, label, name, detail, preview.code, photo, filename, attempt]);
+  }, [kind, label, name, detail, preview.code, filename, attempt]);
 
   function downloadCard() {
     if (!image) return;
