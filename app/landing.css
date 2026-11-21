@@ -246,24 +246,41 @@ body:has(> .landing) { display: flex; flex-direction: column; min-height: 100svh
   .landing-header .brand { font-size: 18px; }
   .create-card-link { min-height: 44px; }
   .landing { padding-block: 12px 20px; }
-  .landing-hero { grid-template-columns: minmax(0,1fr); min-height: 0; border-radius: 15px; }
-  .landing-copy { padding: 20px 19px 0; }
-  .landing-copy h1 { max-width: 15ch; font-size: clamp(30px, 8.8vw, 46px); }
-  .landing-intro { margin-top: 8px; font-size: 14px; }
-  .landing-cta { margin-top: 14px; }
+  /* Text and the whole phone side by side, so the first screen also reaches How it works. */
+  .landing-hero { grid-template-columns: minmax(0, 1.18fr) minmax(0, .82fr); align-items: center; min-height: 0; border-radius: 15px; }
+  .landing-copy { padding: 22px 0 22px 17px; }
+  .landing-copy h1 { max-width: none; font-size: clamp(25px, 7.1vw, 34px); line-height: 1.04; }
+  .landing-copy h1 span, .landing-copy h1 em { white-space: normal; }
+  .landing-intro { margin-top: 9px; font-size: 13px; line-height: 1.4; }
+  .landing-cta { margin-top: 14px; min-height: 40px; padding-inline: clamp(10px, 3.3vw, 13px); font-size: clamp(12.5px, 3.5vw, 13.5px); gap: 6px; }
   .mobile-create-action {
     display: flex;
     width: max-content;
     margin: 24px auto 0;
   }
   .landing + .project-credit { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
-  /* The phone peeks up from the bottom edge of the hero, so the first screen also reaches How it works. */
-  .landing-art { height: 196px; padding-block: 12px 0; align-content: start; overflow: hidden; }
-  .device { width: min(100%, 190px); transform: rotate(3deg); }
-  .device-screen { min-height: 0; gap: 4px; }
-  .device-status { margin-bottom: 5px; }
-  .device-pass { height: 178px; }
-  .device-pass-name { margin-top: 13px; }
+  .landing-art { padding: 18px 12px 18px 6px; }
+  .device { width: 100%; border-radius: 26px; padding: 4px; transform: rotate(4deg); }
+  .device-screen { min-height: 0; border-radius: 22px; padding: 8px 6px 7px; gap: 4px; }
+  .device-status { margin: 0 4px 6px; min-height: 14px; font-size: 8px; }
+  .device-status > span:last-child { gap: 1px; }
+  .device-status > span:last-child svg { width: 8px; height: 8px; }
+  .device-camera { width: 36px; height: 10px; }
+  .device-wallet-label { min-height: 18px; gap: 5px; font-size: 10px; white-space: nowrap; }
+  .device-wallet-label .apple-wallet-mark { width: 15px; height: 15px; }
+  .device-pass { height: 168px; padding: 8px; }
+  .device-pass-brand { gap: 4px; font-size: 9.5px; white-space: nowrap; }
+  .device-pass-brand .destination-mark { width: 13px; height: 13px; }
+  .device-pass-brand .destination-mark svg { width: 12px; height: 12px; }
+  .device-pass-name { margin-block: 10px 4px; }
+  .device-pass-name strong { font-size: 18px; }
+  .device-pass-qr { padding-top: 4px; }
+  .device-pass-qr .qr-code { width: 58px; height: 58px; }
+  .device-pass-qr small { font-size: 7px; }
+  .device-pass > .heya-stamp { display: none; }
+  .device-platforms { min-height: 26px; padding: 3px 2px; border-radius: 7px; }
+  .device-platforms .destination-mark { width: 11px; height: 11px; }
+  .device-platforms .destination-mark svg { width: 9px; height: 9px; }
   .scan-example { margin-top: 2px; }
   .scan-example-flow { grid-template-columns: minmax(0, 1fr); }
   .scan-example-screen { height: 165px; }
