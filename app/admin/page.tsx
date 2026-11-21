@@ -53,7 +53,7 @@ const definitions: [string, string][] = [
 const ranges = [7, 30, 90, 365] as const;
 const n = (value: unknown) => Number(value ?? 0);
 const fmt = (value: unknown) => n(value).toLocaleString("en-GB");
-const pct = (part: number, whole: number) => (whole > 0 ? `${((part / whole) * 100).toFixed(part / whole < 0.1 ? 1 : 0)}%` : "–");
+const pct = (part: number, whole: number) => (whole > 0 && part === 0 ? "0%" : whole > 0 ? `${((part / whole) * 100).toFixed(part / whole < 0.1 ? 1 : 0)}%` : "–");
 
 const eventLabels: Record<string, string> = {
   visit: "Visits", cta_click: "CTA clicks", trial_started: "Studio trials started", trial_card_created: "Cards made before sign-in",
