@@ -82,3 +82,10 @@
   .glance .rate { display: block; margin: 2px 0 0; }
   .glance thead th { font-size: 13px; }
 }
+
+.ticker { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.ticker > div { display: grid; gap: 6px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.ticker span { color: var(--muted); font-size: 14px; font-weight: 650; }
+.ticker strong { font: 640 clamp(48px, 8vw, 72px)/1 var(--heading); color: var(--action); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.ticker small { color: var(--accent-teal, #245b59); font-size: 13px; font-weight: 600; }
+.glance .rate { display: block; margin: 3px 0 0; }

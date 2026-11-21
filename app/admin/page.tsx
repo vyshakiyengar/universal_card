@@ -150,6 +150,8 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   const trackedSince = people.trackedSince ? new Date(people.trackedSince).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) : null;
   const events = (dash.eventTotals ?? []).filter((row) => n(row.total) > 0);
   const rate = (part: number, whole: number) => <small className="rate">{pct(part, whole)}</small>;
+  const allTime = (people.split.find(({ key }) => key === "all") ?? people.split[people.split.length - 1]).data;
+  const today = (people.split.find(({ key }) => key === "today") ?? people.split[0]).data;
   const glance = people.split.find(({ key }) => key === params.glance) ?? people.split.find(({ key }) => key === "all") ?? people.split[0];
 
   return (
@@ -164,6 +166,19 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <a className="admin-help" href="#how-we-count">How we count</a>
       </header>
 
+      <section className="ticker" aria-label="All-time totals">
+        <div>
+          <span>Cards created <Info text="Every card saved on Heya since launch, guest or signed in. One person making 3 cards counts 3." /></span>
+          <strong>{fmt(allTime.cards.total)}</strong>
+          <small>+{fmt(today.cards.total)} today</small>
+        </div>
+        <div>
+          <span>Cards added to Apple Wallet <Info text="Every Wallet pass downloaded since launch. That is when iPhone shows the Add screen; Apple doesn't tell us if they then tap Add. Includes the same card added again." /></span>
+          <strong>{fmt(allTime.passes.total)}</strong>
+          <small>+{fmt(today.passes.total)} today</small>
+        </div>
+      </section>
+
       <section className="panel">
         <div className="glance-head">
           <h2>People</h2>
@@ -173,7 +188,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
             ))}
           </nav>
         </div>
-        <p className="note">{glance.label}. Unique people, split by whether they have signed in. Tap <b>i</b> for what each number means.</p>
+        <p className="note">{glance.label}. Unique people, split by whether they have signed in. Percentages are conversion: the share of people who came (in the same column) who went on to do that step, so they don't add up to 100%. Tap <b>i</b> for what each number means.</p>
         <div className="data-table glance"><table>
           <thead><tr>
             <th scope="col"></th>
@@ -186,7 +201,8 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
                 {splitColumns.map((column) => {
                   const value = n(glance.data[row.key]?.[column.key]);
                   const came = n(glance.data.came?.[column.key]);
-                  return <td key={column.key}><b>{fmt(value)}</b>{row.people && row.key !== "came" ? rate(value, came) : null}</td>;
+                  return <td key={column.key}><b>{fmt(value)}</b>{row.people && row.key !== "came" && came > 0
+                    ? <small className="rate">{pct(value, came)} of the {fmt(came)} who came</small> : null}</td>;
                 })}
               </tr>
             ))}
