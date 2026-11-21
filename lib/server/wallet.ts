@@ -135,9 +135,15 @@ export function createWalletPass(
   const { card, payload } = makeCardPayload(savedCard.draft);
   buildCardQr(payload);
   const kind = card.type === "universal" ? "universal" : card.kind;
-  const label = kind === "universal" ? "Universal card" : cardKindLabels[kind];
-  const { background, foreground, action } = walletCardDesign(kind);
+  const label = kind === "universal" ? "Universal" : cardKindLabels[kind];
+  const { base, action } = walletCardDesign(kind);
+  const light = kind !== "snapchat";
+  const rgb = (hex: string) => `rgb(${[1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(", ")})`;
+  const { name, detail } = cardText(card);
 
+  // A store card is the one pass style with a full-width artwork strip, so the pass can carry
+  // the same gradient and engraved lines as the card on heya.cards. Wallet only allows an image
+  // at the top left, so the card's own mark and name sit there and the Heya logo is in the strip.
   const pass = new PKPass(
     {
       "icon.png": asset("icon.png"),
@@ -146,6 +152,9 @@ export function createWalletPass(
       "logo.png": asset(`mark-${kind}.png`),
       "logo@2x.png": asset(`mark-${kind}@2x.png`),
       "logo@3x.png": asset(`mark-${kind}@3x.png`),
+      "strip.png": asset(`strip-${kind}.png`),
+      "strip@2x.png": asset(`strip-${kind}@2x.png`),
+      "strip@3x.png": asset(`strip-${kind}@3x.png`),
     },
     {
       wwdr: configuration.intermediate.toString(),
@@ -158,16 +167,22 @@ export function createWalletPass(
       teamIdentifier: configuration.teamIdentifier,
       organizationName: configuration.organizationName,
       serialNumber: savedCard.id,
-      description: "Heya Cards business card",
-      logoText: kind === "universal" ? "Heya" : label,
-      backgroundColor: background,
-      foregroundColor: foreground,
-      labelColor: foreground,
+      description: `${label} card from Heya Cards`,
+      logoText: label,
+      backgroundColor: rgb(base),
+      foregroundColor: light ? "rgb(255, 255, 255)" : "rgb(36, 29, 17)",
+      labelColor: light ? "rgb(214, 201, 170)" : "rgb(92, 70, 20)",
     },
   );
 
-  pass.type = "generic";
-  pass.primaryFields.push({ key: "name", label: "Name", value: cardText(card).name });
+  pass.type = "storeCard";
+  pass.primaryFields.push({ key: "name", label: "", value: name });
+  if (card.type === "universal") {
+    if (card.jobTitle.trim()) pass.secondaryFields.push({ key: "role", label: "ROLE", value: card.jobTitle.trim() });
+    if (card.company.trim()) pass.secondaryFields.push({ key: "company", label: "COMPANY", value: card.company.trim() });
+  } else if (detail) {
+    pass.secondaryFields.push({ key: "detail", label: label.toUpperCase(), value: detail });
+  }
   pass.backFields.push({
     key: "heya",
     label: "Heya Cards",

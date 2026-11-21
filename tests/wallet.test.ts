@@ -89,7 +89,8 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
   const hashes = JSON.parse(manifest.toString()) as Record<string, string>;
   const imageNames = ["icon.png", "icon@2x.png", "icon@3x.png"];
   const logoNames = ["logo.png", "logo@2x.png", "logo@3x.png"];
-  assert.deepEqual(Object.keys(hashes).sort(), [...imageNames, ...logoNames, "pass.json"].sort());
+  const stripNames = ["strip.png", "strip@2x.png", "strip@3x.png"];
+  assert.deepEqual(Object.keys(hashes).sort(), [...imageNames, ...logoNames, ...stripNames, "pass.json"].sort());
   for (const [file, hash] of Object.entries(hashes)) {
     assert.equal(createHash("sha1").update(readPassFile(file)).digest("hex"), hash);
   }
@@ -104,6 +105,11 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
     const logo = readPassFile(name);
     assert.equal(logo.readUInt32BE(16), 50 * (index + 1));
     assert.equal(logo.readUInt32BE(20), 50 * (index + 1));
+  }
+  for (const [index, name] of stripNames.entries()) {
+    const strip = readPassFile(name);
+    assert.equal(strip.readUInt32BE(16), 375 * (index + 1));
+    assert.equal(strip.readUInt32BE(20), 123 * (index + 1));
   }
 
   writeFileSync(join(dir, "manifest.json"), manifest);
@@ -120,8 +126,8 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
   assert.equal(pass.passTypeIdentifier, identity);
   assert.equal(pass.teamIdentifier, team);
   assert.equal(pass.formatVersion, 1);
-  assert.equal(pass.logoText, "Heya");
-  assert.equal(pass.generic.primaryFields[0].value, draft.name);
+  assert.equal(pass.logoText, "Universal");
+  assert.equal(pass.storeCard.primaryFields[0].value, draft.name);
   assert.equal(JSON.stringify(pass).includes(draft.title), false);
   assert.deepEqual(pass.barcodes, [{
     format: "PKBarcodeFormatQR",
@@ -142,17 +148,18 @@ test("Wallet bundle has a verified detached signature and the exact UTF-8 QR pay
   writeFileSync(join(dir, "card.pkpass"), createWalletPass({ id, draft: linkedIn }, signing));
   const linkedInPass = JSON.parse(readPassFile("pass.json").toString());
   assert.equal(linkedInPass.logoText, "LinkedIn");
-  assert.equal(linkedInPass.backgroundColor, "rgb(10, 102, 194)");
+  assert.equal(linkedInPass.backgroundColor, "rgb(5, 41, 76)");
   assert.notDeepEqual(readPassFile("logo.png"), universalLogo);
-  assert.equal(linkedInPass.generic.primaryFields[0].value, linkedIn.name);
-  assert.equal(linkedInPass.generic.secondaryFields?.length ?? 0, 0);
+  assert.equal(linkedInPass.storeCard.primaryFields[0].value, linkedIn.name);
+  assert.equal(linkedInPass.storeCard.secondaryFields?.length ?? 0, 0);
   assert.equal(linkedInPass.barcodes[0].message, "https://www.linkedin.com/in/zoe-example");
 
   const whatsApp = { ...linkedIn, title: "WhatsApp", kind: "whatsapp", value: "+44 7700 900123" };
   writeFileSync(join(dir, "card.pkpass"), createWalletPass({ id, draft: whatsApp }, signing));
   const whatsAppPass = JSON.parse(readPassFile("pass.json").toString());
-  assert.equal(whatsAppPass.foregroundColor, "rgb(18, 29, 22)");
+  assert.equal(whatsAppPass.foregroundColor, "rgb(255, 255, 255)");
   assert.equal(whatsAppPass.logoText, "WhatsApp");
-  assert.equal(whatsAppPass.backgroundColor, "rgb(37, 211, 102)");
+  assert.equal(whatsAppPass.backgroundColor, "rgb(7, 55, 46)");
+  assert.equal(whatsAppPass.storeCard.secondaryFields[0].value, "+44 7700 900123");
   assert.equal(whatsAppPass.barcodes[0].message, "https://wa.me/447700900123");
 });
