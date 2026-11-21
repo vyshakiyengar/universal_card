@@ -444,7 +444,7 @@ body:has(> .not-found) { display: flex; flex-direction: column; min-height: 100s
 .how-clip video[data-state="playing"] { cursor: pointer; }
 .how-clip-play {
   position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 10px;
-  border: 0; background: #f7f6f233; color: var(--ink); font: inherit; font-size: 15px; font-weight: 620; line-height: 1.2; cursor: pointer;
+  border: 0; background: #f7f6f24d; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); color: var(--ink); font: inherit; font-size: 15px; font-weight: 620; line-height: 1.2; cursor: pointer;
 }
 .how-clip-play-icon {
   display: grid; place-items: center; width: 68px; height: 68px; border-radius: 50%;
