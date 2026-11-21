@@ -1,8 +1,12 @@
+import { cookies } from "next/headers";
+import { metricsChoiceCookie } from "@/lib/analytics-choice";
+import { setProductMetrics } from "./actions";
 import Link from "next/link";
 
 export const metadata = { title: "Privacy | Heya Cards" };
 
-export default function Privacy() {
+export default async function Privacy() {
+  const enabled = (await cookies()).get(metricsChoiceCookie)?.value === "on";
   return (
     <main className="utility-page">
       <Link href="/">Heya Cards</Link>
@@ -14,7 +18,12 @@ export default function Privacy() {
         <p>If you make your first card before signing in, it stays in your browser’s local storage, not on our servers. If you add it to Apple Wallet, its details are sent to us once to build the pass and are not stored. Three cookies note that you have started, whether this visit is still open and whether you have made your free card. When you sign in, cards in that browser are copied to your account.</p>
         <p>We record aggregate daily counts, such as sign-ins, cards created, Wallet downloads, shares and button clicks, to understand how the service is used. These counts contain no account identifiers or card contents.</p>
         <p>We use Vercel Web Analytics for visits to the public homepage. It provides aggregate traffic statistics without analytics cookies. We exclude private pages, card contents and URL parameters from this analytics collection.</p>
-        <p>To understand how people use Heya Cards, we also record product events such as a visit, starting the studio, making a card, signing in and adding a card to Apple Wallet. Each event carries the event name, the card type, the time, a random visitor ID stored in a first-party cookie (heya_vid, one year) and, once you sign in, your account. It never includes your card’s contact details. We use these events only to improve the product and never share or sell them.</p>
+        <h2>Optional product analytics</h2>
+        <p>With your permission, we record which features you use, when you use them and the card type. A random browser ID links these actions for up to 30 days. When you sign in, events can also be linked to your account. They exclude card contents. You can withdraw permission here at any time.</p>
+        <form action={setProductMetrics}>
+          <p>Product analytics are {enabled ? "on" : "off"} for this browser.</p>
+          <button className="button secondary" name="choice" value={enabled ? "off" : "on"}>{enabled ? "Turn off product analytics" : "Allow product analytics"}</button>
+        </form>
       </section>
       <section>
         <h2>Why we use it (lawful basis)</h2>
@@ -45,7 +54,7 @@ export default function Privacy() {
         <p>For privacy or data rights questions, contact the operator through Vyshak K Iyengar’s website. You can also complain to the Information Commissioner’s Office (ico.org.uk) or your local data protection authority.</p>
         <a href="https://vyshak.me">Contact Vyshak K Iyengar</a>
       </section>
-      <p>Last updated 20 November 2026.</p>
+      <p>Last updated 21 November 2026.</p>
     </main>
   );
 }

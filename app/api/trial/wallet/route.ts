@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   try {
     const pass = createWalletPass({ id, draft });
     const { card } = makeCardPayload(draft);
-    after(async () => recordWalletDownload(card.type === "universal" ? "universal" : card.kind, await activityContext()));
+    after(async () => recordWalletDownload(card.type === "universal" ? "universal" : card.kind, await activityContext(), "guest"));
     return new Response(new Uint8Array(pass), {
       headers: {
         ...headers,

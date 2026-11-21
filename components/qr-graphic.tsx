@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { qrQuietZone as quietZone, type buildCardQr } from "@/lib/qr";
 
 type QrCode = ReturnType<typeof buildCardQr>;
@@ -22,7 +23,7 @@ export function QrGraphic({ code, label, maxWidth = 216 }: { code: QrCode; label
 
   return (
     <svg role="img" aria-label={label} width={pixels} height={pixels} viewBox={`0 0 ${size} ${size}`}
-      shapeRendering="crispEdges" className="qr-code">
+      style={{ "--qr-grid": `${size}px` } as CSSProperties} shapeRendering="crispEdges" className="qr-code">
       <rect width={size} height={size} fill="white" />
       <path d={modulePath(code)} fill="black" />
     </svg>

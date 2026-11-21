@@ -1,3 +1,4 @@
+import { LaunchSummary } from "./launch-summary";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -25,7 +26,7 @@ type Dashboard = {
   recentUsers: AdminUser[];
 };
 
-const ranges = [7, 30, 90, 365] as const;
+const ranges = [1, 7, 30, 90, 365] as const;
 const n = (value: unknown) => Number(value ?? 0);
 const fmt = (value: unknown) => n(value).toLocaleString("en-GB");
 const pct = (part: number, whole: number) => (whole > 0 ? `${((part / whole) * 100).toFixed(part / whole < 0.1 ? 1 : 0)}%` : "–");
@@ -63,7 +64,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
   if (!allowed) notFound();
 
   const requested = Number((await searchParams).range);
-  const range = (ranges as readonly number[]).includes(requested) ? requested : 365;
+  const range = (ranges as readonly number[]).includes(requested) ? requested : 7;
   const { data, error } = await supabase.rpc("read_heya_admin_dashboard", { range_days: range });
   const dash = data as Dashboard | null;
 
@@ -77,6 +78,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
     );
   }
 
+  const audience = await supabase.rpc("launch_audience", { range_days: range });
   const days = dash.daily ?? [];
   const weekly = range > 90;
   const total = (pick: (day: Day) => number) => days.reduce((sum, day) => sum + pick(day), 0);
@@ -107,17 +109,18 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
         <div>
           <Link href="/studio" className="admin-back">← Back to studio</Link>
           <h1>Heya Cards admin</h1>
-          <p className="admin-sub">Last {range} days, UTC · updated {new Date(dash.generatedAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC · refreshes every 30 seconds</p>
+          <p className="admin-sub">{range === 1 ? "Today" : `Last ${range} days`}, UTC · updated {new Date(dash.generatedAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC · refreshes every two minutes</p>
         </div>
         <nav className="admin-ranges" aria-label="Date range">
-          {ranges.map((value) => <Link key={value} href={`/admin?range=${value}`} aria-current={value === range ? "page" : undefined}>{value === 365 ? "1 year" : `${value} days`}</Link>)}
+          {ranges.map((value) => <Link key={value} href={`/admin?range=${value}`} aria-current={value === range ? "page" : undefined}>{value === 1 ? "Today" : value === 365 ? "1 year" : `${value} days`}</Link>)}
         </nav>
       </header>
 
+      <LaunchSummary audience={audience.error ? null : audience.data} events={events} newAccounts={n(dash.users.new)} />
       <section className="kpis" aria-label="Key numbers">
         <div className="kpi"><span>Total users</span><strong>{fmt(dash.users.total)}</strong><small>{fmt(dash.users.new)} new in range</small></div>
         <div className="kpi"><span>Active users</span><strong>{fmt(dash.users.active7)}</strong><small>7 days · {fmt(dash.users.active1)} today · {fmt(dash.users.active30)} in 30 days</small></div>
-        <div className="kpi"><span>Unique visitors</span><strong>{fmt(visitors)}</strong><small>{pct(n(dash.funnel.signedInUsers), visitors)} went on to sign in</small></div>
+        <div className="kpi"><span>Unique visitors</span><strong>{fmt(visitors)}</strong><small>{fmt(n(dash.funnel.signedInUsers))} accounts signed in during this period</small></div>
         <div className="kpi"><span>Cards saved</span><strong>{fmt(dash.cards.total)}</strong><small>{fmt(dash.cards.new)} new in range · {fmt(dash.users.withCards)} users with a card</small></div>
         <div className="kpi"><span>Wallet passes issued</span><strong>{fmt(total((day) => day.walletDownloads))}</strong><small>{fmt(total((day) => day.walletTaps))} Add to Wallet taps</small></div>
         <div className="kpi"><span>Returning users</span><strong>{fmt(dash.users.returning)}</strong><small>{pct(n(dash.users.returning), n(dash.users.total))} signed in again later</small></div>
@@ -136,16 +139,15 @@ export default async function Admin({ searchParams }: { searchParams: Promise<{ 
       </section>
 
       <section className="panel">
-        <h2>Funnel: unique people</h2>
-        <p className="note">Each step counts distinct visitors or accounts in the range{trackedSince ? `. Visitor tracking started ${trackedSince}, so earlier dates show users and cards only.` : ". Visitor tracking starts with this release."}</p>
+        <h2>People by action</h2>
+        <p className="note">Each action counts distinct visitors or accounts independently in the range{trackedSince ? `. Visitor tracking started ${trackedSince}, so earlier dates show users and cards only.` : ". Visitor tracking starts with this release."}</p>
         <ol className="funnel">
-          {funnelSteps.map(([label, value, hint], index) => {
-            const previous = index ? funnelSteps[index - 1][1] : value;
+          {funnelSteps.map(([label, value, hint]) => {
             return (
               <li key={label}>
                 <div className="funnel-label"><strong>{label}</strong><small>{hint}</small></div>
                 <div className="funnel-bar"><i style={{ width: `${Math.max(0.6, (value / funnelTop) * 100)}%` }} /></div>
-                <div className="funnel-num"><strong>{fmt(value)}</strong><small>{index ? `${pct(value, previous)} of previous · ${pct(value, visitors)} of visitors` : "start"}</small></div>
+                <div className="funnel-num"><strong>{fmt(value)}</strong></div>
               </li>
             );
           })}

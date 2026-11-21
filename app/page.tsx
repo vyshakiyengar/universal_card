@@ -49,7 +49,7 @@ export default function Home() {
         </section>
 
         <ul className="why-band" aria-label="Why Heya">
-          <li><LockKeyhole size={19} strokeWidth={1.7} aria-hidden="true" /> Your details live in the QR, not on our servers</li>
+          <li><LockKeyhole size={19} strokeWidth={1.7} aria-hidden="true" /> Share directly from your QR code</li>
           <li><Tag size={19} strokeWidth={1.7} aria-hidden="true" /> Free</li>
         </ul>
 

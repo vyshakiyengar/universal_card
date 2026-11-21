@@ -17,7 +17,7 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
     const card = await getOwnedCard(id);
     const pass = createWalletPass(card);
     const { card: draft } = makeCardPayload(card.draft);
-    after(async () => recordWalletDownload(draft.type === "universal" ? "universal" : draft.kind, await activityContext()));
+    after(async () => recordWalletDownload(draft.type === "universal" ? "universal" : draft.kind, await activityContext(), "account"));
 
     return new Response(new Uint8Array(pass), {
       headers: {

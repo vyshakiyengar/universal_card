@@ -22,7 +22,7 @@ export function HowItWorksPlayer({ phone, web, query, label }: { phone: Cut; web
   const action = state === "ended" ? "Watch again" : state === "paused" ? "Resume" : "Watch how it works";
   return (
     <>
-      <video ref={video} muted playsInline preload="metadata" aria-label={label} data-state={state}
+      <video ref={video} muted playsInline preload="none" aria-label={label} data-state={state}
         onPlay={() => setState("playing")}
         onPause={(event) => setState(event.currentTarget.ended ? "ended" : "paused")}
         onEnded={() => setState("ended")}
